@@ -8,7 +8,7 @@ import Provider from "./_provider";
 import { cn } from "@repo/ui/cn";
 
 export const metadata: Metadata = {
-  title: "Grazehub",
+  title: "Turbo Cell",
   description: "",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },

@@ -17,21 +17,20 @@ export const SiteFooter = () => {
             Built by{" "}
             <a
               aria-label="Kickflip tutorial on YouTube"
-              href="https://twitter.com/grazehub_twt"
+              href="/twitter"
               target="_blank"
               rel="noreferrer"
-              className="font-semibold transition-colors hover:text-foreground"
+              className="font-bold transition-colors duration-200 text-blue-400 hover:text-white"
             >
-              Grazehub Team
+              Fahad
             </a>
-            .
           </div>
           <ul className="flex-1 flex flex-row space-x-3">
             {Company.map((link, index) => (
               <li key={index}>
                 <Link
                   href={link.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground hover:underline"
+                  className="text-sm hover:text-blue-300 duration-200 text-white transition-colors  hover:underline"
                 >
                   {link.title} <span className="sr-only">{link.title}</span>
                 </Link>
