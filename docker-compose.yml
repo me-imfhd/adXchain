@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: repo
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  # web:
+  #   env_file: .env
+  #   container_name: web
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/web/Dockerfile
+  #   restart: always
+  #   expose:
+  #     - 3000
+  #   ports:
+  #     - 3000:3000
+
+volumes:
+  db:
+    driver: local

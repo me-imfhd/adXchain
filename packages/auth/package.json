@@ -1,0 +1,26 @@
+{
+  "name": "@repo/auth",
+  "version": "0.1.1",
+  "private": true,
+  "scripts": {
+    "format": "prettier . --check --cache --cache-location=\"node_modules/.cache/prettiercache\"",
+    "format:fix": "prettier . --write --cache --cache-location=\"node_modules/.cache/prettiercache\" --log-level=warn",
+    "lint": "eslint . --cache --cache-location \"node_modules/.cache/.eslintcache\" --max-warnings 0",
+    "lint:fix": "eslint . --fix --cache --cache-location \"node_modules/.cache/.eslintcache\" --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@repo/db": "workspace:*",
+    "nodemailer": "^6.9.10"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "@types/node": "^20.11.19",
+    "@types/nodemailer": "^6.4.14",
+    "eslint": "^8.56.0",
+    "prisma": "^5.10.2",
+    "tsup": "8.0.2",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@repo/eslint-config",
+  "version": "0.0.0",
+  "type": "commonjs",
+  "files": [
+    "node.js",
+    "next.js"
+  ],
+  "scripts": {
+    "format": "prettier \"**/*.{ts,tsx,md,mdx,json}\" --check"
+  },
+  "dependencies": {
+    "@next/eslint-plugin-next": "canary",
+    "@repo/tsconfig": "workspace:*",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "@vercel/style-guide": "^5.2.0",
+    "eslint": "^8.56.0",
+    "eslint-config-turbo": "^1.12.4",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "eslint-plugin-unused-imports": "^3.1.0"
+  }
+}

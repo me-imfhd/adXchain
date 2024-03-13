@@ -1,0 +1,30 @@
+{
+  "name": "repo",
+  "private": true,
+  "engines": {
+    "node": ">=v20.10.0"
+  },
+  "packageManager": "pnpm@8.7.5",
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo clean",
+    "db:generate": "turbo db:generate",
+    "db:push": "turbo db:push",
+    "db:studio": "turbo db:studio",
+    "dev": "turbo dev --parallel",
+    "format": "prettier --write \"**/*.{html,css,js,jsx,ts,tsx,md,json}\"",
+    "check-format": "prettier --check \"**/*.{html,css,js,jsx,ts,tsx,md,json}\"",
+    "lint": "turbo lint --continue -- --cache --cache-location 'node_modules/.cache/.eslintcache' && manypkg check",
+    "lint:fix": "turbo lint --continue -- --fix --cache --cache-location 'node_modules/.cache/.eslintcache' && manypkg fix",
+    "typecheck": "turbo typecheck"
+  },
+  "dependencies": {
+    "turbo": "^1.10.14",
+    "prettier": "^3.0.3",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "eslint": "^8.50.0",
+    "typescript": "^5.2.2"
+  }
+}
