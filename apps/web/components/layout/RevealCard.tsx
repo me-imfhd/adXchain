@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState, memo } from "react";
 import { motion } from "framer-motion";
-import { twMerge } from "@repo/ui/cn"; 
+import { twMerge } from "@repo/ui/cn";
 import { cn } from "@repo/ui/cn";
 
 export const TextRevealCard = ({
@@ -55,10 +55,7 @@ export const TextRevealCard = ({
       onMouseLeave={mouseLeaveHandler}
       onMouseMove={mouseMoveHandler}
       ref={cardRef}
-      className={cn(
-        "z-20 rounded-lg p-8 relative overflow-hidden",
-        className
-      )}
+      className={cn("z-20 rounded-lg p-8 relative overflow-hidden", className)}
     >
       {children}
 

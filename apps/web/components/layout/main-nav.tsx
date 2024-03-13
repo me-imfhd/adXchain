@@ -30,7 +30,9 @@ export function MainNav() {
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="font-semibold duration-200 hover:font-bold text-blue-300"><span>Prices</span></NavigationMenuTrigger>
+            <NavigationMenuTrigger className="font-semibold duration-200 hover:font-bold text-blue-300">
+              <span>Prices</span>
+            </NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                 <li className="row-span-3">
@@ -40,9 +42,7 @@ export function MainNav() {
                       href="/"
                     >
                       <Icons.logo className="h-6 w-6" />
-                      <div className="mb-2 mt-4 text-lg font-medium">
-                        
-                      </div>
+                      <div className="mb-2 mt-4 text-lg font-medium"></div>
                       <p className="text-sm leading-tight text-muted-foreground">
                         Headache-Free Project Building: Embracing the Latest
                         Tech with Ease.
@@ -66,12 +66,12 @@ export function MainNav() {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-          <Link href="/computers" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Computers
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
+            <Link href="/computers" legacyBehavior passHref>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                Computers
+              </NavigationMenuLink>
+            </Link>
+          </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
     </div>

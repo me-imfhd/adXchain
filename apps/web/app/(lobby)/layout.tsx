@@ -12,9 +12,9 @@ export default function LobbyLayout({ children }: PropsWithChildren) {
         <ProfileHeader />
       </SiteHeader>
       <div className="min-h-screen relative w-full overflow-hidden bg-black flex flex-col rounded-lg">
-      <Boxes />
+        <Boxes />
 
-      <main className="flex-1">{children}</main>
+        <main className="flex-1">{children}</main>
       </div>
       <SiteFooter></SiteFooter>
     </div>

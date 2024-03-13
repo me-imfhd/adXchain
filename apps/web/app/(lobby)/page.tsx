@@ -6,28 +6,51 @@ export default function IndexPage() {
   return (
     <div>
       <HeroSection />
-      <WavyBackground/>
+      <WavyBackground />
       <div className="flex flex-wrap items-center justify-evenly">
-        <CardContainerWrapper name="madlads" imgURL="https://www.madlads.com/mad_lads_logo.svg"/>
-        <CardContainerWrapper name="madlads" imgURL="https://www.madlads.com/mad_lads_logo.svg"/>
-        <CardContainerWrapper name="madlads" imgURL="https://www.madlads.com/mad_lads_logo.svg"/>
-        <CardContainerWrapper name="madlads" imgURL="https://www.madlads.com/mad_lads_logo.svg"/>
-        <CardContainerWrapper name="madlads" imgURL="https://www.madlads.com/mad_lads_logo.svg"/>
-        <CardContainerWrapper name="madlads" imgURL="https://www.madlads.com/mad_lads_logo.svg"/>
-        <CardContainerWrapper name="madlads" imgURL="https://www.madlads.com/mad_lads_logo.svg"/>
-        <CardContainerWrapper name="madlads" imgURL="https://www.madlads.com/mad_lads_logo.svg"/>
-
+        <CardContainerWrapper
+          name="madlads"
+          imgURL="https://www.madlads.com/mad_lads_logo.svg"
+        />
+        <CardContainerWrapper
+          name="madlads"
+          imgURL="https://www.madlads.com/mad_lads_logo.svg"
+        />
+        <CardContainerWrapper
+          name="madlads"
+          imgURL="https://www.madlads.com/mad_lads_logo.svg"
+        />
+        <CardContainerWrapper
+          name="madlads"
+          imgURL="https://www.madlads.com/mad_lads_logo.svg"
+        />
+        <CardContainerWrapper
+          name="madlads"
+          imgURL="https://www.madlads.com/mad_lads_logo.svg"
+        />
+        <CardContainerWrapper
+          name="madlads"
+          imgURL="https://www.madlads.com/mad_lads_logo.svg"
+        />
+        <CardContainerWrapper
+          name="madlads"
+          imgURL="https://www.madlads.com/mad_lads_logo.svg"
+        />
+        <CardContainerWrapper
+          name="madlads"
+          imgURL="https://www.madlads.com/mad_lads_logo.svg"
+        />
       </div>
     </div>
   );
 }
 
-interface CardContainerWrapperProps{
-  name: string
+interface CardContainerWrapperProps {
+  name: string;
   imgURL: string;
 }
 
-const CardContainerWrapper = ({imgURL, name}: CardContainerWrapperProps) =>{
+const CardContainerWrapper = ({ imgURL, name }: CardContainerWrapperProps) => {
   return (
     <CardContainer className="inter-var">
       <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[25rem] h-auto rounded-xl p-5 border  ">
@@ -71,5 +94,5 @@ const CardContainerWrapper = ({imgURL, name}: CardContainerWrapperProps) =>{
         </div>
       </CardBody>
     </CardContainer>
-  )
-}
+  );
+};
