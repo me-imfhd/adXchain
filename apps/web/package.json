@@ -25,6 +25,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-query": "^3.39.3",
+    "simplex-noise": "^4.0.1",
     "sonner": "^1.4.3",
     "swagger-ui-react": "4.11.1",
     "tailwindcss-animate": "^1.0.7",

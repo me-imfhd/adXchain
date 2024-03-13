@@ -77,6 +77,9 @@ importers:
       react-query:
         specifier: ^3.39.3
         version: 3.39.3(react-dom@18.2.0)(react@18.2.0)
+      simplex-noise:
+        specifier: ^4.0.1
+        version: 4.0.1
       sonner:
         specifier: ^1.4.3
         version: 1.4.3(react-dom@18.2.0)(react@18.2.0)
@@ -7583,6 +7586,10 @@ packages:
       simple-concat: 1.0.1
     dev: false
     optional: true
+
+  /simplex-noise@4.0.1:
+    resolution: {integrity: sha512-zl/+bdSqW7HJOQ0oDbxrNYaF4F5ik0i7M6YOYmEoIJNtg16NpvWaTTM1Y7oV/7T0jFljawLgYPS81Uu2rsfo1A==}
+    dev: false
 
   /slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
