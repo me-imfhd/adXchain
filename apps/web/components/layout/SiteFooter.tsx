@@ -22,7 +22,7 @@ export const SiteFooter = () => {
               rel="noreferrer"
               className="font-bold transition-colors duration-200 text-blue-400 hover:text-white"
             >
-              Fahad
+              AdxChain Team
             </a>
           </div>
           <ul className="flex-1 flex flex-row space-x-3">

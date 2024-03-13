@@ -25,7 +25,7 @@ export function MainNav() {
         className="hidden items-center space-x-2 lg:flex"
       >
         <Icons.chevronsRight className="h-6 w-6" aria-hidden="true" />
-        <span className="hidden font-bold lg:inline-block">Turbo Cell</span>
+        <span className="hidden font-bold lg:inline-block">AdXchain</span>
       </a>
       <NavigationMenu>
         <NavigationMenuList>
@@ -41,7 +41,7 @@ export function MainNav() {
                     >
                       <Icons.logo className="h-6 w-6" />
                       <div className="mb-2 mt-4 text-lg font-medium">
-                        Turbo Cell
+                        
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground">
                         Headache-Free Project Building: Embracing the Latest

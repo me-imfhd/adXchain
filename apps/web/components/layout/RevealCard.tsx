@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState, memo } from "react";
 import { motion } from "framer-motion";
-import { twMerge } from "tailwind-merge";
+import { twMerge } from "@repo/ui/cn"; 
 import { cn } from "@repo/ui/cn";
 
 export const TextRevealCard = ({
