@@ -11,8 +11,8 @@ export const ProfileHeader = async () => {
             size: "sm",
           })}
         >
-          Sign In
-          <span className="sr-only">Sign In</span>
+           Connect Wallet
+          <span className="sr-only">Connect Wallet</span>
         </div>
       </Link>
     </>
