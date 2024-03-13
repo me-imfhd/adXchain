@@ -10,8 +10,8 @@ import Image from "next/image";
 export default function IndexPage() {
   return (
     <div>
-      {/* <HeroSection /> */}
-      <div className="h-[40rem] flex items-center justify-center w-full">
+      <HeroSection />
+      {/* <div className="h-[40rem] flex items-center justify-center w-full">
         <WavyBackground>
           <div className="w-full flex flex-wrap items-center  justify-between">
             <div>
@@ -32,7 +32,7 @@ export default function IndexPage() {
             </div>
           </div>
         </WavyBackground>
-      </div>
+      </div> */}
       <div className="min-h-screen relative w-full overflow-hidden bg-black flex flex-col rounded-lg">
         <Boxes />
         <div className="flex flex-wrap items-center justify-evenly">
