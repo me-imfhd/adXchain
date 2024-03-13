@@ -37,13 +37,13 @@ export const mySocials: MySocialsProps[] = [
   },
   {
     title: "Twitter",
-    href: "https://twitter.com/Mefhd2",
+    href: "https://twitter.com/adXchainIN",
     external: true,
     icon: "twitter",
   },
   {
     title: "Discord",
-    href: "https://discord.gg/U9GNWUnA",
+    href: "https://discord.gg/BNpcETKK",
     external: true,
     icon: "discord",
   },

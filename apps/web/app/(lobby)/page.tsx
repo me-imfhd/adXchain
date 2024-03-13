@@ -1,45 +1,74 @@
+"use client";
+import { Boxes } from "@/components/landing-page/Background";
 import HeroSection from "@/components/landing-page/hero-section";
 import { CardBody, CardContainer, CardItem } from "@/components/layout/3dCard";
 import { WavyBackground } from "@/components/layout/WavyBackrgound";
+import logo from "@/public/images/adXchain-logo.png";
+import { Button } from "@repo/ui/components";
+import Image from "next/image";
 
 export default function IndexPage() {
   return (
     <div>
-      <HeroSection />
-      <WavyBackground />
-      <div className="flex flex-wrap items-center justify-evenly">
-        <CardContainerWrapper
-          name="madlads"
-          imgURL="https://www.madlads.com/mad_lads_logo.svg"
-        />
-        <CardContainerWrapper
-          name="madlads"
-          imgURL="https://www.madlads.com/mad_lads_logo.svg"
-        />
-        <CardContainerWrapper
-          name="madlads"
-          imgURL="https://www.madlads.com/mad_lads_logo.svg"
-        />
-        <CardContainerWrapper
-          name="madlads"
-          imgURL="https://www.madlads.com/mad_lads_logo.svg"
-        />
-        <CardContainerWrapper
-          name="madlads"
-          imgURL="https://www.madlads.com/mad_lads_logo.svg"
-        />
-        <CardContainerWrapper
-          name="madlads"
-          imgURL="https://www.madlads.com/mad_lads_logo.svg"
-        />
-        <CardContainerWrapper
-          name="madlads"
-          imgURL="https://www.madlads.com/mad_lads_logo.svg"
-        />
-        <CardContainerWrapper
-          name="madlads"
-          imgURL="https://www.madlads.com/mad_lads_logo.svg"
-        />
+      {/* <HeroSection /> */}
+      <div className="h-[40rem] flex items-center justify-center w-full">
+        <WavyBackground>
+          <div className="w-full flex flex-wrap items-center  justify-between">
+            <div>
+              <p className="text-2xl md:text-4xl lg:text-7xl text-white font-bold inter-var">
+              Future of <span className="gradient-text"> Web3 Advertising is Near</span>
+              </p>
+
+              <p className="text-base md:text-lg mt-4 text-white font-normal inter-var ">
+              Connect with your audience through our NFT-powered ad spaces and seamless UPI-like transactions
+              </p>
+              <Button variant="default" className="mt-4">
+                {" "}
+                <span className="text-xl">Start Trading</span>
+              </Button>
+            </div>
+            <div className=" flex flex-col items-center justify-center rounded-lg">
+              <Image src={logo} alt="dsajf" height={500} width={500} />
+            </div>
+          </div>
+        </WavyBackground>
+      </div>
+      <div className="min-h-screen relative w-full overflow-hidden bg-black flex flex-col rounded-lg">
+        <Boxes />
+        <div className="flex flex-wrap items-center justify-evenly">
+          <CardContainerWrapper
+            name="madlads"
+            imgURL="https://www.madlads.com/mad_lads_logo.svg"
+          />
+          <CardContainerWrapper
+            name="madlads"
+            imgURL="https://www.madlads.com/mad_lads_logo.svg"
+          />
+          <CardContainerWrapper
+            name="madlads"
+            imgURL="https://www.madlads.com/mad_lads_logo.svg"
+          />
+          <CardContainerWrapper
+            name="madlads"
+            imgURL="https://www.madlads.com/mad_lads_logo.svg"
+          />
+          <CardContainerWrapper
+            name="madlads"
+            imgURL="https://www.madlads.com/mad_lads_logo.svg"
+          />
+          <CardContainerWrapper
+            name="madlads"
+            imgURL="https://www.madlads.com/mad_lads_logo.svg"
+          />
+          <CardContainerWrapper
+            name="madlads"
+            imgURL="https://www.madlads.com/mad_lads_logo.svg"
+          />
+          <CardContainerWrapper
+            name="madlads"
+            imgURL="https://www.madlads.com/mad_lads_logo.svg"
+          />
+        </div>
       </div>
     </div>
   );

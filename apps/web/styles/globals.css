@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+body{
+  overflow-x: hidden;
+}
+
+/* Add this to your CSS file */
+.gradient-text {
+ background: linear-gradient(to right, rgb(0, 162, 255), rgb(196, 8, 196));
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+}
+
+
 @layer base {
   :root {
     --background: 0 14.3% 4.1%;
