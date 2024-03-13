@@ -11,6 +11,7 @@ export default function IndexPage() {
   return (
     <div>
       <HeroSection />
+      
       {/* <div className="h-[40rem] flex items-center justify-center w-full">
         <WavyBackground>
           <div className="w-full flex flex-wrap items-center  justify-between">
