@@ -33,10 +33,6 @@
     "dev": {
       "persistent": true
     },
-    "format": {
-      "outputs": ["node_modules/.cache/.prettiercache"],
-      "outputMode": "new-only"
-    },
     "lint": {
       "dependsOn": ["^topo"],
       "outputs": ["node_modules/.cache/.eslintcache"]
@@ -52,6 +48,9 @@
       "cache": false
     },
     "db:generate": {
+      "cache": false
+    },
+    "format": {
       "cache": false
     },
     "db:push": {

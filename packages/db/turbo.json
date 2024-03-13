@@ -5,6 +5,9 @@
       "outputs": ["../../node_modules/.prisma/**"],
       "outputMode": "new-only"
     },
+    "format": {
+      "cache": false
+    },
     "db:deploy": {
       "cache": false
     },
