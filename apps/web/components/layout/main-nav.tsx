@@ -18,16 +18,13 @@ import { Icons } from "@repo/ui/icons";
 
 export function MainNav() {
   return (
-    <div className="hidden gap-6 lg:flex">
-      <a
-        aria-label="Home"
-        href="/"
-        className="hidden items-center space-x-2 lg:flex"
-      >
-        <Icons.chevronsRight className="h-6 w-6" aria-hidden="true" />
-        <span className="hidden font-bold lg:inline-block">AdXchain</span>
+    <div className="gap-6 lg:flex">
+      <a aria-label="Home" href="/" className="items-center space-x-2 lg:flex">
+        <h1 className="tracking-wide font-ox-semi-bold  font-bold lg:inline-block gradient-text text-transparent text-3xl animate-gradient">
+          AdXChain
+        </h1>
       </a>
-      <NavigationMenu>
+      {/* <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger className="font-semibold duration-200 hover:font-bold text-blue-300">
@@ -66,7 +63,7 @@ export function MainNav() {
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenu> */}
     </div>
   );
 }
@@ -82,7 +79,7 @@ const ListItem = React.forwardRef<
           ref={ref}
           className={cn(
             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className,
+            className
           )}
           {...props}
         >

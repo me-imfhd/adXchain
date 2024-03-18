@@ -2,18 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
+body {
   overflow-x: hidden;
 }
 
 /* Add this to your CSS file */
 .gradient-text {
- background: linear-gradient(to right, rgb(0, 162, 255), rgb(196, 8, 196));
- -webkit-background-clip: text;
- -webkit-text-fill-color: transparent;
+  background: linear-gradient(to right, rgb(0, 162, 255), rgb(196, 8, 196));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
-
-
 @layer base {
   :root {
     --background: 0 14.3% 4.1%;
@@ -35,12 +33,12 @@ body{
     --border: 20 5.9% 90%;
     --input: 20 5.9% 90%;
     --ring: 20 14.3% 4.1%;
-    --radius: 0.5rem;
+    --radius: 0.3rem;
   }
 
   .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 60 9.1% 97.8%;
+    --background: 24 9.8% 10%;
+    --foreground: 0 0% 95%;
     --card: 20 14.3% 4.1%;
     --card-foreground: 60 9.1% 97.8%;
     --popover: 20 14.3% 4.1%;
@@ -84,4 +82,65 @@ body{
   .container {
     @apply px-4;
   }
+}
+.shadcnoverridetransition {
+  transition: all 0.3s ease !important;
+}
+.shadcnoverridetransition:active {
+  transition: all 0.075s ease !important;
+}
+
+.fancy-border-gradient::before {
+  inset: 0;
+  content: "";
+  --angle: 0deg;
+  position: absolute;
+  border-radius: inherit;
+  padding: 1.5px; /* control the border thickness */
+  background: conic-gradient(
+    from var(--angle),
+    #3178c622,
+    #3178c644 35%,
+    #3178c688 39%,
+    #3178c6,
+    #3178c688 61%,
+    #3178c644 65%,
+    #3178c622
+  );
+  -webkit-mask-composite: xor;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  animation: 3s rotate linear infinite;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+::-webkit-scrollbar-track {
+  width: 0;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  width: 0;
+  background: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+.gradient-text {
+  background: linear-gradient(
+    to right,
+    #a855f7,
+    #ec4899,
+    #eab308,
+    #ec4899,
+    #a855f7,
+    #ec4899,
+    #eab308
+  );
+  background-size: 300% 300%;
+  background-clip: text;
 }
