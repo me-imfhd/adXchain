@@ -26,13 +26,13 @@ export const ImagesSlider = ({
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex + 1 === images.length ? 0 : prevIndex + 1,
+      prevIndex + 1 === images.length ? 0 : prevIndex + 1
     );
   };
 
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex - 1 < 0 ? images.length - 1 : prevIndex - 1,
+      prevIndex - 1 < 0 ? images.length - 1 : prevIndex - 1
     );
   };
 
@@ -94,7 +94,7 @@ export const ImagesSlider = ({
       rotateX: 0,
       opacity: 1,
       transition: {
-        duration: 0.5,
+        duration: 0.9,
         ease: [0.645, 0.045, 0.355, 1.0],
       },
     },
@@ -120,19 +120,12 @@ export const ImagesSlider = ({
     <div
       className={cn(
         "overflow-hidden h-full w-full relative flex items-center justify-center",
-        className,
+        className
       )}
       style={{
         perspective: "1000px",
       }}
     >
-      {areImagesLoaded && children}
-      {areImagesLoaded && overlay && (
-        <div
-          className={cn("absolute inset-0 bg-black/60 z-40", overlayClassName)}
-        />
-      )}
-
       {areImagesLoaded && (
         <AnimatePresence>
           <motion.img
@@ -145,6 +138,12 @@ export const ImagesSlider = ({
             className="image h-full w-full absolute inset-0 object-cover object-center"
           />
         </AnimatePresence>
+      )}
+      {areImagesLoaded && children}
+      {areImagesLoaded && overlay && (
+        <div
+          className={cn("absolute inset-0 bg-black/20 z-40", overlayClassName)}
+        />
       )}
     </div>
   );
