@@ -18,7 +18,7 @@ export const buttonVariants = cva(
       size: {
         default: "h-10 px-4 py-2",
         xs: "h-5 px-2 rounded-full text-xs", // pill-shaped
-        sm: "h-[2.2rem] rounded-md px-3",
+        sm: "h-[2.3rem] rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
       },

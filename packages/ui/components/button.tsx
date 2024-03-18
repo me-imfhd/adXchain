@@ -25,6 +25,7 @@ export interface ButtonProps
   buttonIcon?: React.ReactNode;
   iconDirection?: "left" | "right";
   isLoading?: boolean;
+  enabledGlow?: boolean;
   tapDepth?: number;
 }
 
@@ -41,6 +42,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       iconDirection = "left",
       withArrow = false,
       disabled = false,
+      enabledGlow,
       isLoading = false,
       tapDepth = 1,
       animationType,
@@ -52,7 +54,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       buttonVariants({ variant, size, className, animationType, tap }),
       !disabled && "hover:brightness-110 active:brightness-90",
       disabled && "cursor-not-allowed opacity-40",
-      isLoading && "cursor-default opacity-60 transition-all"
+      isLoading && "cursor-default opacity-60 transition-all",
+      enabledGlow && "hover:shadow-[0_0_2rem_-0.5rem_#3178c6]"
     );
     return (
       <button
