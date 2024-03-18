@@ -22,7 +22,7 @@ export interface ButtonProps
   size?: "default" | "icon" | "lg" | "sm" | "xs";
   asChild?: boolean;
   withArrow?: boolean;
-  icon?: React.ReactNode;
+  buttonIcon?: React.ReactNode;
   iconDirection?: "left" | "right";
   isLoading?: boolean;
   tapDepth?: number;
@@ -37,7 +37,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       variant,
       size,
       asChild = false,
-      icon = <></>,
+      buttonIcon = <></>,
       iconDirection = "left",
       withArrow = false,
       disabled = false,
@@ -67,9 +67,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               <Loader2 className="h-4 w-4 animate-spin" />
             </span>
           )}
-          {iconDirection === "left" && icon}
+          {iconDirection === "left" && buttonIcon}
           {children}
-          {iconDirection === "right" && icon}
+          {iconDirection === "right" && buttonIcon}
         </span>
       </button>
     );
