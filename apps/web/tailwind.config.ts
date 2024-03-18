@@ -1,13 +1,3 @@
-const defaultTheme = require("tailwindcss/defaultTheme");
-const colors = require("tailwindcss/colors");
-const {
-  default: flattenColorPalette,
-} = require("tailwindcss/lib/util/flattenColorPalette");
-
-const { fontFamily } =
-  // eslint-disable-next-line
-  require("tailwindcss/defaultTheme") as typeof import("tailwindcss/defaultTheme");
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -25,6 +15,10 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        ox: ["var(--font-ox)"],
+        "ox-semi-bold": ["var(--font-ox-semi-bold)"],
+      },
       borderColor: {
         DEFAULT: "hsl(var(--border) / <alpha-value>)",
       },
@@ -69,6 +63,10 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        gradient: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "100%": { backgroundPosition: "100% 50%" },
+        },
         "fade-up": {
           "0%": {
             opacity: "0",
@@ -95,6 +93,32 @@ module.exports = {
             transform: "translateY(0px)",
           },
         },
+        "fade-right": {
+          "0%": {
+            opacity: "0",
+            transform: "translateX(10px)",
+          },
+          "80%": {
+            opacity: "0.6",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateX(0px)",
+          },
+        },
+        "fade-left": {
+          "0%": {
+            opacity: "0",
+            transform: "translateX(-10px)",
+          },
+          "80%": {
+            opacity: "0.6",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateX(0px)",
+          },
+        },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -105,32 +129,20 @@ module.exports = {
         },
       },
       animation: {
-        "fade-up": "fade-up 0.5s",
-        "fade-down": "fade-down 0.5s",
+        gradient: "gradient 5s linear infinite",
+        "fade-up": "fade-up 0.5s ease-in-out",
+        "fade-down": "fade-down 0.5s ease-in-out",
+        "fade-right": "fade-right 0.5s ease-in-out",
+        "fade-left": "fade-left 0.5s ease-in-out",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
-  fontFamily: {
-    sans: ["var(--font-sans)", ...fontFamily.sans],
-  },
+
   plugins: [
     require("tailwindcss-animate"),
     require("@tailwindcss/typography"),
     require("@tailwindcss/container-queries"),
-    addVariablesForColors,
   ],
 };
-
-// This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
-function addVariablesForColors({ addBase, theme }: any) {
-  let allColors = flattenColorPalette(theme("colors"));
-  let newVars = Object.fromEntries(
-    Object.entries(allColors).map(([key, val]) => [`--${key}`, val]),
-  );
-
-  addBase({
-    ":root": newVars,
-  });
-}

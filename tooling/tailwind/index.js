@@ -1,7 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  content: ["../../apps/web/**/*.{ts,tsx}", "../../packages/ui/**/*.{ts,tsx}"],
+  content: [
+    "../../apps/web/**/*.{ts,tsx}",
+    "../../apps/dashboard/**/*.{ts,tsx}",
+    "../../packages/ui/**/*.{ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -55,6 +59,10 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        gradient: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "100%": { backgroundPosition: "100% 50%" },
+        },
         "fade-up": {
           "0%": {
             opacity: "0",
@@ -81,6 +89,32 @@ module.exports = {
             transform: "translateY(0px)",
           },
         },
+        "fade-right": {
+          "0%": {
+            opacity: "0",
+            transform: "translateX(10px)",
+          },
+          "80%": {
+            opacity: "0.6",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateX(0px)",
+          },
+        },
+        "fade-left": {
+          "0%": {
+            opacity: "0",
+            transform: "translateX(-10px)",
+          },
+          "80%": {
+            opacity: "0.6",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateX(0px)",
+          },
+        },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -91,12 +125,23 @@ module.exports = {
         },
       },
       animation: {
-        "fade-up": "fade-up 0.5s",
-        "fade-down": "fade-down 0.5s",
+        gradient: "gradient 5s linear infinite",
+        "fade-up": "fade-up 0.5s ease-in-out",
+        "fade-down": "fade-down 0.5s ease-in-out",
+        "fade-right": "fade-right 0.5 ease-in-out",
+        "fade-left": "fade-left 0.5 ease-in-out",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  fontFamily: {
+    sans: ["var(--font-sans)", ...fontFamily.sans],
+  },
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+    require("@tailwindcss/container-queries"),
+  ],
 };
+
