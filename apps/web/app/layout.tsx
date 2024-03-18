@@ -1,11 +1,11 @@
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Toaster } from "@repo/ui/components";
-import { fontSans, fontMono } from "@/lib/fonts";
 import TailwindResposivenessIndicator from "@repo/ui/components/TailwindResposivenessIndicator";
 import type { PropsWithChildren } from "react";
 import Provider from "./_provider";
 import { cn } from "@repo/ui/cn";
+import { oxCustom, oxSemiBold } from "@/lib/fonts";
 
 export const metadata: Metadata = {
   title: "AdXchain",
@@ -20,9 +20,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
-          fontMono.variable,
+          "min-h-screen bg-background antialiased font-ox",
+          oxCustom.variable,
+          oxSemiBold.variable
         )}
       >
         <Provider>

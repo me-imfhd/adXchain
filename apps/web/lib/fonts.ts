@@ -1,14 +1,15 @@
 import {
   JetBrains_Mono as FontMono,
   Inter as FontSans,
+  Oxanium,
 } from "next/font/google";
+import localFont from "next/font/local";
 
-export const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
+export const oxCustom = localFont({
+  src: [{ path: "./font/static/Oxanium-Regular.ttf", weight: "400" }],
+  variable: "--font-ox",
 });
-
-export const fontMono = FontMono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+export const oxSemiBold = localFont({
+  src: [{ path: "./font/static/Oxanium-SemiBold.ttf" }],
+  variable: "--font-ox-semi-bold",
 });
