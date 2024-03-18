@@ -1,17 +1,8 @@
 "use client";
 import React from "react";
-import Link from "next/link";
-import { Button } from "@repo/ui/components";
-import { Icons } from "@repo/ui/icons";
-import {
-  TextRevealCard,
-  TextRevealCardDescription,
-  TextRevealCardTitle,
-} from "../layout/RevealCard";
 import { ImagesSlider } from "./ImageSlider";
 import { motion } from "framer-motion";
-import { CardBody, CardContainer, CardItem } from "../layout/3dCard";
-import Image from "next/image";
+import { ActionButton } from "@repo/ui/components/buttons";
 
 const HeroSection = () => {
   const images = [
@@ -21,11 +12,11 @@ const HeroSection = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center  h-[30rem] rounded-2xl w-full">
-      <ImagesSlider className="h-[30rem]" images={images}>
+    <div className="flex flex-col items-center justify-center  rounded-2xl w-full">
+      <ImagesSlider className="h-[40rem]" images={images} direction="down">
         <motion.div
           initial={{
-            opacity: 0,
+            opacity: 1,
             y: -80,
           }}
           animate={{
@@ -33,20 +24,16 @@ const HeroSection = () => {
             y: 0,
           }}
           transition={{
-            duration: 0.9,
+            duration: 0.1,
           }}
           className="z-50 flex flex-col justify-center items-center"
         >
           <motion.p className="font-bold text-xl md:text-6xl text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 py-4">
-            <TextRevealCard
-              text="You know what adXchain is?"
-              revealText="Leading NFT Marketplace"
-            ></TextRevealCard>
+            Future of Web3 Advertising is Here
           </motion.p>
-          <button className="px-4 py-2 backdrop-blur-sm border bg-emerald-300/10 border-emerald-500/20 text-white mx-auto text-center rounded-full relative mt-4">
-            <span>Start Trading →</span>
-            <div className="absolute inset-x-0  h-px -bottom-px bg-gradient-to-r w-3/4 mx-auto from-transparent via-blue-500 to-transparent" />
-          </button>
+          <ActionButton className="py-6 px-8 text-2xl ">
+            Start Trading →
+          </ActionButton>
         </motion.div>
       </ImagesSlider>
     </div>
