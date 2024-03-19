@@ -3,7 +3,6 @@ import React from "react";
 import { ProfileHeader } from "@/components/layout/profile-header";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Boxes } from "@/components/landing-page/Background";
 
 export default function LobbyLayout({ children }: PropsWithChildren) {
   return (
