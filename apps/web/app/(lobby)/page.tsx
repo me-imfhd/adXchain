@@ -5,6 +5,7 @@ import { Button, Shell } from "@repo/ui/components";
 import {
   ActionButton,
   GlowingButton,
+  ShinyButton,
   ZoomingButton,
 } from "@repo/ui/components/buttons";
 
@@ -17,7 +18,7 @@ export default function IndexPage() {
       >
         <div className="relative  mx-auto w-full text-center ">
           <div className="absolute left-0 top-0 -z-10 hidden h-full w-full transform-gpu bg-gradient-to-r from-red-500 via-red-600 to-green-500 opacity-70 blur-[58px] dark:block sm:opacity-35" />
-          <h1 className="mb-10 mt-16 text-4xl flex justify-center animate-gradient gradient-text items-center gap-4 h-[14rem] font-bold tracking-tighter text-black dark:text-white sm:text-[12rem]">
+          <h1 className="mb-10 mt-8 text-4xl flex justify-center animate-gradient text-transparent gradient-text items-center gap-4 h-[14rem] font-bold tracking-tighter sm:text-[12rem]">
             <span>Ad</span>
             <span className="sm:text-[14rem]"> X</span>{" "}
             <span className="">Chain</span>
@@ -31,8 +32,16 @@ export default function IndexPage() {
           Connect with your audience through our NFT-powered ad spaces and
           seamless UPI-like transactions
         </p>
-        <div className="pt-6">
-          <GlowingButton>Buy Ad NFT</GlowingButton>
+        <div className="pt-6 flex justify-center items-center gap-5">
+          <ShinyButton tap="in">Buy Ad NFT</ShinyButton>
+          <Button
+            size="sm"
+            className="rounded-lg hover:bg-background duration-300 hover:shadow-[0_0_2rem_-0.5rem_#3178c6]"
+            variant="ghost"
+            tap="in"
+          >
+            Learn More
+          </Button>
         </div>
       </Shell>
     </div>
