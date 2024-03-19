@@ -1,11 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-body {
-  overflow-x: hidden;
-}
-
 /* Add this to your CSS file */
 .gradient-text {
   background: linear-gradient(to right, rgb(0, 162, 255), rgb(196, 8, 196));
@@ -14,6 +9,7 @@ body {
 }
 @layer base {
   :root {
+    --gradient-angle: 360deg;
     --background: 0 14.3% 4.1%;
     --foreground: 20 14.3% 4.1%;
     --card: 0 0% 100%;
@@ -83,11 +79,86 @@ body {
     @apply px-4;
   }
 }
+
+html,
+body,
+#__next,
+main {
+  scroll-padding-top: 64px;
+  scroll-behavior: smooth;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.from-background {
+  --tw-gradient-from: hsl(var(--background)) var(--tw-gradient-from-position);
+}
+
+@property --gradient-angle {
+  syntax: "<angle>"; /* <- defined as type angle for the transition to work */
+  initial-value: 360deg;
+  inherits: false;
+}
+
+/* overrides silly annoying shadcn default */
+/* it doesn't transition shadows by default */
 .shadcnoverridetransition {
   transition: all 0.3s ease !important;
 }
 .shadcnoverridetransition:active {
   transition: all 0.075s ease !important;
+}
+.hero-join-button {
+  background: linear-gradient(
+    var(--gradient-angle),
+    hsla(211, 60%, 48%, 0.7),
+    hsla(211, 60%, 48%, 0.3),
+    #3178c6,
+    hsla(211, 60%, 48%, 0.5)
+  );
+  animation: gradient-rotate 5s linear infinite reverse;
+}
+
+.hero-join-button-dark {
+  background: linear-gradient(
+    var(--gradient-angle),
+    hsla(0, 0%, 100%, 0.5),
+    hsla(0, 0%, 100%, 0.1),
+    #fff,
+    hsla(0, 0%, 100%, 0.3)
+  ) !important;
+  animation: gradient-rotate 5s linear infinite reverse;
+}
+
+@keyframes bg-to-center {
+  to {
+    background-position: center;
+  }
+}
+
+@keyframes gradient-rotate {
+  0% {
+    --gradient-angle: 360deg;
+  }
+
+  100% {
+    --gradient-angle: 0deg;
+  }
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
 }
 
 .fancy-border-gradient::before {
@@ -114,6 +185,18 @@ body {
   animation: 3s rotate linear infinite;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+@keyframes rotate {
+  to {
+    --angle: 360deg;
+  }
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
 }
 ::-webkit-scrollbar-track {
   width: 0;

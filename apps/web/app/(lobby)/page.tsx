@@ -32,14 +32,7 @@ export default function IndexPage() {
           seamless UPI-like transactions
         </p>
         <div className="pt-6">
-          <Button
-            enabledGlow
-            size="sm"
-            variant="outline"
-            className="font-bold hover:-translate-y-[1px] active:translate-y-[1px] "
-          >
-            Get Started
-          </Button>
+          <GlowingButton>Buy Ad NFT</GlowingButton>
         </div>
       </Shell>
     </div>
