@@ -210,12 +210,12 @@ main {
   background: linear-gradient(
     to right,
     #a855f7,
-    #ec4899,
-    #eab308,
-    #ec4899,
+    #3178c6,
+    #b51d1d,
+    #3178c6,
     #a855f7,
-    #ec4899,
-    #eab308
+    #3178c6,
+    #b51d1d
   );
   background-size: 300% 300%;
   background-clip: text;
