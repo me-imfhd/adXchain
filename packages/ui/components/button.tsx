@@ -25,7 +25,6 @@ export interface ButtonProps
   buttonIcon?: React.ReactNode;
   iconDirection?: "left" | "right";
   isLoading?: boolean;
-  tapDepth?: number;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -42,7 +41,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       withArrow = false,
       disabled = false,
       isLoading = false,
-      tapDepth = 1,
       animationType,
       ...props
     },

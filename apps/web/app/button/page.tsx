@@ -2,6 +2,7 @@ import React from "react";
 import {
   ActionButton,
   GlowingButton,
+  ShinyButton,
   ZoomingButton,
 } from "@repo/ui/components/buttons";
 import { Button } from "@repo/ui/components";
@@ -11,6 +12,7 @@ export default function Page() {
       <ActionButton animationType="left">Action Button</ActionButton>
       <GlowingButton>Glowing Button</GlowingButton>
       <ZoomingButton animationType="none">Multi Feature</ZoomingButton>
+      <ShinyButton>Shiny Button</ShinyButton>
       <Button tap="in">Tap Me</Button>
     </div>
   );
