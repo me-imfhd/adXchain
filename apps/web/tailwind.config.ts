@@ -72,8 +72,8 @@ module.exports = {
             opacity: "0",
             transform: "translateY(10px)",
           },
-          "80%": {
-            opacity: "0.6",
+          "60%": {
+            opacity: "0.95",
           },
           "100%": {
             opacity: "1",
