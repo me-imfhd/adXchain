@@ -5,7 +5,7 @@ import TailwindResposivenessIndicator from "@repo/ui/components/TailwindResposiv
 import type { PropsWithChildren } from "react";
 import Provider from "./_provider";
 import { cn } from "@repo/ui/cn";
-import { oxCustom, oxSemiBold } from "@/lib/fonts";
+import { oxCustom, oxSemiBold, pressStart } from "@/lib/fonts";
 
 export const metadata: Metadata = {
   title: "AdXchain",
@@ -22,7 +22,8 @@ export default function RootLayout({ children }: PropsWithChildren) {
         className={cn(
           "min-h-screen bg-background antialiased font-ox",
           oxCustom.variable,
-          oxSemiBold.variable
+          oxSemiBold.variable,
+          pressStart.variable
         )}
       >
         <Provider>

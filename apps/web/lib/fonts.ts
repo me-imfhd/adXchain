@@ -13,3 +13,7 @@ export const oxSemiBold = localFont({
   src: [{ path: "./font/static/Oxanium-SemiBold.ttf" }],
   variable: "--font-ox-semi-bold",
 });
+export const pressStart = localFont({
+  src: [{ path: "./font/PressStart2P-Regular.ttf", weight: "400" }],
+  variable: "--font-psp2",
+});

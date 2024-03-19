@@ -2,20 +2,29 @@ import { Button } from "@repo/ui/components";
 import { ShinyButton } from "@repo/ui/components/buttons";
 export function Hero() {
   return (
-    <div className="flex flex-col items-center select-none  pt-8 pb-16 ">
-      <div className="h-full w-full absolute left-0 top-0 -z-10 hidden transform-gpu bg-gradient-to-r from-blue-500/60 via-zinc-800 to-red-500/70 opacity-45 blur-[54px] dark:block sm:opacity-35" />
-      <div className="relative  mx-auto w-full text-center animate-fade-up ">
-        <h1 className=" lg:mt-8 flex justify-center animate-gradient text-transparent gradient-text items-center gap-2 sm:gap-4 h-[5rem] md:h-[14rem] font-bold tracking-tighter sm:text-[12rem] md:text-[9rem] text-[4rem]">
-          <span>Ad</span>
-          <span className="text-[4.5rem] sm:text-[14rem]"> X</span>
-          <span className="">Chain</span>
+    <div
+      style={{
+        backgroundImage: "radial-gradient(circle at 50%,#666, #222, #000)",
+      }}
+      className="bg-cover bg-center backdrop-filter flex flex-col items-center select-none pt-24 pb-16 "
+    >
+      <div className="mx-auto w-full text-center animate-fade-up inline-block bg-clip-text bg-gradient-to-br from-[#CCE8FE] via-[#8489F5] to-[#B591E9] ">
+        <h1 className=" lg:mt-8 font-psp2  flex justify-center w-full text-transparent   items-center gap-2 sm:gap-4 h-[5rem] md:h-[8rem] lg:h-[16rem] tracking-tighter sm:text-[5rem] lg:text-[90px] xl:text-[128px] text-[2rem]">
+          <span className="">
+            {/* <div className="h-[80%] w-full  -z-10 hidden transform-gpu bg-sky-400 opacity-45 blur-[54px] dark:block sm:opacity-20" /> */}
+            ad
+          </span>
+          <span className="text-[4.5rem] md:text-[9rem] lg:text-[14rem] xl:text-[300px]">X</span>
+          <span className="">
+            {/* <div className="h-[80%] w-full absolute left-0 top-0 -z-10 hidden transform-gpu   bg-sky-400 opacity-45 blur-[54px] dark:block sm:opacity-20" /> */}
+            Chain
+          </span>
         </h1>
       </div>
-      <h2 className="md:pt-2 mt-4 px-6 xs:max-w-xs sm:w-fit tracking-wide md:tracking-normal text-center animate-fade-up text-3xl font-bold  text-black dark:text-white sm:text-5xl">
-        Future Of Web3 <span className="text-red-600/90">Advertising</span> is
-        Here!
+      <h2 className="md:pt-2 mt-4 px-6 xs:max-w-xs sm:w-fit tracking-wide md:tracking-normal text-center animate-fade-up text-3xl font-bold  text-black dark:text-white sm:text-[37px]">
+        Future Of Web3 Advertising is Here!
       </h2>
-      <p className="animate-fade-up px-6 max-w-xs tracking-wide md:tracking-normal  mt-2 lg:pt-2 md:max-w-lg lg:max-w-2xl text-center text-lg font-bold  text-white/80 md:text-xl lg:text-2xl">
+      <p className="animate-fade-up px-6 max-w-[1012px] tracking-wide md:tracking-normal  mt-2  text-center text-lg   text-muted-foreground md:text-xl lg:text-[24px]">
         Connect with your audience through our NFT-powered ad spaces and
         seamless UPI-like transactions
       </p>

@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 
 export default function LobbyLayout({ children }: PropsWithChildren) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="relative flex flex-col min-h-screen">
       <SiteHeader>
         <ProfileHeader />
       </SiteHeader>
