@@ -1,12 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* Add this to your CSS file */
-.gradient-text {
-  background: linear-gradient(to right, rgb(0, 162, 255), rgb(196, 8, 196));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
 @layer base {
   :root {
     --gradient-angle: 360deg;
@@ -84,7 +78,6 @@ html,
 body,
 #__next,
 main {
-  scroll-padding-top: 64px;
   scroll-behavior: smooth;
   height: 100%;
   overflow-x: hidden;

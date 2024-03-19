@@ -129,7 +129,7 @@ module.exports = {
         },
       },
       animation: {
-        gradient: "gradient 5s linear infinite",
+        gradient: "gradient 8s linear infinite",
         "fade-up": "fade-up 0.5s ease-in-out",
         "fade-down": "fade-down 0.5s ease-in-out",
         "fade-right": "fade-right 0.5s ease-in-out",
