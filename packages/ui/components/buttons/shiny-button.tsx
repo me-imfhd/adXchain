@@ -18,11 +18,12 @@ export function ShinyButton({
       {...props}
       className={cn(
         buttonVariants({ animationType, className, size, tap, variant }),
-        "hero-join-button-dark rounded-xl  relative overflow-hidden  py-[2px] px-[1.5px] font-bold transition-all duration-300 hover:shadow-[0_0_2rem_-0.5rem_#fff8] "
+        "hero-join-button-dark rounded-[11px]  relative overflow-hidden  py-[3px] px-[2px] font-bold transition-all duration-300 hover:shadow-[0_0_2rem_-0.5rem_#fff8] "
       )}
+      size="lg"
       variant="outline"
     >
-      <span className="text-foreground rounded-lg px-3 py-2 transition-all duration-300 bg-background ">
+      <span className="text-foreground text-md rounded-lg px-[12px] py-[7px] transition-all duration-300 bg-background ">
         {children}
       </span>
     </Button>
