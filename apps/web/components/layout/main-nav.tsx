@@ -20,8 +20,8 @@ export function MainNav() {
   return (
     <div className="gap-6 lg:flex">
       <a aria-label="Home" href="/" className="items-center space-x-2 lg:flex">
-        <h1 className="tracking-wide  font-bold lg:inline-block gradient-text text-transparent text-3xl animate-gradient">
-          AdXChain
+        <h1 className="tracking-wide  font-bold lg:inline-block text-3xl ">
+          adXchain
         </h1>
       </a>
       {/* <NavigationMenu>

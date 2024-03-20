@@ -18,8 +18,8 @@ export const SiteFooter = () => {
             aria-labelledby="footer-branding-heading"
           >
             <Link href={"/"} className="flex items-center space-x-2">
-              <span className="tracking-wide text-2xl font-bold lg:inline-block gradient-text text-transparent animate-gradient">
-                AdXChain
+              <span className="tracking-wide text-2xl font-bold lg:inline-block">
+                adXchain
               </span>
             </Link>
           </section>
@@ -43,15 +43,6 @@ export const SiteFooter = () => {
               </div>
             ))}
           </section>
-          <section
-            id="newsletter"
-            aria-labelledby="newsletter-heading"
-            className="space-y-3"
-          >
-            <h4 className="text-base font-medium">
-              Subscribe to our newsletter
-            </h4>
-          </section>
         </section>
         <section
           id="footer-bottom"
@@ -66,8 +57,8 @@ export const SiteFooter = () => {
               target="_blank"
               rel="noreferrer"
             >
-              <span className="tracking-wide font-bold lg:inline-block gradient-text text-transparent animate-gradient">
-                AdXChain Team
+              <span className="tracking-wide font-bold lg:inline-block ">
+                adXchain Team
               </span>
             </a>
             .
