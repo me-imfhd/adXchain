@@ -10,7 +10,7 @@ export function Hero() {
             {/* <div className="h-[80%] w-full  -z-10 hidden transform-gpu bg-sky-400 opacity-45 blur-[54px] dark:block sm:opacity-20" /> */}
             ad
           </span>
-          <span className="text-[4.5rem] md:text-[9rem] lg:text-[14rem] xl:text-[300px]">
+          <span className="text-[4.5rem] md:text-[9rem] lg:text-[14rem] xl:text-[300px] -mr-10">
             X
           </span>
           <span className="">
