@@ -1,7 +1,10 @@
 import { KeypairSigner, PublicKey } from "@metaplex-foundation/umi";
 import { umi } from "../lib/utils";
 import {
+  AttributeArgs,
   Creator,
+  addPluginV1,
+  createPlugin,
   createV1,
   pluginAuthorityPair,
   ruleSet,
@@ -11,6 +14,7 @@ import {
 interface CreateNFTProps {
   assetSigner: KeypairSigner;
   royalityCreatorsAndShares: Creator[];
+  attributeList: AttributeArgs[];
   royalityBasisPoints: number;
   name: string;
   uri: string;
@@ -21,6 +25,7 @@ export async function createNFTForCollection({
   name,
   uri,
   collectionAddress,
+  attributeList,
   royalityBasisPoints,
   royalityCreatorsAndShares,
 }: CreateNFTProps) {
@@ -50,7 +55,47 @@ export async function createNFTForCollection({
         `Error occured while creating the NFT, txn sign: ${response.signature.toString()}`
     );
   }
+  const attAttribute = await addAttribute({
+    assestAddress: assetSigner.publicKey,
+    attributeList,
+    collectionAddress,
+  });
+
   return {
-    sign: response.signature,
+    nftSign: response.signature,
+    attrSign: attAttribute.sign,
+  };
+}
+interface AddAttributeProps {
+  assestAddress: PublicKey;
+  attributeList: AttributeArgs[];
+  collectionAddress: PublicKey;
+}
+export async function addAttribute({
+  assestAddress,
+  attributeList,
+  collectionAddress,
+}: AddAttributeProps) {
+  const attributePlugin = createPlugin({
+    type: "Attributes",
+    data: {
+      attributeList,
+    },
+  });
+  const attPluginResponse = await addPluginV1(umi, {
+    asset: assestAddress,
+    plugin: attributePlugin,
+    collection: collectionAddress,
+  }).sendAndConfirm(umi);
+
+  if (attPluginResponse.result.value.err) {
+    throw new Error(
+      (attPluginResponse.result.value.err as Error).message ??
+        `Error occured while creating the NFT, txn sign: ${attPluginResponse.signature.toString()}`
+    );
+  }
+
+  return {
+    sign: attPluginResponse.signature,
   };
 }
