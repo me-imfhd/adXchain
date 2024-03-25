@@ -141,9 +141,9 @@ importers:
 
   packages/api:
     dependencies:
-      '@metaplex-foundation/mpl-token-metadata':
-        specifier: ^3.2.1
-        version: 3.2.1(@metaplex-foundation/umi@0.9.1)
+      '@metaplex-foundation/mpl-core':
+        specifier: ^0.2.0
+        version: 0.2.0(@metaplex-foundation/mpl-toolbox@0.8.1)(@metaplex-foundation/umi@0.9.1)(@noble/hashes@1.4.0)
       '@metaplex-foundation/umi':
         specifier: ^0.9.1
         version: 0.9.1
@@ -1733,6 +1733,18 @@ packages:
       - utf-8-validate
     dev: false
 
+  /@metaplex-foundation/mpl-core@0.2.0(@metaplex-foundation/mpl-toolbox@0.8.1)(@metaplex-foundation/umi@0.9.1)(@noble/hashes@1.4.0):
+    resolution: {integrity: sha512-J7stQipmqf8nBjWnNZhxGqnP3f6crqh7bYSpECEZrXIAfpSKrBRqaJCqaWnfCuUsAhIaOpv3KdbXRDHQ9TfVmw==}
+    peerDependencies:
+      '@metaplex-foundation/mpl-toolbox': ^0.8.0
+      '@metaplex-foundation/umi': ^0.8.2
+      '@noble/hashes': ^1.3.1
+    dependencies:
+      '@metaplex-foundation/mpl-toolbox': 0.8.1(@metaplex-foundation/umi@0.9.1)
+      '@metaplex-foundation/umi': 0.9.1
+      '@noble/hashes': 1.4.0
+    dev: false
+
   /@metaplex-foundation/mpl-token-metadata@2.13.0(fastestsmallesttextencoderdecoder@1.0.22):
     resolution: {integrity: sha512-Fl/8I0L9rv4bKTV/RAl5YIbJe9SnQPInKvLz+xR1fEc4/VQkuCn3RPgypfUMEKWmCznzaw4sApDxy6CFS4qmJw==}
     dependencies:
@@ -1751,19 +1763,10 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@metaplex-foundation/mpl-token-metadata@3.2.1(@metaplex-foundation/umi@0.9.1):
-    resolution: {integrity: sha512-26W1NhQwDWmLOg/pBRYut7x/vEs/5kFS2sWVEY5/X0f2jJOLhnd4NaZQcq+5u+XZsXvm1jq2AtrRGPNK43oqWQ==}
+  /@metaplex-foundation/mpl-toolbox@0.8.1(@metaplex-foundation/umi@0.9.1):
+    resolution: {integrity: sha512-PYU+qU6hg+h6V42z+MDnBTiWZXTTzWhIn5ieyRZYyszTru/LiJKHdsHGKe1VBfuXEuRdfRhAzivMjquZVaqO4A==}
     peerDependencies:
-      '@metaplex-foundation/umi': '>= 0.8.2 < 1'
-    dependencies:
-      '@metaplex-foundation/mpl-toolbox': 0.9.4(@metaplex-foundation/umi@0.9.1)
-      '@metaplex-foundation/umi': 0.9.1
-    dev: false
-
-  /@metaplex-foundation/mpl-toolbox@0.9.4(@metaplex-foundation/umi@0.9.1):
-    resolution: {integrity: sha512-fd6JxfoLbj/MM8FG2x91KYVy1U6AjBQw4qjt7+Da3trzQaWnSaYHDcYRG/53xqfvZ9qofY1T2t53GXPlD87lnQ==}
-    peerDependencies:
-      '@metaplex-foundation/umi': '>= 0.8.2 < 1'
+      '@metaplex-foundation/umi': ^0.8.2
     dependencies:
       '@metaplex-foundation/umi': 0.9.1
     dev: false
