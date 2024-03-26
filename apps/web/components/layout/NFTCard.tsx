@@ -1,5 +1,6 @@
 "use client"
 import Image from "next/image";
+import { useState } from "react";
 
 interface NFTCardProps {
   imgURL: any;
@@ -21,9 +22,10 @@ export function NFTCard({
   onSelect
 }: NFTCardProps) {
 
+  const [isSelected, setIsSelected] = useState<boolean>(false);
 
   return (
-    <div className="bg-[#252a2c] h-64 w-56 rounded-xl flex flex-col justify-around p-2 hover:drop-shadow-2xl duration-300 hover:shadow-[0_0_2rem_-0.5rem_#035cf461] cursor-pointer hover:scale-110 "  onClick={() => onSelect(NFTName, Price)}>
+    <div className={`bg-[#252a2c] h-64 w-56 rounded-xl flex flex-col justify-around p-2 hover:drop-shadow-2xl duration-300 hover:shadow-[0_0_2rem_-0.5rem_#035cf461] cursor-pointer ${isSelected ? "border-2 border-blue-400": ""}`}  onClick={() => {onSelect(NFTName, Price); setIsSelected((prev) => !prev); return;}}>
       {/* Image Container */}
       <div className="h-1/2 w-full flex justify-center items-center object-cover rounded-2xl ">
         <Image
@@ -107,7 +109,7 @@ export function NFTCard({
 
 interface CardTextProps {
   heading: string;
-  subHeading: string;
+  subHeading: string | number;
 }
 const CardText: React.FC<CardTextProps> = (children: CardTextProps) => {
   return (
