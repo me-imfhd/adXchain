@@ -18,7 +18,7 @@ module.exports = {
       fontFamily: {
         ox: ["var(--font-ox)"],
         "ox-semi-bold": ["var(--font-ox-semi-bold)"],
-        psp2: ["var(--font-psp2)"]
+        psp2: ["var(--font-psp2)"],
       },
       borderColor: {
         DEFAULT: "hsl(var(--border) / <alpha-value>)",

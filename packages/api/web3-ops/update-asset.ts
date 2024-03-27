@@ -20,7 +20,7 @@ export async function updateAsset({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while updating the NFT, txn sign: ${response.signature.toString()}`
+        `Error occured while updating the NFT, txn sign: ${response.signature.toString()}`,
     );
   }
   return {

@@ -44,13 +44,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       animationType,
       ...props
     },
-    ref
+    ref,
   ) => {
     const buttonClassNames = cn(
       buttonVariants({ variant, size, className, animationType, tap }),
       !disabled && "hover:brightness-110 active:brightness-90",
       disabled && "cursor-not-allowed opacity-40",
-      isLoading && "cursor-default opacity-60 transition-all"
+      isLoading && "cursor-default opacity-60 transition-all",
     );
     return (
       <button
@@ -71,7 +71,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         </span>
       </button>
     );
-  }
+  },
 );
 Button.displayName = "Button";
 

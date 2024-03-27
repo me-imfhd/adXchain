@@ -13,7 +13,7 @@ export function GlowingButton({
         {...props}
         className={cn(
           className,
-          "fancy-border-gradient hover:bg-background rounded-lg relative mx-auto flex gap-4 border-none font-semibold hover:-translate-y-[1px] active:translate-y-[1px] "
+          "fancy-border-gradient hover:bg-background rounded-lg relative mx-auto flex gap-4 border-none font-semibold hover:-translate-y-[1px] active:translate-y-[1px] ",
         )}
         variant="outline"
       >

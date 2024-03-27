@@ -82,7 +82,7 @@ export const SiteFooter = () => {
                 <Link href={social.href} target="_blank" rel="noreferrer">
                   <div
                     className={cn(
-                      buttonVariants({ variant: "ghost", size: "icon" })
+                      buttonVariants({ variant: "ghost", size: "icon" }),
                     )}
                   >
                     <Icon className="h-4 w-4" />

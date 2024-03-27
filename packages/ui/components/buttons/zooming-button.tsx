@@ -13,7 +13,7 @@ export function ZoomingButton({
       {...props}
       className={cn(
         className,
-        "group relative w-fit overflow-hidden rounded-xl bg-gradient-to-bl from-red-400 to-slate-700 p-[2px] font-bold transition-all duration-300 hover:rounded-2xl active:rounded-xl active:duration-150 md:-translate-x-[25%] md:scale-[1.5] md:hover:scale-[1.6] md:active:scale-[1.5]  lg:translate-x-0"
+        "group relative w-fit overflow-hidden rounded-xl bg-gradient-to-bl from-red-400 to-slate-700 p-[2px] font-bold transition-all duration-300 hover:rounded-2xl active:rounded-xl active:duration-150 md:-translate-x-[25%] md:scale-[1.5] md:hover:scale-[1.6] md:active:scale-[1.5]  lg:translate-x-0",
       )}
     >
       <span className="inline-flex h-full w-fit items-center gap-1 rounded-[10px] bg-white/90 px-4 py-2 text-black transition-all duration-300 group-hover:rounded-2xl group-hover:bg-white/0 group-hover:text-white dark:bg-black/80 dark:text-white group-hover:dark:bg-black/0 dark:group-hover:text-black">

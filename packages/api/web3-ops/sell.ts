@@ -18,7 +18,7 @@ export async function transferDelegatePlug({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while delegating the NFT, txn sign: ${response.signature.toString()}`
+        `Error occured while delegating the NFT, txn sign: ${response.signature.toString()}`,
     );
   }
   return {
@@ -39,7 +39,7 @@ export async function freezeDelegatePlug({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while delegating the NFT, txn sign: ${response.signature.toString()}`
+        `Error occured while delegating the NFT, txn sign: ${response.signature.toString()}`,
     );
   }
   return {

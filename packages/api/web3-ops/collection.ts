@@ -45,7 +45,7 @@ export async function createCollection({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while creating the Collection txn sign: ${response.signature.toString()}`
+        `Error occured while creating the Collection txn sign: ${response.signature.toString()}`,
     );
   }
   return {

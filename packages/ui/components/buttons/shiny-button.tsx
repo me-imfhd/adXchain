@@ -18,7 +18,7 @@ export function ShinyButton({
       {...props}
       className={cn(
         buttonVariants({ animationType, className, size, tap, variant }),
-        "hero-join-button-dark rounded-[11px]  relative overflow-hidden  py-[3px] px-[2px] font-bold transition-all duration-300 hover:shadow-[0_0_2rem_-0.5rem_#fff8] "
+        "hero-join-button-dark rounded-[11px]  relative overflow-hidden  py-[3px] px-[2px] font-bold transition-all duration-300 hover:shadow-[0_0_2rem_-0.5rem_#fff8] ",
       )}
       size="lg"
       variant="outline"
