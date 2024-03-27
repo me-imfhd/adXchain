@@ -5,22 +5,28 @@ import {
   updateAuthority,
 } from "@metaplex-foundation/mpl-core";
 import { PublicKey } from "@metaplex-foundation/umi";
-import { umi } from "../lib/utils";
+import { UmiInstance } from ".";
 
-export interface FetchAssetProps {
+export interface FetchAssetProps extends UmiInstance {
   assetAddress: PublicKey;
 }
 
-export async function fetchAssestByAddress({ assetAddress }: FetchAssetProps) {
+export async function fetchAssestByAddress({
+  assetAddress,
+  umi,
+}: FetchAssetProps) {
   const asset = await fetchAssetV1(umi, assetAddress);
   return asset;
 }
 
-interface FetchAssesByOwnerProps {
+interface FetchAssesByOwnerProps extends UmiInstance {
   owner: PublicKey;
 }
 
-export async function fetchAssestByOwner({ owner }: FetchAssesByOwnerProps) {
+export async function fetchAssestByOwner({
+  owner,
+  umi,
+}: FetchAssesByOwnerProps) {
   const assetsByOwner = await getAssetV1GpaBuilder(umi)
     .whereField("key", Key.AssetV1)
     .whereField("owner", owner)
@@ -28,12 +34,13 @@ export async function fetchAssestByOwner({ owner }: FetchAssesByOwnerProps) {
   return assetsByOwner;
 }
 
-interface FetchAssesByCollectionProps {
+interface FetchAssesByCollectionProps extends UmiInstance {
   collection: PublicKey;
 }
 
 export async function fetchAssestByCollection({
   collection,
+  umi,
 }: FetchAssesByCollectionProps) {
   const assetsByCollection = await getAssetV1GpaBuilder(umi)
     .whereField("key", Key.AssetV1)

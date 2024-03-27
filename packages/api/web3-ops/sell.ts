@@ -1,13 +1,14 @@
 import { addPluginV1, createPlugin } from "@metaplex-foundation/mpl-core";
-import { umi } from "../lib/utils";
 import { Pda, PublicKey } from "@metaplex-foundation/umi";
-interface TransferDelegatePlug {
+import { UmiInstance } from ".";
+interface TransferDelegatePlug extends UmiInstance {
   assetAddress: PublicKey | Pda;
   collectionAddress?: PublicKey;
 }
 export async function transferDelegatePlug({
   assetAddress,
   collectionAddress,
+  umi,
 }: TransferDelegatePlug) {
   const response = await addPluginV1(umi, {
     asset: assetAddress,
@@ -18,7 +19,7 @@ export async function transferDelegatePlug({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while delegating the NFT, txn sign: ${response.signature.toString()}`,
+        `Error occured while delegating the NFT, txn sign: ${response.signature.toString()}`
     );
   }
   return {
@@ -29,6 +30,7 @@ export async function transferDelegatePlug({
 export async function freezeDelegatePlug({
   assetAddress,
   collectionAddress,
+  umi,
 }: TransferDelegatePlug) {
   const response = await addPluginV1(umi, {
     asset: assetAddress,
@@ -39,7 +41,7 @@ export async function freezeDelegatePlug({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while delegating the NFT, txn sign: ${response.signature.toString()}`,
+        `Error occured while delegating the NFT, txn sign: ${response.signature.toString()}`
     );
   }
   return {

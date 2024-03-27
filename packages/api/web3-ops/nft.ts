@@ -1,5 +1,4 @@
 import { KeypairSigner, PublicKey } from "@metaplex-foundation/umi";
-import { umi } from "../lib/utils";
 import {
   AttributeArgs,
   Creator,
@@ -9,9 +8,10 @@ import {
   pluginAuthorityPair,
   ruleSet,
 } from "@metaplex-foundation/mpl-core";
+import { UmiInstance } from ".";
 
 // const mint = generateSigner(umi);
-interface CreateNFTProps {
+interface CreateNFTProps extends UmiInstance {
   assetSigner: KeypairSigner;
   royalityCreatorsAndShares: Creator[];
   attributeList: AttributeArgs[];
@@ -28,6 +28,7 @@ export async function createNFTForCollection({
   attributeList,
   royalityBasisPoints,
   royalityCreatorsAndShares,
+  umi,
 }: CreateNFTProps) {
   let plugins = [
     pluginAuthorityPair({
@@ -52,13 +53,14 @@ export async function createNFTForCollection({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while creating the NFT, txn sign: ${response.signature.toString()}`,
+        `Error occured while creating the NFT, txn sign: ${response.signature.toString()}`
     );
   }
   const attAttribute = await addAttribute({
     assestAddress: assetSigner.publicKey,
     attributeList,
     collectionAddress,
+    umi,
   });
 
   return {
@@ -66,7 +68,7 @@ export async function createNFTForCollection({
     attrSign: attAttribute.sign,
   };
 }
-interface AddAttributeProps {
+interface AddAttributeProps extends UmiInstance {
   assestAddress: PublicKey;
   attributeList: AttributeArgs[];
   collectionAddress: PublicKey;
@@ -75,6 +77,7 @@ export async function addAttribute({
   assestAddress,
   attributeList,
   collectionAddress,
+  umi,
 }: AddAttributeProps) {
   const attributePlugin = createPlugin({
     type: "Attributes",
@@ -91,7 +94,7 @@ export async function addAttribute({
   if (attPluginResponse.result.value.err) {
     throw new Error(
       (attPluginResponse.result.value.err as Error).message ??
-        `Error occured while creating the NFT, txn sign: ${attPluginResponse.signature.toString()}`,
+        `Error occured while creating the NFT, txn sign: ${attPluginResponse.signature.toString()}`
     );
   }
 

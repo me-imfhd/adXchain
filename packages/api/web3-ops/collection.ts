@@ -1,15 +1,15 @@
 import { KeypairSigner } from "@metaplex-foundation/umi";
 
-import { umi } from "../lib/utils";
 import {
   Creator,
   createCollectionV1,
   pluginAuthorityPair,
   ruleSet,
 } from "@metaplex-foundation/mpl-core";
+import { UmiInstance } from ".";
 
 // const mint = generateSigner(umi);
-interface CreateCollection {
+interface CreateCollection extends UmiInstance {
   collectionSigner: KeypairSigner;
   royalityCreatorsAndShares: Creator[];
   royalityBasisPoints: number;
@@ -21,6 +21,7 @@ export async function createCollection({
   name,
   uri,
   royalityBasisPoints,
+  umi,
   royalityCreatorsAndShares,
 }: CreateCollection) {
   let plugins = [
@@ -45,7 +46,7 @@ export async function createCollection({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while creating the Collection txn sign: ${response.signature.toString()}`,
+        `Error occured while creating the Collection txn sign: ${response.signature.toString()}`
     );
   }
   return {
