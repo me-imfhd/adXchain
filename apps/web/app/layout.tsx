@@ -23,7 +23,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
           "min-h-screen bg-background antialiased font-ox",
           oxCustom.variable,
           oxSemiBold.variable,
-          pressStart.variable
+          pressStart.variable,
         )}
       >
         <Provider>

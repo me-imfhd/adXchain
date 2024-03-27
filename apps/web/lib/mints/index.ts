@@ -4,26 +4,26 @@ import {
   getOrCreateAssociatedTokenAccount,
   mintTo,
   transfer,
-} from '@solana/spl-token';
-import { Connection, Keypair, PublicKey, clusterApiUrl } from '@solana/web3.js';
+} from "@solana/spl-token";
+import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
 
 async function createNewMint(
   connection: Connection,
   payer: Keypair,
   mintAuthority: PublicKey,
   freezeAuthority: PublicKey,
-  decimal: number
+  decimal: number,
 ) {
   const tokenMint = await createMint(
     connection,
     payer,
     mintAuthority,
     freezeAuthority,
-    decimal
+    decimal,
   );
 
   console.log(
-    `Token Mint: https://explorer.solana.com/address/${tokenMint}?cluster=devnet`
+    `Token Mint: https://explorer.solana.com/address/${tokenMint}?cluster=devnet`,
   );
 
   return tokenMint;
@@ -33,17 +33,17 @@ async function createTokenAccount(
   connection: Connection,
   payer: Keypair,
   mint: PublicKey,
-  owner: PublicKey
+  owner: PublicKey,
 ) {
   const tokenAccount = await getOrCreateAssociatedTokenAccount(
     connection,
     payer,
     mint,
-    owner
+    owner,
   );
 
   console.log(
-    `Token account: https://explorer.solana.com/address/${tokenAccount.address}?cluster=devnet`
+    `Token account: https://explorer.solana.com/address/${tokenAccount.address}?cluster=devnet`,
   );
 
   return tokenAccount;
@@ -55,7 +55,7 @@ async function mintToken(
   mint: PublicKey,
   destination: PublicKey,
   authority: Keypair,
-  amount: number
+  amount: number,
 ) {
   const transactionSignature = await mintTo(
     connection,
@@ -63,11 +63,11 @@ async function mintToken(
     mint,
     destination,
     authority,
-    amount
+    amount,
   );
 
   console.log(
-    `Mint Token Transaction: https://explorer.solana.com/tx/${transactionSignature}?clsuter=devnet`
+    `Mint Token Transaction: https://explorer.solana.com/tx/${transactionSignature}?clsuter=devnet`,
   );
 }
 
@@ -77,7 +77,7 @@ async function transferTokens(
   source: PublicKey,
   destination: PublicKey,
   owner: Keypair,
-  amount: number
+  amount: number,
 ) {
   const transactionSignature = await transfer(
     connection,
@@ -85,16 +85,16 @@ async function transferTokens(
     source,
     destination,
     owner,
-    amount
+    amount,
   );
 
   console.log(
-    `Transfer Transaction: https://explorer.solana.com/tx/${transactionSignature}?cluster=devnet`
+    `Transfer Transaction: https://explorer.solana.com/tx/${transactionSignature}?cluster=devnet`,
   );
 }
 
 async function main() {
-  const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+  const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
   const secret = Uint8Array.from([
     221, 238, 125, 115, 182, 138, 144, 194, 103, 74, 93, 88, 231, 243, 169, 201,
@@ -109,14 +109,14 @@ async function main() {
     keypair,
     keypair.publicKey,
     keypair.publicKey,
-    9
+    9,
   );
 
   const tokenAccount = await createTokenAccount(
     connection,
     keypair,
     mint,
-    keypair.publicKey
+    keypair.publicKey,
   );
 
   console.log(tokenAccount.address.toBase58());
@@ -127,7 +127,7 @@ async function main() {
     mint,
     tokenAccount.address,
     keypair,
-    100 * 10 ** 9
+    100 * 10 ** 9,
   );
 }
 

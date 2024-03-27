@@ -41,7 +41,7 @@ export const buttonVariants = cva(
       animationType: "up",
       tap: "default",
     },
-  }
+  },
 );
 // animationType === "none" && "transition-all",
 // isLoading && "cursor-default opacity-60 transition-all",

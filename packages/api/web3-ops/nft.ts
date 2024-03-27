@@ -52,7 +52,7 @@ export async function createNFTForCollection({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while creating the NFT, txn sign: ${response.signature.toString()}`
+        `Error occured while creating the NFT, txn sign: ${response.signature.toString()}`,
     );
   }
   const attAttribute = await addAttribute({
@@ -91,7 +91,7 @@ export async function addAttribute({
   if (attPluginResponse.result.value.err) {
     throw new Error(
       (attPluginResponse.result.value.err as Error).message ??
-        `Error occured while creating the NFT, txn sign: ${attPluginResponse.signature.toString()}`
+        `Error occured while creating the NFT, txn sign: ${attPluginResponse.signature.toString()}`,
     );
   }
 

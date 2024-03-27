@@ -8,17 +8,11 @@ import {
 const FAQS = () => {
   return (
     <div className="flex justify-center items-center flex-col gap-5 md:gap-0">
-        <div className="mx-auto w-full text-center animate-fade-up inline-block bg-clip-text bg-gradient-to-br from-[#CCE8FE] via-[#b3b6ec] to-[#d9d7dd] ">
+      <div className="mx-auto w-full text-center animate-fade-up inline-block bg-clip-text bg-gradient-to-br from-[#CCE8FE] via-[#b3b6ec] to-[#d9d7dd] ">
         <h1 className=" lg:mt-8 font-psp2  flex justify-center w-full text-transparent   items-center gap-1 sm:gap-4 h-[5rem] md:h-[4rem] lg:h-[16rem] tracking-tighter sm:text-[5rem] lg:text-[70px] xl:text-[90px] text-[2.2rem]">
-          <span >
-            F
-          </span>
-          <span>
-            A
-          </span>
-          <span >
-            Q's
-          </span>
+          <span>F</span>
+          <span>A</span>
+          <span>Q's</span>
         </h1>
       </div>
       <Accordion type="single" collapsible>
