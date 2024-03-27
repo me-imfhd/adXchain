@@ -40,12 +40,12 @@ export default function Trade() {
   };
 
   return (
-    <div className="bg-cover h-screen flex justify-between bg-center w-full bg-[#111314]  pt-14 md:pt-14 lg:pt-16 xl:px-0">
+    <div className="bg-cover h-screen flex justify-between bg-center w-full">
       <SideTrade
         Price={action === "Buy" ? buyTotalPrice : sellTotalPrice}
         onButtonClick={handleButtonClick}
       />
-      <div className="flex flex-wrap gap-2 px-10 relative overflow-y-auto">
+      <div className="flex flex-wrap gap-2 p-5 justify-center relative overflow-y-auto">
         {action === "Buy" && (
           <>
             <NFTCard

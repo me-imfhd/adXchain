@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@metaplex-foundation/js": "^0.18.3",
+    "@radix-ui/react-accordion": "^1.1.2",
     "@repo/api": "workspace:*",
     "@repo/auth": "workspace:*",
     "@repo/db": "workspace:*",
