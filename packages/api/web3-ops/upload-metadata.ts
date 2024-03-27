@@ -1,7 +1,7 @@
 import { createGenericFileFromBrowserFile } from "@metaplex-foundation/umi";
-import { umi } from "../lib/utils";
+import { UmiInstance } from ".";
 
-interface UploadMetadataProps {
+interface UploadMetadataProps extends UmiInstance {
   uploadFile: File;
   name: string;
   customData: {};
@@ -10,6 +10,7 @@ export async function uploadMetadata({
   uploadFile,
   name,
   customData,
+  umi,
 }: UploadMetadataProps) {
   const genericFile = await createGenericFileFromBrowserFile(uploadFile);
   const [image] = await umi.uploader.upload([genericFile]);

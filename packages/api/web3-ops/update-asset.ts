@@ -1,8 +1,8 @@
 import { PublicKey } from "@metaplex-foundation/umi";
-import { umi } from "../lib/utils";
 import { updateV1 } from "@metaplex-foundation/mpl-core";
+import { UmiInstance } from ".";
 
-interface UpdateAssetProps {
+interface UpdateAssetProps extends UmiInstance {
   assetAddress: PublicKey;
   newName: string;
   newUri: string;
@@ -11,6 +11,7 @@ export async function updateAsset({
   assetAddress,
   newName,
   newUri,
+  umi,
 }: UpdateAssetProps) {
   const response = await updateV1(umi, {
     asset: assetAddress,
@@ -20,7 +21,7 @@ export async function updateAsset({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while updating the NFT, txn sign: ${response.signature.toString()}`,
+        `Error occured while updating the NFT, txn sign: ${response.signature.toString()}`
     );
   }
   return {
