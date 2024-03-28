@@ -1,8 +1,8 @@
 import { createGenericFileFromBrowserFile } from "@metaplex-foundation/umi";
 import { UmiInstance } from ".";
 
-interface UploadMetadataProps extends UmiInstance {
-  uploadFile: File;
+export interface UploadMetadataProps extends UmiInstance {
+  uploadFile?: File;
   name: string;
   customData: {};
 }
@@ -12,16 +12,26 @@ export async function uploadMetadata({
   customData,
   umi,
 }: UploadMetadataProps) {
-  const genericFile = await createGenericFileFromBrowserFile(uploadFile);
-  const [image] = await umi.uploader.upload([genericFile]);
-  const uri = await umi.uploader.uploadJson({
+  const genericFile = uploadFile
+    ? await createGenericFileFromBrowserFile(uploadFile)
+    : null;
+  const amount = genericFile
+    ? await umi.uploader.getUploadPrice([genericFile])
+    : 0;
+  const [image] = genericFile
+    ? await umi.uploader.upload([genericFile])
+    : [null];
+
+  const uploadData = {
     name,
-    image,
     ...customData,
-  });
-  const amount = await umi.uploader.getUploadPrice([genericFile]);
+    ...(image ? { image } : {}),
+  };
+
+  const uri = await umi.uploader.uploadJson(uploadData);
+
   return {
     uri,
-    amount,
+    ...(amount ? { amount } : {}),
   };
 }

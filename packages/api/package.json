@@ -16,6 +16,7 @@
     "@metaplex-foundation/umi": "^0.9.1",
     "@metaplex-foundation/umi-bundle-defaults": "^0.9.1",
     "@metaplex-foundation/umi-signer-wallet-adapters": "^0.9.1",
+    "@metaplex-foundation/umi-uploader-bundlr": "^0.9.1",
     "@next/eslint-plugin-next": "^14.1.2",
     "@repo/auth": "workspace:*",
     "@repo/db": "workspace:*",
