@@ -29,6 +29,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@hookform/resolvers':
+        specifier: ^3.3.4
+        version: 3.3.4(react-hook-form@7.51.0)
       '@metaplex-foundation/js':
         specifier: ^0.18.3
         version: 0.18.3(fastestsmallesttextencoderdecoder@1.0.22)
@@ -104,6 +107,9 @@ importers:
       react-dom:
         specifier: ^18
         version: 18.2.0(react@18.2.0)
+      react-hook-form:
+        specifier: ^7.50.1
+        version: 7.51.0(react@18.2.0)
       react-query:
         specifier: ^3.39.3
         version: 3.39.3(react-dom@18.2.0)(react-native@0.73.6)(react@18.2.0)
@@ -169,6 +175,9 @@ importers:
         specifier: ^0.9.1
         version: 0.9.1(@metaplex-foundation/umi@0.9.1)(@solana/web3.js@1.91.1)
       '@metaplex-foundation/umi-signer-wallet-adapters':
+        specifier: ^0.9.1
+        version: 0.9.1(@metaplex-foundation/umi@0.9.1)(@solana/web3.js@1.91.1)
+      '@metaplex-foundation/umi-uploader-bundlr':
         specifier: ^0.9.1
         version: 0.9.1(@metaplex-foundation/umi@0.9.1)(@solana/web3.js@1.91.1)
       '@next/eslint-plugin-next':
@@ -3323,6 +3332,14 @@ packages:
       '@hapi/hoek': 9.3.0
     dev: false
 
+  /@hookform/resolvers@3.3.4(react-hook-form@7.51.0):
+    resolution: {integrity: sha512-o5cgpGOuJYrd+iMKvkttOclgwRW86EsWJZZRC23prf0uU2i48Htq4PuT73AVb9ionFyZrwYEITuOFGF+BydEtQ==}
+    peerDependencies:
+      react-hook-form: ^7.0.0
+    dependencies:
+      react-hook-form: 7.51.0(react@18.2.0)
+    dev: false
+
   /@humanwhocodes/config-array@0.11.13:
     resolution: {integrity: sha512-JSBDMiDKSzQVngfRjOdFXgFfklaXI4K9nLF49Auh21lmBWRLIK3+xTErTWD4KU54pb6coM6ESE7Awz/FNU3zgQ==}
     engines: {node: '>=10.10.0'}
@@ -3957,6 +3974,25 @@ packages:
       '@metaplex-foundation/umi': 0.9.1
       '@metaplex-foundation/umi-web3js-adapters': 0.9.1(@metaplex-foundation/umi@0.9.1)(@solana/web3.js@1.91.1)
       '@solana/web3.js': 1.91.1
+    dev: false
+
+  /@metaplex-foundation/umi-uploader-bundlr@0.9.1(@metaplex-foundation/umi@0.9.1)(@solana/web3.js@1.91.1):
+    resolution: {integrity: sha512-R2apPj0lWSem1zI0Tqk1MAi+nPK3JVcnppwzvczoUs2n+vuQdk6cQSLE+sbHiba7Gq1bx/Y7DwLLayhLwY8GcA==}
+    peerDependencies:
+      '@metaplex-foundation/umi': ^0.9.1
+      '@solana/web3.js': ^1.72.0
+    dependencies:
+      '@bundlr-network/client': 0.8.9(debug@4.3.4)
+      '@metaplex-foundation/umi': 0.9.1
+      '@metaplex-foundation/umi-web3js-adapters': 0.9.1(@metaplex-foundation/umi@0.9.1)(@solana/web3.js@1.91.1)
+      '@solana/web3.js': 1.91.1
+      bignumber.js: 9.1.2
+      buffer: 6.0.3
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - encoding
+      - utf-8-validate
     dev: false
 
   /@metaplex-foundation/umi-web3js-adapters@0.9.1(@metaplex-foundation/umi@0.9.1)(@solana/web3.js@1.91.1):
