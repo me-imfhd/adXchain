@@ -1,6 +1,7 @@
 import {
   Key,
   fetchAssetV1,
+  fetchCollectionV1,
   getAssetV1GpaBuilder,
   updateAuthority,
 } from "@metaplex-foundation/mpl-core";
@@ -8,17 +9,18 @@ import { PublicKey } from "@metaplex-foundation/umi";
 import { UmiInstance } from ".";
 
 export interface FetchAssetProps extends UmiInstance {
-  assetAddress: PublicKey;
+  address: PublicKey;
 }
 
-export async function fetchAssestByAddress({
-  assetAddress,
-  umi,
-}: FetchAssetProps) {
-  const asset = await fetchAssetV1(umi, assetAddress);
+export async function fetchAssestByAddress({ address, umi }: FetchAssetProps) {
+  const asset = await fetchAssetV1(umi, address);
   return asset;
 }
 
+export async function fetchCollection({ address, umi }: FetchAssetProps) {
+  const asset = await fetchCollectionV1(umi, address);
+  return asset;
+}
 interface FetchAssesByOwnerProps extends UmiInstance {
   owner: PublicKey;
 }

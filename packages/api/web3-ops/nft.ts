@@ -9,6 +9,7 @@ import {
   ruleSet,
 } from "@metaplex-foundation/mpl-core";
 import { UmiInstance } from ".";
+import { base58 } from "@metaplex-foundation/umi/serializers";
 
 // const mint = generateSigner(umi);
 interface CreateNFTProps extends UmiInstance {
@@ -50,11 +51,17 @@ export async function createNFTForCollection({
     plugins,
     collection: collectionAddress,
   }).sendAndConfirm(umi);
+  const signature = base58.deserialize(response.signature)[0];
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while creating the NFT, txn sign: ${response.signature.toString()}`
+        `Error occured while creating the NFT, txn sign: ${signature}`
     );
+  }
+  if (attributeList.length === 0) {
+    return {
+      nftSign: signature,
+    };
   }
   const attAttribute = await addAttribute({
     assestAddress: assetSigner.publicKey,
