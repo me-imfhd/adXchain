@@ -1,9 +1,11 @@
 import { PageHeader } from "@/components/page-header";
 import React from "react";
+import laptop from "@/public/images/laptop.png"
+import Image from "next/image";
 
 export function About() {
   return (
-    <div className=" w-full flex justify-center items-center text-center ">
+    <div className=" w-full flex justify-center items-center text-center mt-10">
       <svg
         width="23"
         height="298"
@@ -109,6 +111,14 @@ export function About() {
           fraud and malicious activities, and hello to transparent, efficient
           advertising.
         </p>
+        <div className="mt-5 relative hidden md:block">
+          <div className="relative">
+           <Image src={laptop} alt="laptop" height={700} width={700}/>
+           <div className="absolute top-9 left-28 ">
+           <iframe width="480" height="300" src="https://www.youtube.com/embed/AuU-tUqZuC8?si=DccR2mUlabDgjTFj" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+           </div>
+           </div>
+        </div>
       </div>
       <svg
         width="23"
