@@ -166,8 +166,8 @@ importers:
   packages/api:
     dependencies:
       '@metaplex-foundation/mpl-core':
-        specifier: ^0.2.0
-        version: 0.2.0(@metaplex-foundation/mpl-toolbox@0.8.1)(@metaplex-foundation/umi@0.9.1)(@noble/hashes@1.4.0)
+        specifier: ^0.3.0
+        version: 0.3.0(@metaplex-foundation/mpl-toolbox@0.8.1)(@metaplex-foundation/umi@0.9.1)(@noble/hashes@1.4.0)
       '@metaplex-foundation/umi':
         specifier: ^0.9.1
         version: 0.9.1
@@ -3794,8 +3794,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@metaplex-foundation/mpl-core@0.2.0(@metaplex-foundation/mpl-toolbox@0.8.1)(@metaplex-foundation/umi@0.9.1)(@noble/hashes@1.4.0):
-    resolution: {integrity: sha512-J7stQipmqf8nBjWnNZhxGqnP3f6crqh7bYSpECEZrXIAfpSKrBRqaJCqaWnfCuUsAhIaOpv3KdbXRDHQ9TfVmw==}
+  /@metaplex-foundation/mpl-core@0.3.0(@metaplex-foundation/mpl-toolbox@0.8.1)(@metaplex-foundation/umi@0.9.1)(@noble/hashes@1.4.0):
+    resolution: {integrity: sha512-ZGK4sVSlRWLkZQpYzctEF978lCOXKTy73Jr7IKIFXK3C2xGLEg4GRuN/SBtByQA5u/vxqkAp04ZiVXhoVWtJSQ==}
     peerDependencies:
       '@metaplex-foundation/mpl-toolbox': ^0.8.0
       '@metaplex-foundation/umi': ^0.8.2
