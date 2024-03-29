@@ -143,19 +143,19 @@ export const SiteConfig = {
 export const mySocials: MySocialsProps[] = [
   {
     title: "Github",
-    href: "https://github.com/me-imfhd",
+    href: "https://github.com/grazehub",
     external: true,
     icon: "gitHub",
   },
   {
     title: "Twitter",
-    href: "https://twitter.com/Mefhd2",
+    href: "https://twitter.com/adXchainIN",
     external: true,
     icon: "twitter",
   },
   {
     title: "Discord",
-    href: "https://discord.gg/U9GNWUnA",
+    href: "https://discord.gg/S7pAgPR3",
     external: true,
     icon: "discord",
   },

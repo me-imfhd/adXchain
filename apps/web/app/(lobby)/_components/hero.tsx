@@ -28,7 +28,7 @@ export function Hero() {
         seamless UPI-like transactions
       </p>
       <div className="pt-6 flex justify-center items-center gap-5 animate-fade-up">
-        <Link href="/trade">
+        <Link href="/create-nft">
         <ShinyButton animationType="up" tap="in">
           Get Started
         </ShinyButton>
