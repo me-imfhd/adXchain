@@ -6,12 +6,12 @@ import { cn } from "@repo/ui/cn";
 
 export const SiteFooter = () => {
   return (
-    <footer className="w-full border-t bg-background">
-      <Shell as={"div"}>
+    <footer className="w-full  border-t bg-background">
+      <Shell as={"div"} className="flex justify-between">
         <section
           id="footer-content"
           aria-labelledby="footer-content-heading"
-          className="flex flex-col gap-10 lg:flex-row lg:gap-20"
+          className="flex gap-10 lg:flex-row lg:gap-20"
         >
           <section
             id="footer-branding"
@@ -23,7 +23,7 @@ export const SiteFooter = () => {
               </span>
             </Link>
           </section>
-          <section className="grid flex-1 grid-cols-1 gap-10 xs:grid-cols-2 sm:grid-cols-4">
+          {/* <section className="grid flex-1 grid-cols-1 gap-10 xs:grid-cols-2 sm:grid-cols-4">
             {SiteConfig.footerNav.map((item) => (
               <div className="space-y-3">
                 <h4 className="text-base font-medium">{item.title}</h4>
@@ -42,12 +42,12 @@ export const SiteFooter = () => {
                 </ul>
               </div>
             ))}
-          </section>
+          </section> */}
         </section>
         <section
           id="footer-bottom"
           aria-labelledby="footer-bottom-heading"
-          className="flex flex-col xl:flex-row lg:flex-row md:flex-row sm:flex-row items-center space-x-4"
+          className="flex  xl:flex-row lg:flex-row md:flex-row sm:flex-row items-center space-x-4"
         >
           <div className="text-left text-sm leading-loose text-muted-foreground">
             Built by{" "}
@@ -63,7 +63,7 @@ export const SiteFooter = () => {
             </a>
             .
           </div>
-          <ul className="flex-1 flex flex-row space-x-3">
+          {/* <ul className="flex-1 flex flex-row space-x-3">
             {Company.map((link) => (
               <li>
                 <Link
@@ -74,7 +74,7 @@ export const SiteFooter = () => {
                 </Link>
               </li>
             ))}
-          </ul>
+          </ul> */}
           <div className="flex items-center space-x-1">
             {mySocials.map((social) => {
               const Icon = Icons[social.icon];
