@@ -1,4 +1,5 @@
 import { ShinyButton } from "@repo/ui/components/buttons";
+import Link from "next/link";
 import React from "react";
 
 export function Hero() {
@@ -27,9 +28,11 @@ export function Hero() {
         seamless UPI-like transactions
       </p>
       <div className="pt-6 flex justify-center items-center gap-5 animate-fade-up">
+        <Link href="/trade">
         <ShinyButton animationType="up" tap="in">
-          Learn More
+          Get Started
         </ShinyButton>
+        </Link>
         {/* <Button
           size="sm"
           className="rounded-lg hover:bg-background duration-300 hover:shadow-[0_0_2rem_-0.5rem_#3178c6]"
