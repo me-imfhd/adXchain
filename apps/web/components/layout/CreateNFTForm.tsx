@@ -42,13 +42,13 @@ export function CreateNFTForm() {
   const [NftAnimation, setNftAnimation] = useState<string>("");
 
   const form = useForm<CreateNFTFormValues>({
-    resolver: zodResolver(CreateNFTFormSchema),
+    // resolver: zodResolver(CreateNFTFormSchema),
     defaultValues: {
-      NFTName: "",
-      NFTDescription: "",
+      NFTName: "Demo NFT",
+      NFTDescription: "Demo Description",
       NFTImage: "",
       NFTWebsite: "",
-      NFTSymbol: "",
+      NFTSymbol: "DNFT",
       NFTMutable: false,
       NFTAnimation: "",
       NFTCategory: "image",
