@@ -23,11 +23,35 @@ import {
 import NFTDemo from "./NFTDemo";
 import { useState } from "react";
 
+const MAX_FILE_SIZE = 1024 * 1024 * 5;
+const ACCEPTED_IMAGE_MIME_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/gif"
+];
 const CreateNFTFormSchema = z.object({
   NFTName: z.string().min(2),
   NFTDescription: z.string().min(2),
-  NFTImage: z.string().url(),
-  NFTAnimation: z.string().url(),
+  NFTImage: z
+    .any()
+    .refine((files) => {
+      return files?.[0]?.size <= MAX_FILE_SIZE;
+    }, `Max image size is 5MB.`)
+    .refine(
+      (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    ),
+  NFTAnimation: z
+    .any()
+    .refine((files) => {
+      return files?.[0]?.size <= MAX_FILE_SIZE;
+    }, `Max image size is 5MB.`)
+    .refine(
+      (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    ),
   NFTWebsite: z.string().url(),
   NFTSymbol: z.string().min(2),
   NFTMutable: z.boolean(),
@@ -38,31 +62,30 @@ const CreateNFTFormSchema = z.object({
 type CreateNFTFormValues = z.infer<typeof CreateNFTFormSchema>;
 
 export function CreateNFTForm() {
-  const [NftImage, setNftImage] = useState<string>("");
-  const [NftAnimation, setNftAnimation] = useState<string>("");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedAnimation, setSelectedIAnimation] = useState<File | null>(
+    null
+  );
 
   const form = useForm<CreateNFTFormValues>({
-    // resolver: zodResolver(CreateNFTFormSchema),
+    // resolver: zodResolver(CreateNFTFormSchema), // need to fix here
+    
     defaultValues: {
-      NFTName: "Demo NFT",
-      NFTDescription: "Demo Description",
-      NFTImage: "",
+      NFTName: "",
+      NFTDescription: "",
       NFTWebsite: "",
-      NFTSymbol: "DNFT",
+      NFTImage: undefined,
+      NFTSymbol: "",
       NFTMutable: false,
-      NFTAnimation: "",
-      NFTCategory: "image",
+      NFTAnimation: undefined,
+      NFTCategory: "",
       // NFTAttribute: {},
     },
   });
 
   function onSubmit(values: CreateNFTFormValues) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log("is this working");
     console.log(values);
-    setNftImage(values.NFTImage);
-    setNftAnimation(values.NFTAnimation);
   }
 
   return (
@@ -106,7 +129,16 @@ export function CreateNFTForm() {
               <FormItem>
                 <FormLabel>Image</FormLabel>
                 <FormControl>
-                  <Input {...field} type="file" />
+                  <Input
+                    type="file"
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    onChange={(e) => {
+                      field.onChange(e.target.files);
+                      setSelectedImage(e.target.files?.[0] || null);
+                    }}
+                    ref={field.ref}
+                  />
                 </FormControl>
                 <FormDescription>
                   This is your image/placeholder of your NFT. If you are
@@ -124,7 +156,16 @@ export function CreateNFTForm() {
               <FormItem>
                 <FormLabel>Animation</FormLabel>
                 <FormControl>
-                  <Input {...field} type="file" />
+                  <Input
+                    type="file"
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    onChange={(e) => {
+                      field.onChange(e.target.files);
+                      setSelectedIAnimation(e.target.files?.[0] || null);
+                    }}
+                    ref={field.ref}
+                  />
                 </FormControl>
                 <FormDescription>
                   Animation file can be a video file, an audio file, a 3d glb
@@ -238,8 +279,8 @@ export function CreateNFTForm() {
       <NFTDemo
         NFTName={form.watch("NFTName")}
         NFTDescription={form.watch("NFTDescription")}
-        NFTImage={NftImage}
-        NFTAnimation={NftAnimation}
+        NFTImage={selectedImage || null}
+        NFTAnimation={selectedAnimation}
         NFTWebsite={form.watch("NFTWebsite")}
         NFTSymbol={form.watch("NFTSymbol")}
         NFTMutable={form.watch("NFTMutable")}
