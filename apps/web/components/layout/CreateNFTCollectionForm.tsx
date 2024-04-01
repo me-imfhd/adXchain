@@ -2,12 +2,29 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { z } from "zod";
+
+const MAX_FILE_SIZE = 1024 * 1024 * 5;
+const ACCEPTED_IMAGE_MIME_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/gif"
+];
 
 const CreateNFTCollectionFormSchema = z.object({
     NFTName: z.string().min(2),
     NFTDescription: z.string().min(2),
-    NFTImage: z.string().url(),
+    NFTImage: z
+    .any()
+    .refine((files) => {
+      return files?.[0]?.size <= MAX_FILE_SIZE;
+    }, `Max image size is 5MB.`)
+    .refine(
+      (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    ),
     NFTWebsite: z.string().url(),
     NFTSymbol: z.string().min(2),
     NFTMutable: z.boolean(),
@@ -25,16 +42,20 @@ import {
   FormMessage,
 } from "@repo/ui/components"
 import { Button, Input } from "@repo/ui/components"
+import { useState } from "react";
+import NFTCollectionDemo from "./NFTCollectionDemo";
 
 
 export function CreateNFTCollectionForm() {
+
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   
     const form = useForm<CreateNFTCollectionFormValues>({
         resolver: zodResolver(CreateNFTCollectionFormSchema),
         defaultValues: {
             NFTName: "",
             NFTDescription: "",
-            NFTImage: "",
+            NFTImage: undefined,
             NFTWebsite: "",
             NFTSymbol: "",
             NFTMutable: false,
@@ -49,6 +70,7 @@ export function CreateNFTCollectionForm() {
       }
 
   return (
+    <>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
@@ -56,7 +78,7 @@ export function CreateNFTCollectionForm() {
           name="NFTName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>NFTName</FormLabel>
+              <FormLabel>NFT Collection Name</FormLabel>
               <FormControl>
                 <Input placeholder="" {...field} />
               </FormControl>
@@ -90,7 +112,16 @@ export function CreateNFTCollectionForm() {
             <FormItem>
               <FormLabel>Image</FormLabel>
               <FormControl>
-                <Input {...field} type="file"/>
+              <Input
+                    type="file"
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    onChange={(e) => {
+                      field.onChange(e.target.files);
+                      setSelectedImage(e.target.files?.[0] || null);
+                    }}
+                    ref={field.ref}
+                  />
               </FormControl>
               <FormDescription>
               This is your image/placeholder of your NFT. If you are creating an NFT type other than image then this will act as the placeholder image in wallets.
@@ -143,5 +174,14 @@ export function CreateNFTCollectionForm() {
         <Button type="submit">Create NFT Collection</Button>
       </form>
     </Form>
+      <NFTCollectionDemo 
+        NFTName={form.watch("NFTName")}
+        NFTDescription={form.watch("NFTDescription")}
+        NFTImage={selectedImage}
+        NFTMutable={form.watch("NFTMutable")}
+        NFTSymbol={form.watch("NFTSymbol")}
+        NFTWebsite={form.watch("NFTWebsite")}
+      />
+    </>
   )
 }
