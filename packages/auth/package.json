@@ -11,6 +11,10 @@
   },
   "dependencies": {
     "@repo/db": "workspace:*",
+    "@auth/core": "^0.28.2",
+    "@auth/prisma-adapter": "^1.5.2",
+    "next": "14.1.4",
+    "next-auth": "^4.24.7",
     "nodemailer": "^6.9.10"
   },
   "devDependencies": {
