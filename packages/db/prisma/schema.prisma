@@ -1,10 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-datasource db {
-  provider     = "postgres"
-  relationMode = "prisma"
-  url          = env("DATABASE_URL")
-}
 
 generator client {
   provider = "prisma-client-js"
@@ -12,16 +7,103 @@ generator client {
 
 generator zod {
   provider              = "zod-prisma"
-  output                = "./zod" // (default) the directory where generated zod schemas will be saved
-  relationModel         = true // (default) Create and export both plain and related models.
-  modelCase             = "camelCase" // Output models using camel case (ex. userModel, postModel)
-  modelSuffix           = "Schema" // (default) Suffix to apply to your prisma models when naming Zod schemas
-  useDecimalJs          = true // represent the prisma Decimal type using Decimal.js (as Prisma does)
-  prismaJsonNullability = true // (default) uses prisma's scheme for JSON field nullability
+  output                = "./zod"
+  relationModel         = true
+  modelCase             = "camelCase"
+  modelSuffix           = "Schema"
+  useDecimalJs          = true
+  prismaJsonNullability = true
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  username String  @unique
-  name     String?
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  walletAddress String?
+
+  accounts  Account[]
+  sessions  Session[]
+  inventory Inventory[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Inventory {
+  id          String       @id @default(cuid())
+  name        String?
+  websiteUri  String?
+  imageUri    String?
+  description String?
+  platform    String?
+  attributes  Attributes[]
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adSlots     AdSlot[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([name])
+  @@index([userId])
+}
+
+model Attributes {
+  id String @id @default(cuid())
+
+  key         String?
+  value       String?
+  Inventory   Inventory? @relation(fields: [inventoryId], references: [id])
+  inventoryId String?
+}
+
+model AdSlot {
+  id           String   @id @default(cuid())
+  inventoryId  String
+  mintAddress  String?
+  ownerAddress String?
+  sold         Boolean?
+  ownerEmail   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  inventory Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
 }
