@@ -17,3 +17,4 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 export { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+export {createTRPCContext} from "./server/context"
