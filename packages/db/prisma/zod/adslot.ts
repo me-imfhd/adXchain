@@ -3,13 +3,19 @@ import { CompleteInventory, relatedInventorySchema } from "./index";
 
 export const adSlotSchema = z.object({
   id: z.string(),
-  inventoryId: z.string(),
+  slotName: z.string().nullish(),
+  slotDescription: z.string().nullish(),
+  slotLength: z.string().nullish(),
+  slotWidth: z.string().nullish(),
+  slotWebsiteUri: z.string().nullish(),
+  slotImageUri: z.string().nullish(),
+  lent: z.boolean().nullish(),
   mintAddress: z.string().nullish(),
   ownerAddress: z.string().nullish(),
-  sold: z.boolean().nullish(),
   ownerEmail: z.string().nullish(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  inventoryId: z.string(),
 });
 
 export interface CompleteAdSlot extends z.infer<typeof adSlotSchema> {

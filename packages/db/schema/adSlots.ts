@@ -29,4 +29,3 @@ export type UpdateAdSlotParams = z.infer<typeof updateAdSlotParams>;
 export type AdSlotId = z.infer<typeof adSlotIdSchema>["id"];
 
 // this type infers the return from getAdSlots() - meaning it will include any joins
-// export type CompleteAdSlot = Awaited<ReturnType<typeof getAdSlots>>["adSlots"][number];

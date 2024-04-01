@@ -2,28 +2,28 @@ import * as z from "zod";
 import {
   CompleteAttributes,
   relatedAttributesSchema,
-  CompleteUser,
-  relatedUserSchema,
   CompleteAdSlot,
   relatedAdSlotSchema,
+  CompleteUser,
+  relatedUserSchema,
 } from "./index";
 
 export const inventorySchema = z.object({
   id: z.string(),
-  name: z.string().nullish(),
-  websiteUri: z.string().nullish(),
-  imageUri: z.string().nullish(),
-  description: z.string().nullish(),
-  platform: z.string().nullish(),
-  userId: z.string(),
+  inventoryName: z.string().nullish(),
+  inventoryWebsiteUri: z.string().nullish(),
+  inventoryImageUri: z.string().nullish(),
+  inventoryDescription: z.string().nullish(),
+  inventoryPlatform: z.string().nullish(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  userId: z.string(),
 });
 
 export interface CompleteInventory extends z.infer<typeof inventorySchema> {
-  attributes: CompleteAttributes[];
-  user: CompleteUser;
+  inventoryAttributes: CompleteAttributes[];
   adSlots: CompleteAdSlot[];
+  user: CompleteUser;
 }
 
 /**
@@ -34,8 +34,8 @@ export interface CompleteInventory extends z.infer<typeof inventorySchema> {
 export const relatedInventorySchema: z.ZodSchema<CompleteInventory> = z.lazy(
   () =>
     inventorySchema.extend({
-      attributes: relatedAttributesSchema.array(),
-      user: relatedUserSchema,
+      inventoryAttributes: relatedAttributesSchema.array(),
       adSlots: relatedAdSlotSchema.array(),
+      user: relatedUserSchema,
     }),
 );

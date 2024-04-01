@@ -68,20 +68,23 @@ model VerificationToken {
 }
 
 model Inventory {
-  id          String       @id @default(cuid())
-  name        String?
-  websiteUri  String?
-  imageUri    String?
-  description String?
-  platform    String?
-  attributes  Attributes[]
-  userId      String
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  adSlots     AdSlot[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id                   String       @id @default(cuid())
+  inventoryName        String?
+  inventoryWebsiteUri  String?
+  inventoryImageUri    String?
+  inventoryDescription String?
+  inventoryPlatform    String?
+  inventoryAttributes  Attributes[]
 
-  @@index([name])
+  adSlots AdSlot[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([inventoryName])
   @@index([userId])
 }
 
@@ -95,15 +98,36 @@ model Attributes {
 }
 
 model AdSlot {
-  id           String   @id @default(cuid())
-  inventoryId  String
+  id              String  @id @default(cuid())
+  slotName        String?
+  slotDescription String?
+  slotLength      String?
+  slotWidth       String?
+  slotWebsiteUri  String?
+  slotImageUri    String?
+
+  lent         Boolean?
   mintAddress  String?
   ownerAddress String?
-  sold         Boolean?
   ownerEmail   String?
+
+  // // attribute 1
+  // displayUri  String?
+  // // attribute 2
+  // redirectUri String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  inventory Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  inventory   Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  inventoryId String
 }
+
+// model SlotAttributes {
+//   id String @id @default(cuid())
+
+//   key      String?
+//   value    String?
+//   adSlot   AdSlot? @relation(fields: [adSlotId], references: [id])
+//   adSlotId String?
+// }
