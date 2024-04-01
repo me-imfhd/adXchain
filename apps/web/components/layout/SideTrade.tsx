@@ -1,6 +1,22 @@
 "use client";
-import { Button } from "@repo/ui/components";
-import React, { useState } from "react";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Input,
+  Label,
+} from "@repo/ui/components";
+import React, { useState, useMemo } from "react";
+import NFTCollectionCard from "./NFTCollectionCard";
+import photo from "@/public/images/creator4.jpg";
+import { WalletIcon, useWalletModal } from "@solana/wallet-adapter-react-ui";
+import { useWalletMultiButton } from "@solana/wallet-adapter-base-ui";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 interface SideTradeProps {
   Price: number;
@@ -11,9 +27,14 @@ export default function SideTrade({ Price, onButtonClick }: SideTradeProps) {
   const [NftToBuy, setNftToBuy] = useState<string>("Buy");
 
   return (
-    <div className="w-[30rem] p-5 bg-[#252a2c] relative">
+    <div className="w-[20rem]  bg-[#060707] relative">
       <div className="w-full flex flex-col gap-2 justify-between">
-        <button
+        <NFTCollectionCard
+          imgURL={photo}
+          CollectionName="Praash"
+          CollectionWebsite="https://github.com"
+        />
+        {/* <button
           className="bg-[#C2C1FF] text-black w-full p-2  flex items-center gap-2 justify-center font-semibold  rounded-lg"
           onClick={() => {
             onButtonClick("Buy");
@@ -35,8 +56,10 @@ export default function SideTrade({ Price, onButtonClick }: SideTradeProps) {
             />
           </svg>
           Buy
-        </button>
-        <button
+        </button> */}
+        {/* commented for adding feature in future */}
+
+        {/* <button
           className="bg-[#181C1E] w-full text-[#d9dbdf] p-2 flex items-center gap-2 justify-center font-semibold  rounded-lg"
           onClick={() => {
             onButtonClick("Sell");
@@ -57,7 +80,7 @@ export default function SideTrade({ Price, onButtonClick }: SideTradeProps) {
             />
           </svg>
           Sell
-        </button>
+        </button> */}
       </div>
       <SideTradeDown NftToBuy={NftToBuy} Price={Price} />
     </div>
@@ -72,10 +95,67 @@ interface SideTradeDownProps {
 const SideTradeDown: React.FC<SideTradeDownProps> = ({ NftToBuy, Price }) => {
   return (
     <div className="p-5">
-      <p className="text-white font-semibold">NFT to {NftToBuy}</p>
-      <button className="bg-[#C2C1FF] text-black w-full p-2 mt-2  flex items-center gap-2 justify-center font-semibold  rounded-lg">
-        Buy at {Price}
-      </button>
+      <p className="text-white font-semibold text-xl">Menu</p>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button className="bg-[#C2C1FF] text-black w-full px-5 py-2 mt-2 font-semibold  rounded-lg">
+            Buy at {Price}
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-center">Execute</DialogTitle>
+          </DialogHeader>
+          {Price === 0 ? (
+            <span className="text-center text-red-600">
+              didn't select any NFT!
+            </span>
+          ) : (
+            <>
+              <TradeExecuteBox item={NftToBuy} price={Price} />
+              <DialogFooter>
+                <Button type="submit">Pay</Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
+
+function TradeExecuteBox(props: any) {
+  const { setVisible: setModalVisible } = useWalletModal();
+  const { connected, connecting, disconnecting, disconnect } = useWallet();
+  const { publicKey, walletIcon, walletName } = useWalletMultiButton({
+    onSelectWallet() {
+      setModalVisible(true);
+    },
+  });
+  const pubKey = useMemo(() => {
+    return (
+      publicKey?.toBase58().slice(0, 4) + ".." + publicKey?.toBase58().slice(-4)
+    );
+  }, [publicKey]);
+  return (
+    <>
+      {connected ? (
+        <div className="flex flex-wrap items-center justify-between">
+          <span>{props.item}</span>
+          <span>{props.price}</span>
+        </div>
+      ) : (
+        <Button
+          tap="in"
+          animationType="none"
+          isLoading={connecting}
+          onClick={() => {
+            setModalVisible(true);
+          }}
+        >
+          Connect Wallet
+        </Button>
+      )}
+    </>
+  );
+}
