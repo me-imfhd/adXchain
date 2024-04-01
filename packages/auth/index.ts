@@ -8,7 +8,11 @@ declare module "next-auth" {
   interface Session {
     user: DefaultSession["user"] & {
       id: string;
+      walletAddress: string | null | undefined;
     };
+  }
+  interface User {
+    walletAddress: string | null | undefined;
   }
 }
 
@@ -18,6 +22,7 @@ export type AuthSession = {
       id: string;
       name?: string;
       email?: string;
+      walletAddress?: string;
     };
   } | null;
 };
@@ -28,6 +33,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     session: ({ session, user }) => {
       session.user.id = user.id;
+      session.user.walletAddress = user.walletAddress;
       return session;
     },
   },
@@ -44,4 +50,4 @@ export const checkAuth = async () => {
   if (!session) redirect("/api/auth/signin");
 };
 
-export {SessionProvider} from "next-auth/react"
+export { SessionProvider } from "next-auth/react";
