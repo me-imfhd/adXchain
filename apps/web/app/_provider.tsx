@@ -1,25 +1,27 @@
 "use client";
 
+import { SessionProvider } from "@repo/auth";
+import TrpcProvider from "@repo/trpc/trpc/Provider";
+
 import { ThemeProvider } from "@repo/ui/components/ThemeProvider";
 import { WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import "@solana/wallet-adapter-react-ui/styles.css";
+import { cookies } from "next/headers";
 
 import { useMemo, type PropsWithChildren } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
 
 const Provider = ({ children }: PropsWithChildren) => {
   const wallets = useMemo(() => [], []);
-  const queryClient = new QueryClient();
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <WalletProvider wallets={wallets} autoConnect>
-        {/* <TrpcProvider> */}
-        <QueryClientProvider client={queryClient}>
-          <WalletModalProvider>{children}</WalletModalProvider>
-        </QueryClientProvider>
-        {/* </TrpcProvider> */}
+        <TrpcProvider cookies={cookies().toString()}>
+          <SessionProvider>
+            <WalletModalProvider>{children}</WalletModalProvider>
+          </SessionProvider>
+        </TrpcProvider>
       </WalletProvider>
     </ThemeProvider>
   );
