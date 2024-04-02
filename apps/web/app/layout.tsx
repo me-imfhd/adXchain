@@ -6,6 +6,8 @@ import type { PropsWithChildren } from "react";
 import Provider from "./_provider";
 import { cn } from "@repo/ui/cn";
 import { oxCustom, oxSemiBold, pressStart } from "@/lib/fonts";
+import TrpcProvider from "@repo/trpc/trpc/Provider";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
   title: "AdXchain",
@@ -23,13 +25,15 @@ export default function RootLayout({ children }: PropsWithChildren) {
           "min-h-screen bg-background antialiased font-ox",
           oxCustom.variable,
           oxSemiBold.variable,
-          pressStart.variable,
+          pressStart.variable
         )}
       >
         <Provider>
-          {children}
-          <TailwindResposivenessIndicator />
-          <Toaster />
+          <TrpcProvider cookies={cookies().toString()}>
+            {children}
+            <TailwindResposivenessIndicator />
+            <Toaster />
+          </TrpcProvider>
         </Provider>
       </body>
     </html>

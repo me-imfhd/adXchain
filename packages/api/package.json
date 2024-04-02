@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@metaplex-foundation/mpl-core": "^0.3.0",
+    "@metaplex-foundation/mpl-core": "^0.4.2",
     "@metaplex-foundation/umi": "^0.9.1",
     "@metaplex-foundation/umi-bundle-defaults": "^0.9.1",
     "@metaplex-foundation/umi-signer-wallet-adapters": "^0.9.1",
@@ -22,6 +22,7 @@
     "@repo/db": "workspace:*",
     "@solana/web3.js": "^1.91.1",
     "@trpc/server": "^10.45.1",
+    "next": "^14.1.4",
     "react": "^18",
     "superjson": "2.2.1",
     "zod": "^3.22.4"

@@ -5,6 +5,7 @@ import { WalletIcon, useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { useWalletMultiButton } from "@solana/wallet-adapter-base-ui";
 import { Button } from "@repo/ui/components";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { signOut } from "@repo/auth";
 
 export const ProfileHeader = () => {
   const { setVisible: setModalVisible } = useWalletModal();
@@ -14,10 +15,9 @@ export const ProfileHeader = () => {
       setModalVisible(true);
     },
   });
+  const walletAddress = publicKey?.toBase58();
   const pubKey = useMemo(() => {
-    return (
-      publicKey?.toBase58().slice(0, 4) + ".." + publicKey?.toBase58().slice(-4)
-    );
+    return walletAddress?.slice(0, 4) + ".." + walletAddress?.slice(-4);
   }, [publicKey]);
   return (
     <>
@@ -41,8 +41,9 @@ export const ProfileHeader = () => {
             animationType="none"
             variant="outline"
             isLoading={disconnecting}
-            onClick={() => {
+            onClick={async () => {
               disconnect();
+              signOut({redirect:false});
             }}
           >
             Disconnect

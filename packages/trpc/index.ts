@@ -13,7 +13,9 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
 /**
  * Inference helpers for output types
  * @example type HelloOutput = RouterOutputs['example']['hello']
- **/
+**/
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 export { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+export {createTRPCContext} from "./server/context"
+export { api } from "./server/api";
