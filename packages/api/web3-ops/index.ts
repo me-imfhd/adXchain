@@ -7,6 +7,7 @@ export * from "./upload-metadata";
 export * from "./fetch-assets";
 export * from "./update-asset";
 export * from "./burn-asset";
+export * from "./sell";
 export interface UmiInstance {
   umi: Umi;
 }
