@@ -41,7 +41,7 @@ model User {
 
 model Inventory {
   id                   String       @id @default(cuid())
-  inventoryName        String?
+  inventoryName        String       @unique
   inventoryWebsiteUri  String?
   inventoryImageUri    String?
   inventoryDescription String?
@@ -51,7 +51,7 @@ model Inventory {
   adSlots AdSlot[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -73,7 +73,7 @@ model Attributes {
 
 model AdSlot {
   id              String  @id @default(cuid())
-  slotName        String?
+  slotName        String  @unique
   slotDescription String?
   slotLength      String?
   slotWidth       String?
@@ -91,7 +91,7 @@ model AdSlot {
   // redirectUri String?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
 
   inventory   Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
   inventoryId String

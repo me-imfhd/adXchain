@@ -3,7 +3,7 @@ import { CompleteInventory, relatedInventorySchema } from "./index"
 
 export const adSlotSchema = z.object({
   id: z.string(),
-  slotName: z.string().nullish(),
+  slotName: z.string(),
   slotDescription: z.string().nullish(),
   slotLength: z.string().nullish(),
   slotWidth: z.string().nullish(),
