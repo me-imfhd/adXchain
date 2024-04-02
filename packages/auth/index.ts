@@ -138,4 +138,5 @@ export {
   signOut,
   useSession,
 } from "next-auth/react";
+export { type Session } from "next-auth";
 export * from "./signMessage";

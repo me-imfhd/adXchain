@@ -10,7 +10,7 @@ import {
 } from "@repo/db";
 
 export const createInventory = async (inventory: NewInventoryParams) => {
-  const { session } = await getUserAuth();
+  const session = await getUserAuth();
   const newInventory = insertInventorySchema.parse({
     ...inventory,
     userId: session?.user.id!,
@@ -29,7 +29,7 @@ export const updateInventory = async (
   id: InventoryId,
   inventory: UpdateInventoryParams
 ) => {
-  const { session } = await getUserAuth();
+  const session  = await getUserAuth();
   const { id: inventoryId } = inventoryIdSchema.parse({ id });
   const newInventory = updateInventorySchema.parse({
     ...inventory,
@@ -49,7 +49,7 @@ export const updateInventory = async (
 };
 
 export const deleteInventory = async (id: InventoryId) => {
-  const { session } = await getUserAuth();
+  const session  = await getUserAuth();
   const { id: inventoryId } = inventoryIdSchema.parse({ id });
   try {
     const i = await db.inventory.delete({
