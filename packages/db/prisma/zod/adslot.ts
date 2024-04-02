@@ -1,5 +1,5 @@
-import * as z from "zod";
-import { CompleteInventory, relatedInventorySchema } from "./index";
+import * as z from "zod"
+import { CompleteInventory, relatedInventorySchema } from "./index"
 
 export const adSlotSchema = z.object({
   id: z.string(),
@@ -16,10 +16,10 @@ export const adSlotSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   inventoryId: z.string(),
-});
+})
 
 export interface CompleteAdSlot extends z.infer<typeof adSlotSchema> {
-  inventory: CompleteInventory;
+  inventory: CompleteInventory
 }
 
 /**
@@ -27,8 +27,6 @@ export interface CompleteAdSlot extends z.infer<typeof adSlotSchema> {
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const relatedAdSlotSchema: z.ZodSchema<CompleteAdSlot> = z.lazy(() =>
-  adSlotSchema.extend({
-    inventory: relatedInventorySchema,
-  }),
-);
+export const relatedAdSlotSchema: z.ZodSchema<CompleteAdSlot> = z.lazy(() => adSlotSchema.extend({
+  inventory: relatedInventorySchema,
+}))

@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { userSchema } from "../prisma/zod";
 
-export const createUserSchema = userSchema.omit({
-  emailVerified: true,
-  id: true,
+export const createUserSchema = z.object({
+  name: z.string().optional(),
+  email: z.string().optional(),
+  walletAddress: z.string(),
 });
 export const userWalletSchema = userSchema.pick({ walletAddress: true });
 export const userIdSchema = userSchema.pick({ id: true });
