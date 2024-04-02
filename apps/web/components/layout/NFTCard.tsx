@@ -25,7 +25,7 @@ export function NFTCard({
 
   return (
     <div
-      className={`bg-[#252a2c] h-64 w-56 rounded-xl flex flex-col justify-around p-2 hover:drop-shadow-2xl duration-150 hover:shadow-[0_0_2rem_-0.5rem_#035cf461] cursor-pointer ${
+      className={`bg-[#252a2c] h-64 w-56 rounded-xl flex flex-col justify-around p-2 duration-50  cursor-pointer ${
         isSelected ? "border-2 border-blue-400" : ""
       }`}
       onClick={() => {
