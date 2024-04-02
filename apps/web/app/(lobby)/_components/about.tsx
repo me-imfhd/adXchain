@@ -115,7 +115,7 @@ export function About() {
           <div className="relative">
            <Image src={laptop} alt="laptop" height={700} width={700}/>
            <div className="absolute top-9 left-28 ">
-           <iframe width="480" height="300" src="https://www.youtube.com/embed/AuU-tUqZuC8?si=DccR2mUlabDgjTFj" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+           <iframe width="480" height="300" src="https://www.youtube.com/embed/y96oyPvMe54?si=BFprFiPxh7IQaEzV" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
            </div>
            </div>
         </div>
