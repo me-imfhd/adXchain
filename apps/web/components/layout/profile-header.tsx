@@ -14,10 +14,9 @@ export const ProfileHeader = () => {
       setModalVisible(true);
     },
   });
+  const walletAddress = publicKey?.toBase58();
   const pubKey = useMemo(() => {
-    return (
-      publicKey?.toBase58().slice(0, 4) + ".." + publicKey?.toBase58().slice(-4)
-    );
+    return walletAddress?.slice(0, 4) + ".." + walletAddress?.slice(-4);
   }, [publicKey]);
   return (
     <>
