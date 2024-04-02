@@ -48,37 +48,45 @@ export default function LoginForm() {
         className="w-full h-screen flex items-center justify-center px-4"
         onSubmit={form.handleSubmit(async (data) => {
           setIsLoading(true);
-          if (!connected || !data.walletAddress) {
-            toast({
-              title: "Wallet Not Connected",
-              description: "Please Connect Your Wallet First.",
+          try {
+            if (!connected || !data.walletAddress) {
+              toast({
+                title: "Wallet Not Connected",
+                description: "Please Connect Your Wallet First.",
+              });
+              setIsLoading(false);
+              return;
+            }
+            const csrf = await getCsrfToken();
+
+            const message = new SigninMessage({
+              domain: window.location.host,
+              publicKey: data.walletAddress,
+              statement: `Sign in to adXchain.`,
+              nonce: csrf!,
+            });
+            console.log(data);
+
+            const d = new TextEncoder().encode(message.prepare());
+            const signature = await signMessage!(d);
+            const serializedSignature = bs58.encode(signature);
+            signIn("credentials", {
+              message: JSON.stringify(message),
+              redirect: false,
+              signature: serializedSignature,
+              name: data.name,
+              email: data.email,
             });
             setIsLoading(false);
+            router.push("/dashboard");
             return;
+          } catch (e) {
+            toast({
+              title: "Could not Login",
+              description: (e as Error).message ?? "Error Logging In.",
+            });
+            setIsLoading(false);
           }
-          const csrf = await getCsrfToken();
-
-          const message = new SigninMessage({
-            domain: window.location.host,
-            publicKey: data.walletAddress,
-            statement: `Sign in to adXchain.`,
-            nonce: csrf!,
-          });
-          console.log(data);
-
-          const d = new TextEncoder().encode(message.prepare());
-          const signature = await signMessage!(d);
-          const serializedSignature = bs58.encode(signature);
-          signIn("credentials", {
-            message: JSON.stringify(message),
-            redirect: false,
-            signature: serializedSignature,
-            name: data.name,
-            email: data.email,
-          });
-          setIsLoading(false);
-          router.refresh();
-          return;
         })}
       >
         <Card className="w-full max-w-sm  bg-background rounded-xl">
