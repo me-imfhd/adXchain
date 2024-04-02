@@ -1,13 +1,13 @@
 "use client";
 
 import { SessionProvider } from "@repo/auth";
-import TrpcProvider from "@repo/trpc/trpc/Provider";
-
 import { ThemeProvider } from "@repo/ui/components/ThemeProvider";
-import { WalletProvider } from "@solana/wallet-adapter-react";
+import {
+  ConnectionProvider,
+  WalletProvider,
+} from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import "@solana/wallet-adapter-react-ui/styles.css";
-import { cookies } from "next/headers";
 
 import { useMemo, type PropsWithChildren } from "react";
 
@@ -16,13 +16,13 @@ const Provider = ({ children }: PropsWithChildren) => {
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <WalletProvider wallets={wallets} autoConnect>
-        <TrpcProvider cookies={cookies().toString()}>
+      <ConnectionProvider endpoint="https://api.devnet.solana.com">
+        <WalletProvider wallets={wallets} autoConnect>
           <SessionProvider>
             <WalletModalProvider>{children}</WalletModalProvider>
           </SessionProvider>
-        </TrpcProvider>
-      </WalletProvider>
+        </WalletProvider>
+      </ConnectionProvider>
     </ThemeProvider>
   );
 };
