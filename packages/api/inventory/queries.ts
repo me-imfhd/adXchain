@@ -10,6 +10,12 @@ export const getInventories = async () => {
   return i;
 };
 
+export const getAllInventories = async () =>{
+  const i = await db.inventory.findMany();
+
+  return i;
+}
+
 export const getInventoryById = async (id: InventoryId) => {
   const session = await getUserAuth();
   const { id: inventoryId } = inventoryIdSchema.parse({ id });
