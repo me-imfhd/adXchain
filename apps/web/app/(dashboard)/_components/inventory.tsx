@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-export { UTApi } from "uploadthing/server";
 import {
   Button,
   Card,
@@ -9,7 +8,10 @@ import {
   CardHeader,
   CardTitle,
   Form,
+  FormControl,
   FormField,
+  FormItem,
+  FormMessage,
   Input,
   Label,
   Select,
@@ -24,22 +26,15 @@ import { ChevronLeft } from "@repo/ui/icons";
 import Link from "next/link";
 import { trpc } from "@repo/trpc/trpc/client";
 import { useForm } from "react-hook-form";
-import {
-  Inventory,
-  UpdateInventoryParams,
-  insertInventoryParams,
-} from "@repo/db";
+import { Inventory, insertInventoryParams } from "@repo/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { s3Upload } from "./s3Upload";
-import { redirect } from "next/navigation";
-interface InventoryProps {
-  inventory?: UpdateInventoryParams;
-  edit?: boolean;
-}
-export default function Inventory({ edit, inventory }: InventoryProps) {
+import { useRouter } from "next/navigation";
+export default function Inventory() {
   const createInventory = trpc.inventory.createInventory.useMutation();
-  const isLoading = createInventory.isLoading;
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const toast = useToast();
   const [image, setImage] = useState<File | null>(null);
   const form = useForm<z.infer<typeof insertInventoryParams>>({
@@ -50,6 +45,7 @@ export default function Inventory({ edit, inventory }: InventoryProps) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(async (data) => {
+            setIsLoading(true);
             try {
               if (!image) {
                 throw new Error("Please upload image.");
@@ -63,11 +59,12 @@ export default function Inventory({ edit, inventory }: InventoryProps) {
                 inventoryImageUri: s3ImageUri,
               });
               if (res) {
+                setIsLoading(false);
                 toast.toast({ title: "Inventory created successfully." });
-                redirect("/inventories");
+                router.push("/inventories");
               }
-              console.log(res);
             } catch (err) {
+              setIsLoading(false);
               console.log(err);
               toast.toast({
                 title: "Operation Failed",
@@ -128,7 +125,11 @@ export default function Inventory({ edit, inventory }: InventoryProps) {
                         name="inventoryDescription"
                         control={form.control}
                         render={({ field }) => (
-                          <Textarea className="min-h-32" />
+                          <Textarea
+                            className="min-h-32"
+                            {...field}
+                            value={field.value ?? ""}
+                          />
                         )}
                       />
                     </div>
@@ -138,7 +139,12 @@ export default function Inventory({ edit, inventory }: InventoryProps) {
                         name="inventoryWebsiteUri"
                         control={form.control}
                         render={({ field }) => (
-                          <Input type="text" className="w-full" />
+                          <Input
+                            type="text"
+                            className="w-full"
+                            {...field}
+                            value={field.value ?? ""}
+                          />
                         )}
                       />
                     </div>
@@ -155,26 +161,28 @@ export default function Inventory({ edit, inventory }: InventoryProps) {
                       <Label htmlFor="platform">Platform</Label>
 
                       <FormField
-                        name="inventoryPlatform"
                         control={form.control}
+                        name="inventoryPlatform"
                         render={({ field }) => (
-                          <Select>
-                            <SelectTrigger
-                              id="platform"
-                              aria-label="Select platform"
-                            >
-                              <SelectValue placeholder="Select Platform" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="t-shirts">Web App</SelectItem>
-                              <SelectItem value="hoodies">
-                                Mobile App
-                              </SelectItem>
-                              <SelectItem value="sweatshirts">
-                                Billboard
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <FormItem>
+                            <Select onValueChange={field.onChange}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Platform" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="Mobile App">
+                                  Mobile App
+                                </SelectItem>
+                                <SelectItem value="Web App">Web App</SelectItem>
+                                <SelectItem value="Billboard">
+                                  Billboard
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
                         )}
                       />
                     </div>

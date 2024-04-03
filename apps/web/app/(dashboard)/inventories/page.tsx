@@ -14,7 +14,7 @@ import Link from "next/link";
 import React from "react";
 export default async function InventoryPage() {
   const inventory = await api.inventory.getInventory.query();
-  console.log("inventory", inventory)
+  console.log("inventory", inventory);
   return (
     <div className="flex flex-1 min-h-[100vh] flex-col gap-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -66,11 +66,19 @@ export default async function InventoryPage() {
         </div>
       )}
       <div className="flex flex-wrap gap-4 items-center">
-      {inventory.map((inventory) => {
-        return <div>
-           <InventoryCard imgURL={inventory.inventoryImageUri!} CollectionName={inventory.inventoryName} CollectionPlatform={inventory.inventoryPlatform!} CollectionWebsite={inventory.inventoryWebsiteUri!} Collectionid={inventory.id}/>
-        </div>;
-      })}
+        {inventory.map((inventory) => {
+          return (
+            <Link href={`/inventories/${inventory.id}`}>
+              <InventoryCard
+                imgURL={inventory.inventoryImageUri!}
+                CollectionName={inventory.inventoryName}
+                CollectionPlatform={inventory.inventoryPlatform!}
+                CollectionWebsite={inventory.inventoryWebsiteUri!}
+                Collectionid={inventory.id}
+              />
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
