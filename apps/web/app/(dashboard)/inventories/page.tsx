@@ -1,3 +1,4 @@
+import InventoryCard from "@/components/layout/InventoryCard";
 import { api } from "@repo/trpc";
 import {
   Button,
@@ -64,7 +65,9 @@ export default async function InventoryPage() {
         </div>
       )}
       {inventory.map((inventory) => {
-        return <div>{inventory.inventoryName}</div>;
+        return <div>
+           <InventoryCard imgURL={inventory.inventoryImageUri!} CollectionName={inventory.inventoryName} CollectionPlatform={inventory.inventoryPlatform!} CollectionWebsite={inventory.inventoryWebsiteUri!}/>
+        </div>;
       })}
     </div>
   );
