@@ -1,11 +1,15 @@
+"use client"
 import { Card } from "@repo/ui/components";
 import Link from "next/link";
+import { useRouter } from 'next/navigation'
+
 
 interface InventoryCardProps {
  imgURL: string;
  CollectionName: string;
  CollectionWebsite: string;
  CollectionPlatform: string;
+ Collectionid: string,
 }
 
 export default function InventoryCard({
@@ -13,9 +17,13 @@ export default function InventoryCard({
  CollectionName,
  CollectionPlatform,
  CollectionWebsite,
+ Collectionid,
 }: InventoryCardProps) {
+    const router = useRouter()
+
  return (
-    <Card className="w-full max-w-xs rounded-xl border width">
+    <>
+    <Card className="w-full max-w-xs rounded-xl border width cursor-pointer" onClick={() => router.push(`/inventories/${Collectionid}`)}>
       <div className="grid gap-4 p-4">
         <div className="aspect-square w-full overflow-hidden rounded-xl">
           <img
@@ -33,5 +41,6 @@ export default function InventoryCard({
         </div>
       </div>
     </Card>
+    </>
  );
 }

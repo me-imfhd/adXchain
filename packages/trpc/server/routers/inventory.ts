@@ -1,6 +1,7 @@
 import {
   createInventory,
   deleteInventory,
+  getAllInventories,
   getInventories,
   getInventoryById,
   updateInventory,
@@ -20,6 +21,10 @@ export const inventoryRouter = createTRPCRouter({
     .input(inventoryIdSchema)
     .query(async ({ input }) => {
       return getInventoryById(input.id);
+    }),
+  getAllInventories: publicProcedure
+    .query(async ()=>{
+      return getAllInventories();
     }),
   createInventory: publicProcedure
     .input(insertInventoryParams)
