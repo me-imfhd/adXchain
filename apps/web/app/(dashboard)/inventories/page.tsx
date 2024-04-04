@@ -1,4 +1,5 @@
 import InventoryCard from "@/components/layout/InventoryCard";
+import { checkAuth } from "@repo/auth";
 import { api } from "@repo/trpc";
 import {
   Button,
@@ -14,7 +15,7 @@ import Link from "next/link";
 import React from "react";
 export default async function InventoryPage() {
   const inventory = await api.inventory.getInventory.query();
-  console.log("inventory", inventory)
+  console.log("inventory", inventory);
   return (
     <div className="flex flex-1 min-h-[100vh] flex-col gap-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -22,7 +23,7 @@ export default async function InventoryPage() {
           Your Ad Inventories
         </h2>
         <div className="ml-auto flex items-center gap-2">
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8 gap-1">
                 <ListFilter className="h-3.5 w-3.5" />
@@ -39,7 +40,7 @@ export default async function InventoryPage() {
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
           <Link href={"/inventories/new"}>
             <Button size="sm" className="h-8 gap-1">
               <PlusCircle className="h-3.5 w-3.5" />
@@ -66,11 +67,19 @@ export default async function InventoryPage() {
         </div>
       )}
       <div className="flex flex-wrap gap-4 items-center">
-      {inventory.map((inventory) => {
-        return <div>
-           <InventoryCard imgURL={inventory.inventoryImageUri!} CollectionName={inventory.inventoryName} CollectionPlatform={inventory.inventoryPlatform!} CollectionWebsite={inventory.inventoryWebsiteUri!} Collectionid={inventory.id}/>
-        </div>;
-      })}
+        {inventory.map((inventory) => {
+          return (
+            <Link href={`/inventories/${inventory.id}`}>
+              <InventoryCard
+                imgURL={inventory.inventoryImageUri!}
+                CollectionName={inventory.inventoryName}
+                CollectionPlatform={inventory.inventoryPlatform!}
+                CollectionWebsite={inventory.inventoryWebsiteUri!}
+                Collectionid={inventory.id}
+              />
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

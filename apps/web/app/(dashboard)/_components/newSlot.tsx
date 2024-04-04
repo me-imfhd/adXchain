@@ -25,23 +25,34 @@ import {
 import { ChevronLeft } from "@repo/ui/icons";
 import { trpc } from "@repo/trpc/trpc/client";
 import { useForm } from "react-hook-form";
-import { Inventory, insertInventoryParams } from "@repo/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { s3Upload } from "./s3Upload";
 import { useRouter } from "next/navigation";
+import { insertAdSlotParams } from "@repo/db";
+import { GetInventoryById } from "@repo/api";
 import { deleteS3Image } from "./s3Delete";
 import Link from "next/link";
-export default function Inventory() {
-  const createInventory = trpc.inventory.createInventory.useMutation();
+export default function NewSlot({
+  inventory,
+}: {
+  inventory: GetInventoryById;
+}) {
+  const createAdSlot = trpc.adSlots.createAdSlot.useMutation();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const toast = useToast();
   const [image, setImage] = useState<File | null>(null);
-  const form = useForm<z.infer<typeof insertInventoryParams>>({
-    resolver: zodResolver(insertInventoryParams),
+  const form = useForm<z.infer<typeof insertAdSlotParams>>({
+    resolver: zodResolver(insertAdSlotParams),
     defaultValues: {
-      inventoryPlatform: "Web App",
+      inventoryId: inventory?.id,
+      lent: false,
+      mintAddress: null,
+      ownerAddress: null,
+      ownerEmail: null,
+      status: "active",
+      slotType: "Aside Ad",
     },
   });
   return (
@@ -51,22 +62,31 @@ export default function Inventory() {
           onSubmit={form.handleSubmit(async (data) => {
             setIsLoading(true);
             try {
+              if (data.slotPrice < 0) {
+                throw new Error("Only Positive Numbers are allowed");
+              }
+              if (data.slotWidth && data.slotLength) {
+                if (data.slotWidth < 0 || data.slotLength < 0) {
+                  throw new Error("Only Positive Numbers are allowed");
+                }
+              }
               if (!image) {
                 throw new Error("Please upload image.");
               }
               const s3ImageUri = await s3Upload(image);
-              if (s3ImageUri) {
-                toast.toast({ title: "Image upload successfully." });
-              }
-              const res = await createInventory.mutateAsync({
+              const res = await createAdSlot.mutateAsync({
                 ...data,
-                inventoryImageUri: s3ImageUri,
+                slotImageUri: s3ImageUri,
+                lent: false,
+                mintAddress: null,
+                ownerAddress: null,
+                ownerEmail: null,
               });
               if (!res) {
-                await deleteS3Image(s3ImageUri!);
+                await deleteS3Image(s3ImageUri);
               }
-              toast.toast({ title: "Inventory created successfully." });
-              router.push("/inventories");
+              toast.toast({ title: "Ad slot created successfully." });
+              router.push(`/inventories/${inventory?.id}`);
               router.refresh();
               setIsLoading(false);
             } catch (err) {
@@ -81,14 +101,14 @@ export default function Inventory() {
           })}
         >
           <div className="flex items-center gap-4">
-            <Link href={`/inventories`}>
+            <Link href={`/inventories/${inventory?.id}`}>
               <Button variant="outline" size="icon" className="h-7 w-7">
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Back</span>
               </Button>
             </Link>
             <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-              Create New Ad Inventory
+              Add New Ad Slot
             </h1>
             <div className="hidden items-center gap-2 md:ml-auto md:flex">
               <Button
@@ -105,9 +125,9 @@ export default function Inventory() {
             <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
               <Card>
                 <CardHeader>
-                  <CardTitle>Inventory Details</CardTitle>
+                  <CardTitle>Ad slot Details</CardTitle>
                   <CardDescription>
-                    Fill details about your ad inventory.
+                    Fill details about your ad slot.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -115,7 +135,7 @@ export default function Inventory() {
                     <div className="grid gap-3">
                       <Label htmlFor="name">Name</Label>
                       <FormField
-                        name="inventoryName"
+                        name="slotName"
                         control={form.control}
                         render={({ field }) => (
                           <Input type="text" className="w-full" {...field} />
@@ -125,7 +145,7 @@ export default function Inventory() {
                     <div className="grid gap-3">
                       <Label htmlFor="description">Description</Label>
                       <FormField
-                        name="inventoryDescription"
+                        name="slotDescription"
                         control={form.control}
                         render={({ field }) => (
                           <Textarea
@@ -139,7 +159,7 @@ export default function Inventory() {
                     <div className="grid gap-3">
                       <Label htmlFor="name">Website URI</Label>
                       <FormField
-                        name="inventoryWebsiteUri"
+                        name="slotWebsiteUri"
                         control={form.control}
                         render={({ field }) => (
                           <Input
@@ -156,45 +176,112 @@ export default function Inventory() {
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>Category</CardTitle>
+                  <CardTitle>More Details</CardTitle>
+                  <CardDescription>
+                    Estimated lenght width of your ad space on 100% zoom and
+                    price of your slot.
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-3">
-                  {/* <div className="grid gap-6 sm:grid-cols-3"> */}
-                  {/* <div className="grid gap-3"> */}
-                  <Label htmlFor="platform">Platform</Label>
+                <CardContent>
+                  <div className="grid gap-6 sm:grid-cols-3">
+                    <div className="grid gap-3">
+                      <Label htmlFor="slotPrice">Slot Price ( in sol )</Label>
+                      <FormField
+                        control={form.control}
+                        name="slotPrice"
+                        render={({ field }) => (
+                          <Input
+                            type="number"
+                            className="w-full"
+                            {...field}
+                            {...form.register("slotPrice", {
+                              valueAsNumber: true,
+                            })}
+                            value={field.value ?? ""}
+                          />
+                        )}
+                      />
+                    </div>
+                    <div className="grid gap-3">
+                      <Label htmlFor="slotWidth">Slot Width</Label>
 
+                      <FormField
+                        control={form.control}
+                        name="slotWidth"
+                        render={({ field }) => (
+                          <Input
+                            type="number"
+                            className="w-full"
+                            {...field}
+                            {...form.register("slotWidth", {
+                              valueAsNumber: true,
+                            })}
+                            value={field.value ?? ""}
+                          />
+                        )}
+                      />
+                    </div>
+                    <div className="grid gap-3">
+                      <Label htmlFor="slotLength">Slot Length</Label>
+                      <FormField
+                        control={form.control}
+                        name="slotLength"
+                        render={({ field }) => (
+                          <Input
+                            type="number"
+                            className="w-full"
+                            {...field}
+                            {...form.register("slotLength", {
+                              valueAsNumber: true,
+                            })}
+                            value={field.value ?? ""}
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Ad Space Type</CardTitle>
+                  <CardDescription>
+                    Select the type of ad space are your listing.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
                   <FormField
                     control={form.control}
-                    name="inventoryPlatform"
+                    name="slotType"
                     render={({ field }) => (
                       <FormItem>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value ?? "Web App"}
+                          defaultValue={field.value ?? "Aside Ad"}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select Platform" />
+                              <SelectValue
+                                placeholder="Select Ad Space"
+                                defaultValue="Aside Ad"
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Mobile App">
-                              Mobile App
-                            </SelectItem>
-                            <SelectItem value="Web App">Web App</SelectItem>
-                            <SelectItem value="Billboard">Billboard</SelectItem>
+                            <SelectItem value="Banner Ad">Banner Ad</SelectItem>
+                            <SelectItem value="Pop Up Ad">Pop Up Ad</SelectItem>
+                            <SelectItem value="Aside Ad">Aside Ad</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  {/* </div> */}
-                  {/* </div> */}
                 </CardContent>
               </Card>
-            </div>
-            <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
               <Card className="overflow-hidden">
                 <CardHeader>
                   <CardTitle>Ad Inventory Image</CardTitle>
@@ -232,6 +319,12 @@ export default function Inventory() {
                               d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                             />
                           </svg>
+                          <p className="mb-2 text-sm">
+                            <span className="font-semibold">
+                              Click to upload
+                            </span>{" "}
+                            or drag and drop
+                          </p>
                         </div>
                       )}
                       <input
@@ -243,6 +336,46 @@ export default function Inventory() {
                         }}
                       />
                     </label>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-6">
+                    <div className="grid gap-3">
+                      <FormField
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => (
+                          <FormItem>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value ?? "active"}
+                            >
+                              <FormControl>
+                                <SelectTrigger
+                                  id="status"
+                                  aria-label="Select status"
+                                >
+                                  <SelectValue
+                                    placeholder="Select status"
+                                    defaultValue="active"
+                                  />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="draft">Draft</SelectItem>
+                                <SelectItem value="active">Active</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
                 </CardContent>
               </Card>

@@ -20,32 +20,32 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  Tabs,
-  TabsContent,
+  TypographyH3,
 } from "@repo/ui/components";
 import { ListFilter, MoreHorizontal, PlusCircle } from "@repo/ui/icons";
 import Image from "next/image";
+import Link from "next/link";
+import DeleteSlot from "./_deleteSlot";
 
 export default async function InventoryLayout({
   params: { inventory },
 }: {
   params: { inventory: string };
 }) {
-  console.log(inventory);
-  const adSlots = await api.adSlots.getAdSlots.query({
+  const i = await api.inventory.getInventoryById.query({
     id: inventory,
   });
-  console.log(adSlots);
-  if (!adSlots) {
+  if (!i) {
     return notFound();
   }
+  const adSlots = i.adSlots;
   return (
     <>
-      <div>Ad Inventory: {inventory}</div>
-      <Tabs defaultValue="all">
+      <div className="flex flex-1 min-h-[100vh] flex-col gap-4 lg:gap-6 lg:p-6">
+        <TypographyH3 className="text-muted-foreground">Inventory : {i.inventoryName}</TypographyH3>
         <div className="flex items-center">
           <h2 className="scroll-m-20 font-bold tracking-tight xs:text-xl md:text-4xl lg:text-5xl">
-            Your Ad NFTs
+            Your Ad Slots
           </h2>
           <div className="ml-auto flex items-center gap-2">
             <DropdownMenu>
@@ -64,113 +64,115 @@ export default async function InventoryLayout({
                   Active
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button size="sm" className="h-8 gap-1">
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Add Product
-              </span>
-            </Button>
+            <Link href={`/inventories/${inventory}/new`}>
+              <Button size="sm" className="h-8 gap-1">
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Add New Slot
+                </span>
+              </Button>
+            </Link>
           </div>
         </div>
-        <TabsContent value="all">
-          <Card>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="hidden w-[100px] sm:table-cell">
-                      <span className="sr-only">Image</span>
-                    </TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Price
-                    </TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Total Sales
-                    </TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Created at
-                    </TableHead>
-                    <TableHead>
-                      <span className="sr-only">Actions</span>
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className="hidden sm:table-cell">
-                      <Image
-                        alt="Product image"
-                        className="aspect-square rounded-md object-cover"
-                        height="64"
-                        src="/placeholder.svg"
-                        width="64"
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      Laser Lemonade Machine
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">Draft</Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      $499.99
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">25</TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      2023-07-12 10:42 AM
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter>
-              <div className="text-xs text-muted-foreground">
-                Showing <strong>1-10</strong> of <strong>32</strong> products
-              </div>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
-      {adSlots.length === 0 && (
-        <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-          <div className="flex flex-col items-center gap-1 text-center">
-            <h3 className="text-2xl font-bold tracking-tight">
-              You have no inventories
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Create an adSlots to list your ad spaces.
-            </p>
-            <Button className="mt-4">Add adSlots</Button>
+        {adSlots.length === 0 ? (
+          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+            <div className="flex flex-col items-center gap-1 text-center">
+              <h3 className="text-2xl font-bold tracking-tight">
+                You have no ad slots here.
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Create an adSlots to list your ad spaces.
+              </p>
+              <Link href={`/inventories/${inventory}/new`}>
+                <Button className="mt-4">Add New Slot</Button>
+              </Link>
+            </div>
           </div>
-        </div>
-      )}
-      {adSlots.map((adSlot) => {
-        return <div>{adSlot.slotName}</div>;
-      })}
+        ) : (
+          <>
+            <Card className="rounded-xl">
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="hidden w-[100px] sm:table-cell font-semibold">
+                        Image
+                      </TableHead>
+                      <TableHead className="font-semibold">Name</TableHead>
+                      <TableHead className="font-semibold">Status</TableHead>
+                      <TableHead className="hidden md:table-cell font-semibold">
+                        Price
+                      </TableHead>
+                      <TableHead className="hidden md:table-cell font-semibold">
+                        Ad Space Type
+                      </TableHead>
+                      <TableHead className="hidden md:table-cell font-semibold">
+                        Rented
+                      </TableHead>
+                      <TableHead className="font-semibold">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {adSlots.map((adSlot) => (
+                      <TableRow>
+                        <TableCell className="hidden sm:table-cell">
+                          <img
+                            alt="Product image"
+                            className="aspect-square rounded-md object-cover"
+                            height="64"
+                            src={adSlot.slotImageUri!}
+                            width="64"
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {adSlot.slotName}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{adSlot.status}</Badge>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {adSlot.slotPrice} sol
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {adSlot.slotType}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {!adSlot.lent ? "No Renter Yet" : adSlot.mintAddress}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                aria-haspopup="true"
+                                size="icon"
+                                variant="ghost"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Toggle menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <Link
+                                href={`/inventories/${adSlot.inventoryId}/${adSlot.id}/edit`}
+                              >
+                                <DropdownMenuItem>Edit</DropdownMenuItem>
+                              </Link>
+                              <DeleteSlot id={adSlot.id} />
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </>
+        )}
+      </div>
     </>
   );
 }

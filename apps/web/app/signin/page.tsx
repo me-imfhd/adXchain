@@ -77,8 +77,8 @@ export default function LoginForm() {
               name: data.name,
               email: data.email,
             });
+            router.push("/trade");
             setIsLoading(false);
-            router.push("/dashboard");
             return;
           } catch (e) {
             toast({

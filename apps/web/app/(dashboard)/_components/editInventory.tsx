@@ -23,26 +23,29 @@ import {
   useToast,
 } from "@repo/ui/components";
 import { ChevronLeft } from "@repo/ui/icons";
+import Link from "next/link";
 import { trpc } from "@repo/trpc/trpc/client";
 import { useForm } from "react-hook-form";
-import { Inventory, insertInventoryParams } from "@repo/db";
+import { updateInventoryParams } from "@repo/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { s3Upload } from "./s3Upload";
 import { useRouter } from "next/navigation";
+import { GetInventoryById } from "@repo/api";
 import { deleteS3Image } from "./s3Delete";
-import Link from "next/link";
-export default function Inventory() {
-  const createInventory = trpc.inventory.createInventory.useMutation();
+export default function EditInventory({
+  inventory,
+}: {
+  inventory: GetInventoryById;
+}) {
+  const updateInventory = trpc.inventory.updateInventory.useMutation();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const toast = useToast();
   const [image, setImage] = useState<File | null>(null);
-  const form = useForm<z.infer<typeof insertInventoryParams>>({
-    resolver: zodResolver(insertInventoryParams),
-    defaultValues: {
-      inventoryPlatform: "Web App",
-    },
+  const form = useForm<z.infer<typeof updateInventoryParams>>({
+    resolver: zodResolver(updateInventoryParams),
+    defaultValues: { ...inventory },
   });
   return (
     <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
@@ -52,23 +55,33 @@ export default function Inventory() {
             setIsLoading(true);
             try {
               if (!image) {
-                throw new Error("Please upload image.");
+                const res = await updateInventory.mutateAsync({
+                  ...data,
+                  updatedAt: new Date(),
+                });
+                if (res) {
+                  toast.toast({ title: "Inventory updated successfully." });
+                  router.push("/inventories");
+                  router.refresh();
+                  setIsLoading(false);
+                }
+                return;
               }
+              await deleteS3Image(inventory?.inventoryImageUri!);
               const s3ImageUri = await s3Upload(image);
               if (s3ImageUri) {
-                toast.toast({ title: "Image upload successfully." });
+                toast.toast({ title: "Image updated successfully." });
               }
-              const res = await createInventory.mutateAsync({
+              const res = await updateInventory.mutateAsync({
                 ...data,
                 inventoryImageUri: s3ImageUri,
               });
-              if (!res) {
-                await deleteS3Image(s3ImageUri!);
+              if (res) {
+                toast.toast({ title: "Inventory updated successfully." });
+                router.push("/inventories");
+                router.refresh();
+                setIsLoading(false);
               }
-              toast.toast({ title: "Inventory created successfully." });
-              router.push("/inventories");
-              router.refresh();
-              setIsLoading(false);
             } catch (err) {
               console.log(err);
               toast.toast({
@@ -81,14 +94,14 @@ export default function Inventory() {
           })}
         >
           <div className="flex items-center gap-4">
-            <Link href={`/inventories`}>
+            <Link href={"/inventories"}>
               <Button variant="outline" size="icon" className="h-7 w-7">
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Back</span>
               </Button>
             </Link>
             <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-              Create New Ad Inventory
+              Update New Ad Inventory
             </h1>
             <div className="hidden items-center gap-2 md:ml-auto md:flex">
               <Button
@@ -97,7 +110,7 @@ export default function Inventory() {
                 isLoading={isLoading}
                 disabled={isLoading}
               >
-                Create
+                Save
               </Button>
             </div>
           </div>
@@ -158,7 +171,7 @@ export default function Inventory() {
                 <CardHeader>
                   <CardTitle>Category</CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-3">
+                <CardContent>
                   {/* <div className="grid gap-6 sm:grid-cols-3"> */}
                   {/* <div className="grid gap-3"> */}
                   <Label htmlFor="platform">Platform</Label>
@@ -170,7 +183,7 @@ export default function Inventory() {
                       <FormItem>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value ?? "Web App"}
+                          defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -216,23 +229,12 @@ export default function Inventory() {
                           width={200}
                         />
                       ) : (
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <svg
-                            className="w-8 h-8 mb-4"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 20 16"
-                          >
-                            <path
-                              stroke="currentColor"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                            />
-                          </svg>
-                        </div>
+                        <img
+                          src={inventory?.inventoryImageUri!}
+                          alt={"NFTImage"}
+                          height={200}
+                          width={200}
+                        />
                       )}
                       <input
                         id="dropzone-file"
@@ -255,7 +257,7 @@ export default function Inventory() {
               isLoading={isLoading}
               disabled={isLoading}
             >
-              Create
+              Save
             </Button>
           </div>
         </form>

@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.540.0",
+    "@aws-sdk/s3-presigned-post": "^3.540.0",
     "@hookform/resolvers": "^3.3.4",
     "@metaplex-foundation/js": "^0.18.3",
     "@radix-ui/react-accordion": "^1.1.2",
@@ -29,6 +31,7 @@
     "@solana/web3.js": "^1.91.1",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@uploadthing/react": "^6.4.1",
     "autoprefixer": "^10.4.18",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.12",
@@ -41,6 +44,8 @@
     "sonner": "^1.4.3",
     "swagger-ui-react": "4.11.1",
     "tailwindcss-animate": "^1.0.7",
+    "uploadthing": "^6.7.0",
+    "uuid": "^9.0.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -49,6 +54,7 @@
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/typography": "^0.5.10",
     "@types/node": "20.11.24",
+    "@types/uuid": "^9.0.8",
     "eslint": "^8.57.0",
     "postcss": "^8.4.35",
     "prettier": "^3.2.5",

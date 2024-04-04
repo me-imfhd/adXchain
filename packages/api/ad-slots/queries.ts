@@ -15,3 +15,5 @@ export const getAdSlotById = async (id: AdSlotId) => {
   });
   return a;
 };
+
+export type GetAdSlotById = Awaited<ReturnType<typeof getAdSlotById>>;
