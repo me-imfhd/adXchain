@@ -13,10 +13,10 @@ CREATE TABLE "User" (
 CREATE TABLE "Inventory" (
     "id" TEXT NOT NULL,
     "inventoryName" TEXT NOT NULL,
-    "inventoryWebsiteUri" TEXT,
+    "inventoryWebsiteUri" TEXT NOT NULL,
     "inventoryImageUri" TEXT,
     "inventoryDescription" TEXT,
-    "inventoryPlatform" TEXT,
+    "inventoryPlatform" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" TEXT NOT NULL,
@@ -39,10 +39,13 @@ CREATE TABLE "AdSlot" (
     "id" TEXT NOT NULL,
     "slotName" TEXT NOT NULL,
     "slotDescription" TEXT,
-    "slotLength" TEXT,
-    "slotWidth" TEXT,
-    "slotWebsiteUri" TEXT,
+    "slotLength" DOUBLE PRECISION,
+    "slotWidth" DOUBLE PRECISION,
+    "slotWebsiteUri" TEXT NOT NULL,
     "slotImageUri" TEXT,
+    "slotType" TEXT NOT NULL,
+    "slotPrice" DOUBLE PRECISION NOT NULL,
+    "status" TEXT NOT NULL,
     "lent" BOOLEAN,
     "mintAddress" TEXT,
     "ownerAddress" TEXT,
@@ -61,9 +64,6 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_walletAddress_key" ON "User"("walletAddress");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Inventory_inventoryName_key" ON "Inventory"("inventoryName");
-
--- CreateIndex
 CREATE INDEX "Inventory_inventoryName_idx" ON "Inventory"("inventoryName");
 
 -- CreateIndex
@@ -71,9 +71,6 @@ CREATE INDEX "Inventory_userId_idx" ON "Inventory"("userId");
 
 -- CreateIndex
 CREATE INDEX "Attributes_inventoryId_idx" ON "Attributes"("inventoryId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "AdSlot_slotName_key" ON "AdSlot"("slotName");
 
 -- CreateIndex
 CREATE INDEX "AdSlot_inventoryId_idx" ON "AdSlot"("inventoryId");

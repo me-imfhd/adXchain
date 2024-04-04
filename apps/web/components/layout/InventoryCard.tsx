@@ -1,6 +1,7 @@
 "use client";
-import { Card } from "@repo/ui/components";
+import { Button, Card, CardContent, CardFooter } from "@repo/ui/components";
 import Link from "next/link";
+import DeleteInventory from "./deleteInventory";
 
 interface InventoryCardProps {
   imgURL: string;
@@ -15,11 +16,12 @@ export default function InventoryCard({
   CollectionName,
   CollectionPlatform,
   CollectionWebsite,
+  Collectionid,
 }: InventoryCardProps) {
   return (
     <>
       <Card className="w-full max-w-xs rounded-xl border width cursor-pointer">
-        <div className="grid gap-4 p-4">
+        <CardContent className="grid gap-4 p-4">
           <div className="aspect-square w-full overflow-hidden rounded-xl">
             <img
               alt="Product image"
@@ -47,7 +49,19 @@ export default function InventoryCard({
               </Link>
             </p>
           </div>
-        </div>
+        </CardContent>
+        <CardFooter className="flex gap-2">
+          <Link href={`/inventories/${Collectionid}/edit`}>
+            <Button size="sm" variant="secondary">
+              Edit
+            </Button>
+          </Link>
+          <DeleteInventory id={Collectionid}>
+            <Button size="sm" variant="destructive">
+              Delete
+            </Button>
+          </DeleteInventory>
+        </CardFooter>
       </Card>
     </>
   );

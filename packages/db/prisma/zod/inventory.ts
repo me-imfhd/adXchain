@@ -4,10 +4,10 @@ import { CompleteAttributes, relatedAttributesSchema, CompleteAdSlot, relatedAdS
 export const inventorySchema = z.object({
   id: z.string(),
   inventoryName: z.string(),
-  inventoryWebsiteUri: z.string().nullish(),
+  inventoryWebsiteUri: z.string(),
   inventoryImageUri: z.string().nullish(),
   inventoryDescription: z.string().nullish(),
-  inventoryPlatform: z.string().nullish(),
+  inventoryPlatform: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   userId: z.string(),

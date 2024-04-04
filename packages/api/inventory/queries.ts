@@ -10,11 +10,11 @@ export const getInventories = async () => {
   return i;
 };
 
-export const getAllInventories = async () =>{
+export const getAllInventories = async () => {
   const i = await db.inventory.findMany();
 
   return i;
-}
+};
 
 export const getInventoryById = async (id: InventoryId) => {
   const session = await getUserAuth();
@@ -23,5 +23,7 @@ export const getInventoryById = async (id: InventoryId) => {
     where: { id: inventoryId, userId: session?.user.id! },
     include: { adSlots: true },
   });
-  return { inventory: i };
+  return i;
 };
+
+export type GetInventoryById = Awaited<ReturnType<typeof getInventoryById>>;

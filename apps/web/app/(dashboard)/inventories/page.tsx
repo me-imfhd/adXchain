@@ -1,4 +1,5 @@
 import InventoryCard from "@/components/layout/InventoryCard";
+import { checkAuth } from "@repo/auth";
 import { api } from "@repo/trpc";
 import {
   Button,
@@ -13,6 +14,7 @@ import { ListFilter, PlusCircle } from "@repo/ui/icons";
 import Link from "next/link";
 import React from "react";
 export default async function InventoryPage() {
+  await checkAuth();
   const inventory = await api.inventory.getInventory.query();
   console.log("inventory", inventory);
   return (
@@ -22,7 +24,7 @@ export default async function InventoryPage() {
           Your Ad Inventories
         </h2>
         <div className="ml-auto flex items-center gap-2">
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8 gap-1">
                 <ListFilter className="h-3.5 w-3.5" />
@@ -39,7 +41,7 @@ export default async function InventoryPage() {
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
           <Link href={"/inventories/new"}>
             <Button size="sm" className="h-8 gap-1">
               <PlusCircle className="h-3.5 w-3.5" />

@@ -18,7 +18,7 @@ export default async function DashboardLayout({
           <MobileSidebar />
           <DynamicBreadcrumb />
           <div className="relative ml-auto flex-1 md:grow-0">
-            <Profile />
+            {/* <Profile /> */}
           </div>
         </header>
         <main className="grid min-h-screen flex-1 items-start gap-4 px-4 pt-4 sm:px-6 sm:py-0 md:gap-8">

@@ -3,24 +3,20 @@ import { z } from "zod";
 import { adSlotSchema } from "../prisma/zod";
 
 // Schema for adSlots - used to validate API requests
-const baseSchema = adSlotSchema.omit({
+const baseSchema = adSlotSchema;
+
+export const insertAdSlotSchema = baseSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export const insertAdSlotParams = baseSchema.omit({
+  id: true,
   createdAt: true,
   updatedAt: true,
 });
 
-export const insertAdSlotSchema = baseSchema.omit({ id: true });
-export const insertAdSlotParams = baseSchema
-  .extend({
-    sold: z.coerce.boolean(),
-  })
-  .omit({
-    id: true,
-  });
-
-export const updateAdSlotSchema = baseSchema;
-export const updateAdSlotParams = updateAdSlotSchema.extend({
-  sold: z.coerce.boolean(),
-});
+export const updateAdSlotParams = baseSchema.omit({ createdAt: true });
 export const adSlotIdSchema = baseSchema.pick({ id: true });
 export const adSlotNameSchema = baseSchema.pick({ slotName: true });
 

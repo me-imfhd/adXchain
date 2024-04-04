@@ -4,7 +4,6 @@ import {
   UpdateAdSlotParams,
   adSlotIdSchema,
   insertAdSlotSchema,
-  updateAdSlotSchema,
 } from "@repo/db";
 import { db } from "@repo/db";
 
@@ -24,12 +23,10 @@ export const updateAdSlot = async (
   id: AdSlotId,
   adSlot: UpdateAdSlotParams
 ) => {
-  const { id: adSlotId } = adSlotIdSchema.parse({ id });
-  const newAdSlot = updateAdSlotSchema.parse(adSlot);
   try {
     const a = await db.adSlot.update({
-      where: { id: adSlotId },
-      data: newAdSlot,
+      where: { id },
+      data: adSlot,
     });
     return { adSlot: a };
   } catch (err) {

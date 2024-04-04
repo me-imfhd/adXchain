@@ -4,7 +4,6 @@ import { inventorySchema } from "../prisma/zod";
 // Schema for inventory - used to validate API requests
 const baseSchema = inventorySchema;
 
-export const insertInventorySchema = baseSchema.omit({ id: true });
 export const insertInventoryParams = baseSchema.omit({
   id: true,
   userId: true,
@@ -22,7 +21,6 @@ export const inventoryNameSchema = baseSchema.pick({ inventoryName: true });
 
 // Types for inventory - used to type API request params and within Components
 export type Inventory = z.infer<typeof inventorySchema>;
-export type NewInventory = z.infer<typeof insertInventorySchema>;
 export type NewInventoryParams = z.infer<typeof insertInventoryParams>;
 export type UpdateInventoryParams = z.infer<typeof updateInventoryParams>;
 export type InventoryId = z.infer<typeof inventoryIdSchema>["id"];
