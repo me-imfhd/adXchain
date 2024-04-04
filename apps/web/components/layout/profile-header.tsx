@@ -43,7 +43,7 @@ export const ProfileHeader = () => {
             isLoading={disconnecting}
             onClick={async () => {
               disconnect();
-              signOut({redirect:false});
+              signOut({ redirect: false });
             }}
           >
             Disconnect

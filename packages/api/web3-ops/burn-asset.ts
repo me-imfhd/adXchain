@@ -19,7 +19,7 @@ export async function BurnNft({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while burning the NFT, txn sign: ${response.signature.toString()}`
+        `Error occured while burning the NFT, txn sign: ${response.signature.toString()}`,
     );
   }
   return {

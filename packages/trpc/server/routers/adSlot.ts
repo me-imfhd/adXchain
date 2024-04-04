@@ -5,7 +5,7 @@ import {
   getAdSlots,
   updateAdSlot,
 } from "@repo/api";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import {
   adSlotIdSchema,
   adSlotNameSchema,
@@ -25,17 +25,17 @@ export const adSlotsRouter = createTRPCRouter({
     .query(async ({ input }) => {
       return getAdSlotById(input.id);
     }),
-  createAdSlot: publicProcedure
+  createAdSlot: protectedProcedure
     .input(insertAdSlotParams)
     .mutation(async ({ input }) => {
       return createAdSlot(input);
     }),
-  updateAdSlot: publicProcedure
+  updateAdSlot: protectedProcedure
     .input(updateAdSlotParams)
     .mutation(async ({ input }) => {
       return updateAdSlot(input.id, input);
     }),
-  deleteAdSlot: publicProcedure
+  deleteAdSlot: protectedProcedure
     .input(adSlotIdSchema)
     .mutation(async ({ input }) => {
       return deleteAdSlot(input.id);

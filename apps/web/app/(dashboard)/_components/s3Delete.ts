@@ -14,7 +14,7 @@ export async function deleteS3Image(imageURI: string) {
       body: JSON.stringify({
         key: oldImageKey,
       }),
-    }
+    },
   );
   if (!deleteResponse.ok) {
     throw new Error("Failed to delete the old image.");

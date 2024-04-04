@@ -10,7 +10,7 @@ export async function s3Upload(image: File) {
         filename: image.name,
         contentType: image.type,
       }),
-    }
+    },
   );
   if (!response.ok) {
     throw new Error("Failed to get pre-signed URL.");
