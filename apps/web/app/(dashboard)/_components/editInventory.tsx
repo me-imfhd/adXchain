@@ -8,17 +8,9 @@ import {
   CardHeader,
   CardTitle,
   Form,
-  FormControl,
   FormField,
-  FormItem,
-  FormMessage,
   Input,
   Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Textarea,
   useToast,
 } from "@repo/ui/components";
@@ -165,45 +157,6 @@ export default function EditInventory({
                       />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Category</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {/* <div className="grid gap-6 sm:grid-cols-3"> */}
-                  {/* <div className="grid gap-3"> */}
-                  <Label htmlFor="platform">Platform</Label>
-
-                  <FormField
-                    control={form.control}
-                    name="inventoryPlatform"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Platform" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="Mobile App">
-                              Mobile App
-                            </SelectItem>
-                            <SelectItem value="Web App">Web App</SelectItem>
-                            <SelectItem value="Billboard">Billboard</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {/* </div> */}
-                  {/* </div> */}
                 </CardContent>
               </Card>
             </div>

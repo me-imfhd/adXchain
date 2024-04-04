@@ -16,4 +16,12 @@ export const getAdSlotById = async (id: AdSlotId) => {
   return a;
 };
 
+export const getSlotCountInInventory = async (id: InventoryId) => {
+  const total = await db.adSlot.count({ where: { inventoryId: id } });
+  const lent = await db.adSlot.count({
+    where: { inventoryId: id, lent: true },
+  });
+
+  return { total, lent };
+};
 export type GetAdSlotById = Awaited<ReturnType<typeof getAdSlotById>>;

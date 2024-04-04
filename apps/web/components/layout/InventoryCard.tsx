@@ -7,14 +7,12 @@ interface InventoryCardProps {
   imgURL: string;
   CollectionName: string;
   CollectionWebsite: string;
-  CollectionPlatform: string;
   Collectionid: string;
 }
 
 export default function InventoryCard({
   imgURL,
   CollectionName,
-  CollectionPlatform,
   CollectionWebsite,
   Collectionid,
 }: InventoryCardProps) {
@@ -35,10 +33,7 @@ export default function InventoryCard({
             <h3 className="text-sm md:text-base">
               Name: <span className="font-semibold">{CollectionName}</span>
             </h3>
-            <h3 className="text-sm md:text-base">
-              Platform:{" "}
-              <span className="font-semibold">{CollectionPlatform}</span>
-            </h3>
+
             <p className="text-sm md:text-base">
               Website:{" "}
               <Link

@@ -199,7 +199,7 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
                       />
                     </div>
                     <div className="grid gap-3">
-                      <Label htmlFor="slotWidth">Slot Width</Label>
+                      <Label htmlFor="slotWidth">Slot Width ( in % )</Label>
 
                       <FormField
                         control={form.control}
@@ -218,7 +218,7 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
                       />
                     </div>
                     <div className="grid gap-3">
-                      <Label htmlFor="slotLength">Slot Length</Label>
+                      <Label htmlFor="slotLength">Slot Length ( in % )</Label>
                       <FormField
                         control={form.control}
                         name="slotLength"
@@ -232,6 +232,38 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
                             })}
                             value={field.value ?? ""}
                           />
+                        )}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="platform">Platform</Label>
+
+                      <FormField
+                        control={form.control}
+                        name="slotPlatform"
+                        render={({ field }) => (
+                          <FormItem>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Platform" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="Mobile App">
+                                  Mobile App
+                                </SelectItem>
+                                <SelectItem value="Web App">Web App</SelectItem>
+                                <SelectItem value="Billboard">
+                                  Billboard
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
                         )}
                       />
                     </div>
