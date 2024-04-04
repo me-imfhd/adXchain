@@ -116,10 +116,6 @@ export const authOptions: AuthOptions = {
   ],
 };
 
-export function handler() {
-  return NextAuth(authOptions);
-}
-
 export const getUserAuth = async () => {
   const session = await getServerSession(authOptions);
   return session;
