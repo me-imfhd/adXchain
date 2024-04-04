@@ -18,14 +18,7 @@ export default function DynamicBreadcrumb() {
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link
-              href="/dashboard"
-              className={`${
-                pathname === "/dashboard" ? "font-semibold text-white" : ""
-              }`}
-            >
-              Dashboard
-            </Link>
+            <Link href="/dashboard" className={`${pathname === "/dashboard" ? 'font-semibold text-white' : ''}`}>Dashboard</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
@@ -44,16 +37,7 @@ export default function DynamicBreadcrumb() {
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link
-              href="/inventories/all"
-              className={`${
-                pathname === "/inventories/all"
-                  ? "font-semibold text-white"
-                  : ""
-              }`}
-            >
-              All Inventories
-            </Link>
+            <Link href="/inventories/all" className={`${pathname === "/inventories/all" ? 'font-semibold text-white' : ''}`}>All Inventories</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
       </BreadcrumbList>

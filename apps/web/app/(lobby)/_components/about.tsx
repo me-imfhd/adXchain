@@ -12,6 +12,7 @@ export function About() {
         viewBox="0 0 23 298"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        className="hidden md:block"
       >
         {/* @ts-ignore */}
         <g>
@@ -135,6 +136,7 @@ export function About() {
         viewBox="0 0 23 298"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        className="hidden md:block"
       >
         {/* @ts-ignore */}
         <g>

@@ -49,7 +49,7 @@ export const SiteFooter = () => {
           aria-labelledby="footer-bottom-heading"
           className="flex  xl:flex-row lg:flex-row md:flex-row sm:flex-row items-center space-x-4"
         >
-          <div className="text-left text-sm leading-loose text-muted-foreground">
+          <div className="hidden md:block text-left text-sm leading-loose text-muted-foreground">
             Built by{" "}
             <a
               aria-label="Kickflip tutorial on YouTube"
