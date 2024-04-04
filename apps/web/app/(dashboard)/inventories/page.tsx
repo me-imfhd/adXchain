@@ -14,7 +14,6 @@ import { ListFilter, PlusCircle } from "@repo/ui/icons";
 import Link from "next/link";
 import React from "react";
 export default async function InventoryPage() {
-  await checkAuth();
   const inventory = await api.inventory.getInventory.query();
   console.log("inventory", inventory);
   return (

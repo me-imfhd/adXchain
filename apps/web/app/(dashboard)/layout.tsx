@@ -3,11 +3,13 @@ import MobileSidebar from "./_components/mobile-sidebar";
 import Sidebar from "./_components/sidebar";
 import DynamicBreadcrumb from "./_components/breadcrumb";
 import Profile from "./_components/profile";
+import { checkAuth } from "@repo/auth";
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await checkAuth();
   return (
     <div className="flex  w-full flex-col bg-muted/40">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
