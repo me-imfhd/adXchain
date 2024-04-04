@@ -23,7 +23,7 @@ export async function transferNft({
   if (response.result.value.err) {
     throw new Error(
       (response.result.value.err as Error).message ??
-        `Error occured while transfering the NFT txn sign: ${signature}`
+        `Error occured while transfering the NFT txn sign: ${signature}`,
     );
   }
 

@@ -23,7 +23,7 @@ export const createInventory = async (inventory: NewInventoryParams) => {
 };
 export const updateInventory = async (
   id: InventoryId,
-  inventory: UpdateInventoryParams
+  inventory: UpdateInventoryParams,
 ) => {
   const session = await getUserAuth();
   const newInventory = {

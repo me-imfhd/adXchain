@@ -224,14 +224,24 @@ main {
 .gradient-border-left {
   border-radius: 2rem;
   border: 2px solid;
-  border-image: linear-gradient(to right, white, rgb(105, 67, 228), rgb(187, 75, 222));
+  border-image: linear-gradient(
+    to right,
+    white,
+    rgb(105, 67, 228),
+    rgb(187, 75, 222)
+  );
   border-image-slice: 1;
   border-image-width: 1 0 1 1;
 }
 .gradient-border-right {
   border-radius: 2rem;
   border: 2px solid;
-  border-image: linear-gradient(to right, white, rgb(105, 67, 228), rgb(187, 75, 222));
+  border-image: linear-gradient(
+    to right,
+    white,
+    rgb(105, 67, 228),
+    rgb(187, 75, 222)
+  );
   border-image-slice: 1;
   border-image-width: 1 1 1 0;
 }

@@ -25,7 +25,6 @@ const NFTDemo: React.FC<NFTDemoProps> = ({
   NFTSymbol,
   NFTWebsite,
 }) => {
-
   return (
     <div className="border-2 border-slate-500-500 flex flex-wrap justify-between p-5 mt-10 rounded-md">
       <div className="p-3 flex items-start flex-col gap-2">
@@ -44,11 +43,7 @@ const NFTDemo: React.FC<NFTDemoProps> = ({
         {NFTSymbol && (
           <span className="text-slate-400 text-lg">{NFTSymbol}</span>
         )}
-        {NFTMutable && (
-          <p className="text-slate-300 text-lg">
-            Mutable
-          </p>
-        )}
+        {NFTMutable && <p className="text-slate-300 text-lg">Mutable</p>}
         {NFTCategory && <p>Category:{NFTCategory}</p>}
         {/* attributes here */}
       </div>

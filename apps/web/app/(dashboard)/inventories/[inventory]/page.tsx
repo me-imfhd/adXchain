@@ -42,7 +42,9 @@ export default async function InventoryLayout({
   return (
     <>
       <div className="flex flex-1 min-h-[100vh] flex-col gap-4 lg:gap-6 lg:p-6">
-        <TypographyH3 className="text-muted-foreground">Inventory : {i.inventoryName}</TypographyH3>
+        <TypographyH3 className="text-muted-foreground">
+          Inventory : {i.inventoryName}
+        </TypographyH3>
         <div className="flex items-center">
           <h2 className="scroll-m-20 font-bold tracking-tight xs:text-xl md:text-4xl lg:text-5xl">
             Your Ad Slots
