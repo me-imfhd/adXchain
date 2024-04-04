@@ -33,4 +33,3 @@ export class SigninMessage {
     return nacl.sign.detached.verify(msgUint8, signatureUint8, pubKeyUint8);
   }
 }
-

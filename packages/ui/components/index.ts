@@ -52,4 +52,4 @@ export * from "./typography/typography";
 export * from "./use-keypress";
 export * from "./user-badge";
 export * from "./use-toast";
-export * from "./breadcrumb"
+export * from "./breadcrumb";

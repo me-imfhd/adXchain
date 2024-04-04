@@ -6,7 +6,7 @@ import {
   getInventoryById,
   updateInventory,
 } from "@repo/api";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import {
   insertInventoryParams,
   inventoryIdSchema,
@@ -22,21 +22,20 @@ export const inventoryRouter = createTRPCRouter({
     .query(async ({ input }) => {
       return getInventoryById(input.id);
     }),
-  getAllInventories: publicProcedure
-    .query(async ()=>{
-      return getAllInventories();
-    }),
-  createInventory: publicProcedure
+  getAllInventories: publicProcedure.query(async () => {
+    return getAllInventories();
+  }),
+  createInventory: protectedProcedure
     .input(insertInventoryParams)
     .mutation(async ({ input }) => {
       return createInventory(input);
     }),
-  updateInventory: publicProcedure
+  updateInventory: protectedProcedure
     .input(updateInventoryParams)
     .mutation(async ({ input }) => {
       return updateInventory(input.id, input);
     }),
-  deleteInventory: publicProcedure
+  deleteInventory: protectedProcedure
     .input(inventoryIdSchema)
     .mutation(async ({ input }) => {
       return deleteInventory(input.id);

@@ -29,9 +29,9 @@ export function Hero() {
       </p>
       <div className="pt-6 flex justify-center items-center gap-5 animate-fade-up">
         <Link href="/create-nft">
-        <ShinyButton animationType="up" tap="in">
-          Get Started
-        </ShinyButton>
+          <ShinyButton animationType="up" tap="in">
+            Get Started
+          </ShinyButton>
         </Link>
         {/* <Button
           size="sm"
