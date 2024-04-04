@@ -3,6 +3,7 @@ import {
   deleteAdSlot,
   getAdSlotById,
   getAdSlots,
+  getSlotCountInInventory,
   updateAdSlot,
 } from "@repo/api";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
@@ -39,5 +40,10 @@ export const adSlotsRouter = createTRPCRouter({
     .input(adSlotIdSchema)
     .mutation(async ({ input }) => {
       return deleteAdSlot(input.id);
+    }),
+  getSlotCountInInventory: publicProcedure
+    .input(inventoryIdSchema)
+    .query(async ({ input }) => {
+      return getSlotCountInInventory(input.id);
     }),
 });

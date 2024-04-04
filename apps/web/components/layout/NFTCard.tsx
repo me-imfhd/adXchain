@@ -1,4 +1,5 @@
 "use client";
+import { Card } from "@repo/ui/components";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -24,8 +25,8 @@ export function NFTCard({
   const [isSelected, setIsSelected] = useState<boolean>(false);
 
   return (
-    <div
-      className={`bg-[#252a2c] h-64 w-56 rounded-xl flex flex-col justify-around p-2 duration-50  cursor-pointer ${
+    <Card
+      className={`  cursor-pointer ${
         isSelected ? "border-2 border-blue-400" : ""
       }`}
       onClick={() => {
@@ -35,11 +36,19 @@ export function NFTCard({
       }}
     >
       {/* Image Container */}
-      <div className="h-1/2 w-full flex justify-center items-center object-cover rounded-2xl ">
-        <Image
-          src={imgURL}
-          alt="logo"
-          className="max-w-full max-h-full object-cover rounded-xl"
+      <div className="aspect-video overflow-hidden ">
+        <img
+          alt="Collection Image"
+          className="object-cover rounded-xl"
+          height="350"
+          src={
+            "http://localhost:3000/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcreator4.b93d61e5.jpg&w=1920&q=75"
+          }
+          style={{
+            aspectRatio: "350/250",
+            objectFit: "cover",
+          }}
+          width="250"
         />
       </div>
       {/* Card Text Container */}
@@ -111,7 +120,7 @@ export function NFTCard({
           price={BID}
         />
       </div>
-    </div>
+    </Card>
   );
 }
 

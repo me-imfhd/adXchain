@@ -40,9 +40,6 @@ export default function Inventory() {
   const [image, setImage] = useState<File | null>(null);
   const form = useForm<z.infer<typeof insertInventoryParams>>({
     resolver: zodResolver(insertInventoryParams),
-    defaultValues: {
-      inventoryPlatform: "Web App",
-    },
   });
   return (
     <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
@@ -152,45 +149,6 @@ export default function Inventory() {
                       />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Category</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3">
-                  {/* <div className="grid gap-6 sm:grid-cols-3"> */}
-                  {/* <div className="grid gap-3"> */}
-                  <Label htmlFor="platform">Platform</Label>
-
-                  <FormField
-                    control={form.control}
-                    name="inventoryPlatform"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value ?? "Web App"}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Platform" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="Mobile App">
-                              Mobile App
-                            </SelectItem>
-                            <SelectItem value="Web App">Web App</SelectItem>
-                            <SelectItem value="Billboard">Billboard</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {/* </div> */}
-                  {/* </div> */}
                 </CardContent>
               </Card>
             </div>

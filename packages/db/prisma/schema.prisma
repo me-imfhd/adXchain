@@ -41,11 +41,10 @@ model User {
 
 model Inventory {
   id                   String       @id @default(cuid())
-  inventoryName        String       
+  inventoryName        String
   inventoryWebsiteUri  String
   inventoryImageUri    String?
   inventoryDescription String?
-  inventoryPlatform    String
   inventoryAttributes  Attributes[]
 
   adSlots AdSlot[]
@@ -73,7 +72,7 @@ model Attributes {
 
 model AdSlot {
   id              String  @id @default(cuid())
-  slotName        String  
+  slotName        String
   slotDescription String?
   slotLength      Float?
   slotWidth       Float?
@@ -82,6 +81,7 @@ model AdSlot {
   slotType        String
   slotPrice       Float
   status          String
+  slotPlatform    String
 
   lent         Boolean?
   mintAddress  String?

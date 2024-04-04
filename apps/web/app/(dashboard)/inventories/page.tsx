@@ -73,7 +73,6 @@ export default async function InventoryPage() {
               <InventoryCard
                 imgURL={inventory.inventoryImageUri!}
                 CollectionName={inventory.inventoryName}
-                CollectionPlatform={inventory.inventoryPlatform!}
                 CollectionWebsite={inventory.inventoryWebsiteUri!}
                 Collectionid={inventory.id}
               />

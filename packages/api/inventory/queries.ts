@@ -11,8 +11,12 @@ export const getInventories = async () => {
 };
 
 export const getAllInventories = async () => {
-  const i = await db.inventory.findMany();
-
+  const i = await db.inventory.findMany({
+    include: {
+      user: { select: { walletAddress: true } },
+      adSlots: { select: { lent: true } },
+    },
+  });
   return i;
 };
 
