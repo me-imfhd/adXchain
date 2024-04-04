@@ -5,7 +5,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { SigninMessage } from "./signMessage";
 import { getCsrfToken } from "next-auth/react";
 import NextAuth from "next-auth/next";
-import { NextApiRequest, NextApiResponse } from "next";
 import { redirect } from "next/navigation";
 
 declare module "next-auth" {
@@ -28,7 +27,7 @@ declare module "next-auth/jwt" {
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(db),
-  secret: "1eabb82993bb5b639ba79263548a6256445d9072728c4e6b9441a7f7d86e9743",
+  secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV !== "production",
   session: {
     strategy: "jwt",
