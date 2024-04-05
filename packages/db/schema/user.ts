@@ -2,8 +2,8 @@ import { z } from "zod";
 import { userSchema } from "../prisma/zod";
 
 export const createUserSchema = z.object({
-  name: z.string().optional(),
-  email: z.string().optional(),
+  name: z.string(),
+  email: z.string().email(),
   walletAddress: z.string(),
 });
 export const userWalletSchema = userSchema.pick({ walletAddress: true });

@@ -65,7 +65,6 @@ export default function LoginForm() {
               statement: `Sign in to adXchain.`,
               nonce: csrf!,
             });
-            console.log(data);
 
             const d = new TextEncoder().encode(message.prepare());
             const signature = await signMessage!(d);
@@ -111,7 +110,7 @@ export default function LoginForm() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Business Email</Label>
               <FormField
                 control={form.control}
                 name="email"
