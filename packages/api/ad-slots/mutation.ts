@@ -1,5 +1,6 @@
 import {
   AdSlotId,
+  BuySlot,
   NewAdSlotParams,
   UpdateAdSlotParams,
   adSlotIdSchema,
@@ -21,7 +22,7 @@ export const createAdSlot = async (adSlot: NewAdSlotParams) => {
 
 export const updateAdSlot = async (
   id: AdSlotId,
-  adSlot: UpdateAdSlotParams,
+  adSlot: UpdateAdSlotParams
 ) => {
   try {
     const a = await db.adSlot.update({
@@ -46,4 +47,11 @@ export const deleteAdSlot = async (id: AdSlotId) => {
     console.error(message);
     throw { error: message };
   }
+};
+
+export const buyMultipleSlots = async (data: BuySlot[]) => {
+  const promises = data.map((adSlot) => {
+    return db.adSlot.update({ where: { id: adSlot.id }, data: { ...adSlot } });
+  });
+  const updatedSlots = await db.$transaction(promises);
 };

@@ -1,4 +1,5 @@
 import {
+  buyMultipleSlots,
   buySlot,
   createAdSlot,
   deleteAdSlot,
@@ -11,6 +12,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import {
   adSlotIdSchema,
   adSlotNameSchema,
+  buyMultipleSlotSchema,
   buySlotSchema,
   insertAdSlotParams,
   inventoryIdSchema,
@@ -52,4 +54,9 @@ export const adSlotsRouter = createTRPCRouter({
   buySlot: publicProcedure.input(buySlotSchema).mutation(async ({ input }) => {
     return buySlot(input);
   }),
+  buyMultipleSlots: publicProcedure
+    .input(buyMultipleSlotSchema)
+    .mutation(async ({ input }) => {
+      return buyMultipleSlots(input);
+    }),
 });

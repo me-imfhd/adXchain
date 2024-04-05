@@ -28,9 +28,8 @@ export const getSlotCountInInventory = async (id: InventoryId) => {
 export type GetAdSlotById = Awaited<ReturnType<typeof getAdSlotById>>;
 
 export const buySlot = async (data: BuySlot) => {
-  const old = await db.adSlot.findUnique({ where: { id: data.id } });
   const a = await db.adSlot.update({
     where: { id: data.id },
-    data: { ...old, ...data },
+    data: { ...data },
   });
 };
