@@ -12,12 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Input,
   TypographyH3,
 } from "@repo/ui/components";
 import { GlowingButton } from "@repo/ui/components/buttons";
-import { ExternalLink } from "@repo/ui/icons";
+import { ExternalLink, Upload } from "@repo/ui/icons";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 
 interface MarketPageProps {
   inventory: GetInventoryById;
@@ -36,14 +37,19 @@ export default function MarketPage({
   const [adPrice, setAdPrice] = useState(0);
   const [isSelected, setIsSelected] = useState(false);
 
-  const handleClick = (id: string, name: string, img:string, price: number) => {
+  const handleClick = (
+    id: string,
+    name: string,
+    img: string,
+    price: number
+  ) => {
     const mp = new Map(adSlotToPriceMapping);
     if (mp.has(id)) {
       if (adPrice !== 0) setAdPrice((prev) => prev - price);
       mp.delete(id);
     } else {
       setAdPrice((prev) => prev + price);
-      mp.set(id, price);
+      mp.set(id, [name, img, price]);
     }
     setAdslotToPriceMapping(mp);
     setIsSelected((prev) => !prev);
@@ -83,17 +89,22 @@ export default function MarketPage({
                 <>
                   <div className="flex items-start flex-wrap justify-between p-2">
                     <div className="flex flex-col gap-4 items-start w-[70%] border-solid border p-3">
-                      {Array.from(adSlotToPriceMapping).map(([slot, price]) => {
-                        const id = slot.slice(0, 7);
+                      {Array.from(adSlotToPriceMapping).map(([slot, value]) => {
                         return (
-                          <div key={slot} className="flex gap-4">
+                          <div key={slot} className="flex gap-5">
                             <Badge
                               className="bg-secondary text-primary font-medium "
                               size={"xs"}
                             >
                               BUY
                             </Badge>
-                            <span>#{id}</span>
+                            <img
+                              src={value[1]}
+                              alt="img"
+                              width={20}
+                              height={20}
+                            />
+                            <span>{value[0]}</span>
                             <span className="flex items-center gap-1">
                               <svg
                                 version="1.1"
@@ -118,18 +129,38 @@ export default function MarketPage({
                                   style={{ fill: "white" }}
                                 ></path>
                               </svg>
-                              {price}
+                              {value[2]}
+                            </span>
+                            <span>
+                              <button
+                                onClick={() =>
+                                  document.getElementById("picture")?.click()
+                                }
+                              >
+                                <Upload />
+                                <Input
+                                  id="picture"
+                                  type="file"
+                                  className="hidden"
+                                  onChange={(
+                                    e: ChangeEvent<HTMLInputElement>
+                                  ) => {
+                                    const file = e.target.files?.[0];
+                                    console.log(file); // You can handle the file here
+                                  }}
+                                />
+                              </button>
                             </span>
                           </div>
                         );
                       })}
                     </div>
                     <div className="flex flex-col w-[30%] border-solid border p-3 items-end">
-                      {Array.from(adSlotToPriceMapping).map(([slot, price]) => {
+                      {Array.from(adSlotToPriceMapping).map(([slot, value]) => {
                         return (
                           <div key={slot} className="flex gap-4">
                             <span className="flex items-center gap-1">
-                              {price}
+                              {value[2]}
                             </span>
                           </div>
                         );
@@ -198,7 +229,7 @@ export default function MarketPage({
               </div>
             </div>
           )}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-start">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-start p-3">
             {inventory?.adSlots.length === 0
               ? "This inventory has not ad slots listed."
               : inventory?.adSlots.map((adSlot: any) => {
@@ -210,7 +241,14 @@ export default function MarketPage({
                   return (
                     <Card
                       className="rounded-lg"
-                      onClick={() => handleClick(adSlot.id, adSlot.slotName, adSlot.slotImageUri, adSlot.slotPrice)}
+                      onClick={() =>
+                        handleClick(
+                          adSlot.id,
+                          adSlot.slotName,
+                          adSlot.slotImageUri,
+                          adSlot.slotPrice
+                        )
+                      }
                     >
                       <div className="flex flex-col gap-1">
                         <div className="aspect-video overflow-hidden ">
