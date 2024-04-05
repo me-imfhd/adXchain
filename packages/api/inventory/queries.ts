@@ -25,7 +25,20 @@ export const getInventoryById = async (id: InventoryId) => {
   const { id: inventoryId } = inventoryIdSchema.parse({ id });
   const i = await db.inventory.findFirst({
     where: { id: inventoryId, userId: session?.user.id! },
-    include: { adSlots: true },
+    include: {
+      adSlots: {
+        include: {
+          inventory: {
+            select: {
+              projects: {
+                where: { inventoryId: id },
+                select: { adNft: { select: { nftMintAddress: true } } },
+              },
+            },
+          },
+        },
+      },
+    },
   });
   return i;
 };

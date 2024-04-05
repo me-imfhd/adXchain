@@ -15,8 +15,24 @@ export const insertAdSlotParams = baseSchema.omit({
   createdAt: true,
   updatedAt: true,
 });
-
+export const insertAdSlotForm = insertAdSlotParams
+  .omit({
+    slotImageUri: true,
+    slotPrice: true,
+  })
+  .extend({
+    slotPrice: z.number(),
+  });
 export const updateAdSlotParams = baseSchema.omit({ createdAt: true });
+export const editAdSlotForm = baseSchema
+  .omit({
+    createdAt: true,
+    slotPrice: true,
+  })
+  .extend({
+    slotPrice: z.number(),
+  });
+
 export const adSlotIdSchema = baseSchema.pick({ id: true });
 export const adSlotNameSchema = baseSchema.pick({ slotName: true });
 
@@ -53,7 +69,7 @@ export const inventoryAndAdSlotSchema = baseSchema.extend({
     }, `Max image size is 5MB.`)
     .refine(
       (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
-      "Format not supported.",
+      "Format not supported."
     ),
 });
 export const selectedSlotSchema = z.object({

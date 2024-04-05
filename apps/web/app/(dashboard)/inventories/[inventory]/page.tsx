@@ -32,6 +32,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import DeleteSlot from "./_deleteSlot";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 export default async function InventoryLayout({
   params: { inventory },
@@ -45,12 +46,18 @@ export default async function InventoryLayout({
     return notFound();
   }
   const adSlots = i.adSlots;
+
   return (
     <>
       <div className="flex flex-1 min-h-[100vh] flex-col gap-4 lg:gap-6 lg:p-6">
         <div className="flex gap-2 items-center">
           <Link href={`/inventories`}>
-            <Button variant="outline" size="icon" animationType="none" className="h-7 w-7">
+            <Button
+              variant="outline"
+              size="icon"
+              animationType="none"
+              className="h-7 w-7"
+            >
               <ChevronLeft className="h-4 w-4" />
               <span className="sr-only">Back</span>
             </Button>
@@ -175,16 +182,19 @@ export default async function InventoryLayout({
                                 style={{ fill: "white" }}
                               ></path>
                             </svg>
-                            <span>{adSlot.slotPrice}</span>
+                            <span>
+                              {Number(adSlot.slotPrice) / LAMPORTS_PER_SOL}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
                           {adSlot.slotType}
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
-                          {!adSlot.lent && !adSlot.mintAddress
-                            ? "No Renter Yet"
-                            : adSlot.mintAddress}
+                          {adSlot.inventory.projects[0]?.adNft?.nftMintAddress
+                            ? adSlot.inventory.projects[0]?.adNft
+                                ?.nftMintAddress
+                            : "No Renter Yet"}
                         </TableCell>
                         <TableCell>
                           <DropdownMenu>
