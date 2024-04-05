@@ -1,6 +1,7 @@
 import React from "react";
 import { TypographyH3 } from "@repo/ui/components";
 import { GetInventoryById } from "@repo/api";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 export default function InventoryPageLayout({
   i,
   dialog,
@@ -17,7 +18,7 @@ export default function InventoryPageLayout({
   total: number;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center mt-14  w-full">
+    <div className="flex flex-col items-center justify-center mt-[57px]  w-full">
       <div className="grid md:grid-cols-[300px_1fr] gap-4 min-h-screen">
         <div className="flex flex-col gap-2 h-full md:border-r ">
           <img
@@ -39,7 +40,9 @@ export default function InventoryPageLayout({
           {i && i.adSlots.length > 0 && (
             <div className="flex flex-wrap p-4 gap-8">
               <div className="text-center">
-                <TypographyH3>{i?.adSlots[0]?.slotPrice}</TypographyH3>
+                <TypographyH3>
+                  {Number(i?.adSlots[0]?.slotPrice) / LAMPORTS_PER_SOL}
+                </TypographyH3>
                 <TypographyH3 className="text-muted-foreground font-normal">
                   BUY NOW
                 </TypographyH3>

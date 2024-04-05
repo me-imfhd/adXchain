@@ -22,6 +22,7 @@ import React, { ChangeEvent, useState } from "react";
 import InventoryPageLayout from "./inventoryPageLayout";
 import { Session } from "@repo/auth";
 import { SelectedSlotSchema } from "@repo/db";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 interface MarketPageProps {
   inventory: NonNullable<GetInventoryById>;
@@ -75,7 +76,35 @@ export default function MarketPage({
         <Dialog>
           <DialogTrigger asChild>
             <GlowingButton>
-              BUY {adPrice != 0 && <span>ADNFT {adPrice} SOL</span>}
+              BUY{" "}
+              {adPrice != 0 && (
+                <span className=" flex items-center gap-1">
+                  ADNFT {adPrice}{" "}
+                  <svg
+                    version="1.1"
+                    id="Layer_1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    x="0"
+                    y="0"
+                    width="16px"
+                    height="16px"
+                    viewBox="0 0 450 352.69"
+                  >
+                    <path
+                      d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"
+                      style={{ fill: "white" }}
+                    ></path>
+                    <path
+                      d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"
+                      style={{ fill: "white" }}
+                    ></path>
+                    <path
+                      d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
+                      style={{ fill: "white" }}
+                    ></path>
+                  </svg>
+                </span>
+              )}
             </GlowingButton>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[800px]">
@@ -277,8 +306,9 @@ export default function MarketPage({
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-start p-3">
           {inventory?.adSlots.length === 0
             ? "This inventory has not ad slots listed."
-            : inventory?.adSlots.map((adSlot: any) => {
-                const walletAddress = adSlot.ownerAddress;
+            : inventory?.adSlots.map((adSlot) => {
+                const walletAddress =
+                  adSlot.inventory.projects[0]?.adNft?.nftMintAddress;
                 const wa =
                   walletAddress?.slice(0, 4) + ".." + walletAddress?.slice(-4);
                 return (
@@ -288,7 +318,7 @@ export default function MarketPage({
                         adSlot.id,
                         adSlot.slotName,
                         adSlot.slotImageUri,
-                        adSlot.slotPrice
+                        Number(adSlot.slotPrice) / LAMPORTS_PER_SOL
                       );
                     }}
                     className="rounded-lg"
@@ -298,10 +328,10 @@ export default function MarketPage({
                         <img
                           alt="Collection Image"
                           className="object-cover rounded-lg"
-                          height="275"
+                          height="225"
                           src={adSlot.slotImageUri!}
                           style={{
-                            aspectRatio: "400/275",
+                            aspectRatio: "400/225",
                             objectFit: "cover",
                           }}
                           width="400"
@@ -313,35 +343,60 @@ export default function MarketPage({
                             <h3 className="font-semibold text-xl">
                               {adSlot.slotName}
                             </h3>
-                            <Badge
-                              className="bg-secondary text-primary font-medium "
-                              size={"xs"}
-                            >
-                              {adSlot.slotPlatform}
-                            </Badge>
                           </div>
-                          <div className="flex flex-col gap-1">
-                            <p className="text-sm leading-none flex justify-between gap-2">
-                              <span className="text-muted-foreground font-medium">
+                          <div className="text-xs flex flex-col gap-1">
+                            <p className="leading-none flex text-base pb-0.5 justify-between gap-2">
+                              <span className="text-green-400 font-semibold">
                                 Floor Price :
                               </span>
-                              <span>{adSlot.slotPrice} sol</span>
+                              <span className="flex items-center gap-1">
+                                {Number(adSlot.slotPrice) / LAMPORTS_PER_SOL}{" "}
+                                <svg
+                                  version="1.1"
+                                  id="Layer_1"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  x="0"
+                                  y="0"
+                                  width="16px"
+                                  height="16px"
+                                  viewBox="0 0 450 352.69"
+                                >
+                                  <path
+                                    d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"
+                                    style={{ fill: "white" }}
+                                  ></path>
+                                  <path
+                                    d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"
+                                    style={{ fill: "white" }}
+                                  ></path>
+                                  <path
+                                    d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
+                                    style={{ fill: "white" }}
+                                  ></path>
+                                </svg>
+                              </span>
                             </p>
-                            <p className="text-sm leading-none flex justify-between gap-2">
+                            <p className=" leading-none flex justify-between gap-2">
                               <span className="text-muted-foreground font-medium">
                                 Slot Area :
                               </span>
-                              <span>{`${adSlot.slotWidth}% x ${adSlot.slotLength}% `}</span>
+                              <span>{`${adSlot.slotWidth} x ${adSlot.slotLength} `}</span>
                             </p>
-                            <p className="text-sm leading-none flex justify-between gap-2">
+                            <p className=" leading-none flex justify-between gap-2">
                               <span className="text-muted-foreground font-medium">
                                 Ad Space Type :
                               </span>
                               <span>{adSlot.slotType}</span>
                             </p>
+                            <p className=" leading-none flex justify-between gap-2">
+                              <span className="text-muted-foreground font-medium">
+                                Platform :
+                              </span>
+                              <span>{adSlot.slotPlatform}</span>
+                            </p>
                             {/* {adSlot.ownerAddress?.length &&
                               adSlot.ownerAddress?.length > 1 && (
-                                <p className="text-sm leading-none flex justify-between gap-2">
+                                <p className=" leading-none flex justify-between gap-2">
                                   <span className="text-muted-foreground font-medium">
                                     Renter :
                                   </span>
