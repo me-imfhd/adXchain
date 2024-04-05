@@ -1,4 +1,5 @@
 import {
+  buySlot,
   createAdSlot,
   deleteAdSlot,
   getAdSlotById,
@@ -10,10 +11,12 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import {
   adSlotIdSchema,
   adSlotNameSchema,
+  buySlotSchema,
   insertAdSlotParams,
   inventoryIdSchema,
   updateAdSlotParams,
 } from "@repo/db";
+import { getJSDocReturnType } from "typescript";
 
 export const adSlotsRouter = createTRPCRouter({
   getAdSlots: publicProcedure
@@ -46,4 +49,7 @@ export const adSlotsRouter = createTRPCRouter({
     .query(async ({ input }) => {
       return getSlotCountInInventory(input.id);
     }),
+  buySlot: publicProcedure.input(buySlotSchema).mutation(async ({ input }) => {
+    return buySlot(input);
+  }),
 });

@@ -8,6 +8,8 @@ export * from "./fetch-assets";
 export * from "./update-asset";
 export * from "./burn-asset";
 export * from "./sell";
+export * from "./s3Upload";
+export * from "./underdog";
 export interface UmiInstance {
   umi: Umi;
 }
