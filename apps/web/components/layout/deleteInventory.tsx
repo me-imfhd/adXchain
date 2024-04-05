@@ -34,6 +34,7 @@ export default function DeleteInventory({
           animationType="none"
           onClick={async () => {
             await mutateAsync({ id });
+            router.push("/inventories");
             router.refresh();
           }}
         >

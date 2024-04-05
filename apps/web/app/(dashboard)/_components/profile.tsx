@@ -1,3 +1,4 @@
+import { Session } from "@repo/auth";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -10,25 +11,28 @@ import {
 import Image from "next/image";
 import React from "react";
 
-export default function Profile() {
+export default function Profile({ session: { user } }: { session: Session }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
           size="icon"
-          className="overflow-hidden rounded-full"
+          className="overflow-hidden rounded-full  "
         >
-          P
+          <img
+            src={
+              "https://i.pinimg.com/originals/d6/d0/bd/d6d0bdfdbdb9db439b8033c7681976dc.jpg"
+            }
+            className="object-cover"
+            alt="P"
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-muted-foreground">{user.email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem>Support</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Logout</DropdownMenuItem>
+        <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
       </DropdownMenuContent>
     </DropdownMenu>
   );

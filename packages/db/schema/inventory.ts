@@ -10,6 +10,9 @@ export const insertInventoryParams = baseSchema.omit({
   createdAt: true,
   updatedAt: true,
 });
+export const insertInventoryForm = insertInventoryParams.omit({
+  inventoryImageUri: true,
+});
 
 export const updateInventorySchema = baseSchema;
 export const updateInventoryParams = updateInventorySchema.omit({

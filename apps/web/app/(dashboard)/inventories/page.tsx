@@ -4,8 +4,5 @@ import InventoriesPage from "../_components/inventories-page";
 
 export default async function InventoryPage() {
   const inventory = await api.inventory.getInventory.query();
-  console.log("inventory", inventory);
-  return (
-    <InventoriesPage inventory={inventory}/>
-  );
+  return <InventoriesPage inventory={inventory} />;
 }
