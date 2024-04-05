@@ -3,9 +3,9 @@ import { CompleteInventory, relatedInventorySchema } from "./index"
 
 export const attributesSchema = z.object({
   id: z.string(),
-  key: z.string().nullish(),
-  value: z.string().nullish(),
-  inventoryId: z.string().nullish(),
+  key: z.string(),
+  value: z.string(),
+  inventoryId: z.string(),
 })
 
 export interface CompleteAttributes extends z.infer<typeof attributesSchema> {

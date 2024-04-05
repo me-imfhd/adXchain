@@ -53,7 +53,7 @@ export const inventoryAndAdSlotSchema = baseSchema.extend({
     }, `Max image size is 5MB.`)
     .refine(
       (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
-      "Format not supported."
+      "Format not supported.",
     ),
 });
 export const selectedSlotSchema = z.object({
