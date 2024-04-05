@@ -1,4 +1,4 @@
-import { AdSlotName, InventoryId, InventoryName, db } from "@repo/db";
+import { AdSlotName, BuySlot, InventoryId, InventoryName, db } from "@repo/db";
 import { AdSlotId, adSlotIdSchema, inventoryIdSchema } from "@repo/db";
 
 export const getAdSlots = async (id: InventoryId) => {
@@ -12,6 +12,7 @@ export const getAdSlots = async (id: InventoryId) => {
 export const getAdSlotById = async (id: AdSlotId) => {
   const a = await db.adSlot.findFirst({
     where: { id },
+    include: { inventory: true },
   });
   return a;
 };
@@ -25,3 +26,11 @@ export const getSlotCountInInventory = async (id: InventoryId) => {
   return { total, lent };
 };
 export type GetAdSlotById = Awaited<ReturnType<typeof getAdSlotById>>;
+
+export const buySlot = async (data: BuySlot) => {
+  const old = await db.adSlot.findUnique({ where: { id: data.id } });
+  const a = await db.adSlot.update({
+    where: { id: data.id },
+    data: { ...old, ...data },
+  });
+};
