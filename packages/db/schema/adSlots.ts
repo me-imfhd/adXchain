@@ -60,6 +60,7 @@ export const selectedSlotSchema = z.object({
   slotImageUri: z.string(),
   slotName: z.string(),
   id: z.string(),
+  adFile: z.any(),
 });
 export type SelectedSlotSchema = z.infer<typeof selectedSlotSchema>;
 export const multipleAdSlotForm = z
