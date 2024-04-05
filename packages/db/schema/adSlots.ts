@@ -27,6 +27,8 @@ export const buySlotSchema = baseSchema.pick({
   ownerEmail: true,
   lent: true,
 });
+export const buyMultipleSlotSchema = z.array(buySlotSchema);
+
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/jpeg",
@@ -54,6 +56,21 @@ export const inventoryAndAdSlotSchema = baseSchema.extend({
       "Format not supported."
     ),
 });
+export const selectedSlotSchema = z.object({
+  slotImageUri: z.string(),
+  slotName: z.string(),
+  id: z.string(),
+});
+export type SelectedSlotSchema = z.infer<typeof selectedSlotSchema>;
+export const multipleAdSlotForm = z
+  .object({ slotArray: z.array(selectedSlotSchema) })
+  .extend({
+    inventoryName: z.string(),
+    inventoryImageUri: z.string().nullish(),
+    underdogApi: z.string(),
+    ownerAddress: z.string(),
+    ownerEmail: z.string(),
+  });
 
 // Types for adSlots - used to type API request params and within Components
 export type AdSlot = z.infer<typeof adSlotSchema>;

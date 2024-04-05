@@ -52,3 +52,29 @@ export async function createUnderdogNFT({
   );
   return createNftResponse.data as NftCreationResponse;
 }
+interface CreateUnderdogNFTs {
+  underdogApiEndpoint: string;
+  projectId: number;
+  underdogApiKey: string;
+  nftArray: NftBodyParams[];
+}
+export async function createUnderdogNFTs({
+  nftArray,
+  projectId,
+  underdogApiEndpoint,
+  underdogApiKey,
+}: CreateUnderdogNFTs) {
+  const nftArrayResponse = await Promise.all(
+    nftArray.map(async (nft) => {
+      const res = await axios.post(
+        `${underdogApiEndpoint}/v2/projects/${projectId}/nfts`,
+        nft,
+        {
+          headers: { Authorization: `Bearer ${underdogApiKey}` },
+        }
+      );
+      return res.data as NftCreationResponse;
+    })
+  );
+  return nftArrayResponse;
+}
