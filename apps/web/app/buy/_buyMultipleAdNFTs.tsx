@@ -98,7 +98,7 @@ export default function BuyMultiple({
                 });
                 console.log(
                   "2. Underdog Project Created: ",
-                  underdogProject.projectId,
+                  underdogProject.projectId
                 );
 
                 const web2Project = await createNewProject.mutateAsync({
@@ -109,7 +109,7 @@ export default function BuyMultiple({
                 });
                 console.log(
                   "3. adXchain Project for underdog project created: ",
-                  web2Project.project.id,
+                  web2Project
                 );
 
                 // Create NFTs
@@ -129,12 +129,18 @@ export default function BuyMultiple({
                     } as NftBodyParams;
                     console.log(nftBody);
                     try {
-                      const nft = await createUnderdogNFT({
-                        projectId: underdogProject.projectId,
-                        underdogApiEndpoint,
-                        underdogApiKey: data.underdogApi,
-                        nftBody,
-                      });
+                      const nft = await retry(
+                        async () => {
+                          return await createUnderdogNFT({
+                            projectId: web2Project.project.underdogProjectId,
+                            underdogApiEndpoint,
+                            underdogApiKey: data.underdogApi,
+                            nftBody,
+                          });
+                        },
+                        3,
+                        1000
+                      );
                       if (nft) {
                         toast({ title: "Ad Space Initialized successfully." });
                       }
@@ -151,13 +157,13 @@ export default function BuyMultiple({
                       if (res) {
                         setIsLoading(false);
                         toast({ title: "Operation Successful" });
-                        router.push(`/market/${inventoryId}`);
+                        router.push(`/market`);
                         return;
                       }
                     } catch (err) {
                       throw new Error("Ad NFT creation failed.");
                     }
-                  }),
+                  })
                 );
               } else {
                 // If project exists, create NFTs for existing project
@@ -177,12 +183,18 @@ export default function BuyMultiple({
                     } as NftBodyParams;
                     console.log(nftBody);
                     try {
-                      const nft = await createUnderdogNFT({
-                        projectId: projectAlreadyExist.underdogProjectId,
-                        underdogApiEndpoint,
-                        underdogApiKey: data.underdogApi,
-                        nftBody,
-                      });
+                      const nft = await retry(
+                        async () => {
+                          return await createUnderdogNFT({
+                            projectId: projectAlreadyExist.underdogProjectId,
+                            underdogApiEndpoint,
+                            underdogApiKey: data.underdogApi,
+                            nftBody,
+                          });
+                        },
+                        3,
+                        1000
+                      );
                       if (nft) {
                         toast({ title: "Ad NFT Initialized successfully." });
                       }
@@ -199,13 +211,13 @@ export default function BuyMultiple({
                       if (res) {
                         setIsLoading(false);
                         toast({ title: "Operation Successful" });
-                        router.push(`/market/${inventoryId}`);
+                        router.push(`/market`);
                         return;
                       }
                     } catch (err) {
-                      throw new Error("Ad NFT creation failed.");
+                      throw new Error("Ad NFT creation failed. Please retry.");
                     }
-                  }),
+                  })
                 );
               }
             } catch (err) {
@@ -217,8 +229,8 @@ export default function BuyMultiple({
               });
               await Promise.all(
                 s3ImagesUri.map(
-                  async (s3ImageUri) => await deleteS3Image(s3ImageUri),
-                ),
+                  async (s3ImageUri) => await deleteS3Image(s3ImageUri)
+                )
               );
             }
           })}
@@ -245,4 +257,25 @@ export default function BuyMultiple({
       </Form>
     </>
   );
+}
+
+async function retry(fn: any, retries: number, delayMs: number) {
+  let lastError = null;
+  console.log("try/retry");
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (attempt < retries) {
+        await delay(delayMs);
+      }
+    }
+  }
+
+  throw lastError;
+}
+
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
