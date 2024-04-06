@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  Ad,
   NftBodyParams,
   NftCreationResponse,
   ProjectCreationResponse,
@@ -108,4 +109,25 @@ export async function retrieveNft({
   } while (retrieveNft?.data.status !== "confirmed");
   const data = retrieveNft.data;
   return data;
+}
+
+interface RetrieveNftByMint {
+  underdogApiEndpoint: string;
+  mintAddresses: string[];
+}
+
+export async function retrieveNftByMint({
+  underdogApiEndpoint,
+  mintAddresses,
+}: RetrieveNftByMint) {
+  const ads = await Promise.all(
+    mintAddresses.map(async (mint) => {
+      const retrieveNft = await axios.get(
+        `${underdogApiEndpoint}/v2/nfts/${mint}`
+      );
+      const data = retrieveNft.data as Ad;
+      return data;
+    })
+  );
+  return ads;
 }
