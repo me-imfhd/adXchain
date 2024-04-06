@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params: { inventory } }: { params: { inventory: string } },
+  { params: { inventory } }: { params: { inventory: string } }
 ) {
   try {
     const searchParams = await request.nextUrl.searchParams;
@@ -16,7 +16,7 @@ export async function GET(
       underdogApiEndpoint = "https://devnet.underdogprotocol.com";
     } else if (network === "mainnet") {
       //   underdogApiEndpoint = "https://mainnet.underdogprotocol.com";
-      return new Response("Invalid network selection", { status: 400 });
+      return new Response("adxchain is currently on devnet", { status: 400 });
     } else {
       return new Response("Invalid network selection", { status: 400 });
     }
