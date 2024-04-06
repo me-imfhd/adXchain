@@ -43,7 +43,7 @@ interface BuyAdNFTProps {
   session: Session;
   inventoryName: string;
   inventoryImageUri: string;
-  transactionAmount: number;
+  transactionAmount: bigint;
   files: File[];
 }
 export default function BuyMultiple({
@@ -123,12 +123,12 @@ export default function BuyMultiple({
                     underdogApiKey: data.underdogApi,
                     nftBody,
                   });
-                  buy.push({
-                    id: data.slotArray[i]?.id!,
-                    lent: true,
-                    mintAddress: nft.mintAddress,
-                    ownerAddress: data.ownerAddress,
-                  });
+                  // buy.push({
+                  //   id: data.slotArray[i]?.id!,
+                  //   lent: true,
+                  //   mintAddress: nft.mintAddress,
+                  //   ownerAddress: data.ownerAddress,
+                  // });
                 }
                 // update database slots table
                 await buyMultipleSlots.mutateAsync(buy);

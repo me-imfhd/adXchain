@@ -1,19 +1,22 @@
 import * as React from "react";
 import { cn } from "../cn";
-
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    className={cn(
-      "bg-card text-card-foreground rounded-3xl border shadow-sm animate-fade-up",
-      className,
-    )}
-    ref={ref}
-    {...props}
-  />
-));
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  disabled?: boolean;
+}
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, disabled, ...props }, ref) => (
+    <div
+      className={cn(
+        "bg-card text-card-foreground rounded-3xl border shadow-sm animate-fade-up",
+        className,
+        !disabled && "hover:brightness-110 active:brightness-90",
+        disabled && "opacity-60"
+      )}
+      ref={ref}
+      {...props}
+    />
+  )
+);
 Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<
@@ -35,7 +38,7 @@ const CardTitle = React.forwardRef<
   <h3
     className={cn(
       "text-lg font-semibold leading-none tracking-tight",
-      className,
+      className
     )}
     ref={ref}
     {...props}

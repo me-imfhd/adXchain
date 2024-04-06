@@ -23,51 +23,47 @@ import InventoryPageLayout from "./inventoryPageLayout";
 import { Session } from "@repo/auth";
 import { SelectedSlotSchema } from "@repo/db";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { SlotMap } from "../market/[inventory]/page";
 
 interface MarketPageProps {
   inventory: NonNullable<GetInventoryById>;
+  totalBuyablePrice: bigint;
   supply: number;
   percentage: number;
   total: number;
-  lent: number;
   session: Session;
+  initial: SlotMap[];
 }
 
 export default function MarketPage({
   inventory,
   percentage,
+  totalBuyablePrice,
   supply,
   session,
   total,
+  initial,
 }: MarketPageProps) {
-  const [adSlotToPriceMapping, setAdslotToPriceMapping] = useState<
-    Map<string, [string, string, number]>
-  >(new Map());
-  const [files, setFiles] = useState<File[]>([]);
-
-  const [adPrice, setAdPrice] = useState(0);
-  const [isSelected, setIsSelected] = useState(false);
+  const [slotsArray, setSlotsArray] = useState<SlotMap[]>(initial);
+  const totalPrice = slotsArray
+    .filter((slot) => slot.isSelected && !slot.isRented)
+    .reduce((accumulator, slot) => accumulator + slot.price, BigInt(0));
   const toast = useToast().toast;
-  const selectedSlots: SelectedSlotSchema[] = [];
-  const handleClick = (
-    id: string,
-    name: string,
-    img: string,
-    price: number
-  ) => {
-    const mp = new Map(adSlotToPriceMapping);
-    if (mp.has(id)) {
-      if (adPrice !== 0) setAdPrice((prev) => prev - price);
-      mp.delete(id);
-    } else {
-      setAdPrice((prev) => prev + price);
-      mp.set(id, [name, img, price]);
-    }
-    setAdslotToPriceMapping(mp);
-    setIsSelected((prev) => !prev);
+  const handleClick = (id: string) => {
+    console.log(slotsArray);
+    const updatedSlotsArray = slotsArray.map((slot) => {
+      if (slot.id === id) {
+        return { ...slot, isSelected: !slot.isSelected };
+      } else {
+        return slot;
+      }
+    });
+    setSlotsArray(updatedSlotsArray);
+    console.log(slotsArray);
   };
   return (
     <InventoryPageLayout
+    totalBuyablePrice={totalBuyablePrice}
       percentage={percentage}
       supply={supply}
       total={total}
@@ -75,150 +71,192 @@ export default function MarketPage({
       dialog={
         <Dialog>
           <DialogTrigger asChild>
-            <GlowingButton>
-              BUY{" "}
-              {adPrice != 0 && (
-                <span className=" flex items-center gap-1">
-                  ADNFT {adPrice}{" "}
-                  <svg
-                    version="1.1"
-                    id="Layer_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    x="0"
-                    y="0"
-                    width="16px"
-                    height="16px"
-                    viewBox="0 0 450 352.69"
-                  >
-                    <path
-                      d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"
-                      style={{ fill: "white" }}
-                    ></path>
-                    <path
-                      d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"
-                      style={{ fill: "white" }}
-                    ></path>
-                    <path
-                      d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
-                      style={{ fill: "white" }}
-                    ></path>
-                  </svg>
-                </span>
-              )}
+            <GlowingButton
+              className="w-full"
+              disabled={totalPrice == BigInt(0)}
+            >
+              BUY
+              <span className=" flex items-center gap-1">
+                at {Number(totalPrice) / LAMPORTS_PER_SOL}
+                <svg
+                  version="1.1"
+                  id="Layer_1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  x="0"
+                  y="0"
+                  width="16px"
+                  height="16px"
+                  viewBox="0 0 450 352.69"
+                >
+                  <path
+                    d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"
+                    style={{ fill: "white" }}
+                  ></path>
+                  <path
+                    d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"
+                    style={{ fill: "white" }}
+                  ></path>
+                  <path
+                    d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
+                    style={{ fill: "white" }}
+                  ></path>
+                </svg>
+              </span>
             </GlowingButton>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[800px]">
             <DialogHeader>
               <DialogTitle className="text-center">Execute</DialogTitle>
             </DialogHeader>
-            {adPrice === 0 ? (
-              <span className="text-center text-red-600">
-                didn't select any NFT!
-              </span>
-            ) : (
-              <>
-                <div className="flex items-start flex-wrap justify-between p-2">
-                  <div className="flex flex-col gap-4 items-start w-[70%] border-solid border p-3">
-                    {Array.from(adSlotToPriceMapping).map(([slot, value]) => {
-                      selectedSlots.push({
-                        id: slot,
-                        slotName: value[0] as string,
-                        slotImageUri: value[1] as string,
-                      });
-                      return (
-                        <div key={slot} className="flex gap-5 w-full">
-                          <Badge
-                            className="bg-secondary text-primary font-medium "
-                            size={"xs"}
-                          >
-                            BUY
-                          </Badge>
-                          <img
-                            className="object-cover rounded-lg"
-                            src={value[1] as string}
-                            style={{
-                              aspectRatio: "25/25",
-                              objectFit: "cover",
-                            }}
-                            width={25}
-                            height={25}
-                          />
-                          <div className="flex justify-between w-full">
-                            <span>{value[0]}</span>
-                            <div className="flex items-center gap-4">
-                              <span className="flex items-center gap-1">
-                                {value[2]}
-                                <svg
-                                  version="1.1"
-                                  id="Layer_1"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  x="0"
-                                  y="0"
-                                  width="16px"
-                                  height="16px"
-                                  viewBox="0 0 450 352.69"
-                                >
-                                  <path
-                                    d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"
-                                    style={{ fill: "white" }}
-                                  ></path>
-                                  <path
-                                    d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"
-                                    style={{ fill: "white" }}
-                                  ></path>
-                                  <path
-                                    d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
-                                    style={{ fill: "white" }}
-                                  ></path>
-                                </svg>
-                              </span>
-                              <span>
-                                <button
-                                  onClick={() =>
-                                    document.getElementById("picture")?.click()
-                                  }
-                                >
-                                  <Upload />
-                                  <Input
-                                    id="picture"
-                                    type="file"
-                                    className="hidden"
-                                    onChange={(
-                                      e: ChangeEvent<HTMLInputElement>
-                                    ) => {
-                                      const currentFiles = files
-                                        ? [...files]
-                                        : [];
-                                      if (e.target.files?.[0]) {
-                                        setFiles([
-                                          ...currentFiles,
-                                          e.target.files[0],
-                                        ]);
-                                        toast({ title: "Image Uploaded" });
-                                      }
-                                    }}
-                                  />
-                                </button>
-                              </span>
-                            </div>
+            <>
+              <div className="flex items-start flex-wrap justify-between p-2">
+                <div className="flex flex-col gap-4 items-start w-[70%] border-solid border p-3">
+                  {slotsArray.map((adSlot) => {
+                    const selected = Boolean(
+                      slotsArray.find(
+                        (slot) => slot.id == adSlot.id && slot.isSelected
+                      )
+                    );
+                    if (!selected) {
+                      return;
+                    }
+                    return (
+                      <div key={adSlot.id} className="flex gap-5 w-full">
+                        <Badge
+                          className="bg-secondary text-primary font-medium "
+                          size={"xs"}
+                        >
+                          BUY
+                        </Badge>
+                        <img
+                          className="object-cover rounded-lg"
+                          src={adSlot.imageUri}
+                          style={{
+                            aspectRatio: "25/25",
+                            objectFit: "cover",
+                          }}
+                          width={25}
+                          height={25}
+                        />
+                        <div className="flex justify-between w-full">
+                          <span>{adSlot.slotName}</span>
+                          <div className="flex items-center gap-4">
+                            <span className="flex items-center gap-1">
+                              {Number(adSlot.price) / LAMPORTS_PER_SOL}
+                              <svg
+                                version="1.1"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                x="0"
+                                y="0"
+                                width="16px"
+                                height="16px"
+                                viewBox="0 0 450 352.69"
+                              >
+                                <path
+                                  d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"
+                                  style={{ fill: "white" }}
+                                ></path>
+                                <path
+                                  d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"
+                                  style={{ fill: "white" }}
+                                ></path>
+                                <path
+                                  d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
+                                  style={{ fill: "white" }}
+                                ></path>
+                              </svg>
+                            </span>
+                            {/* <span>
+                              <button
+                                onClick={() =>
+                                  document.getElementById("picture")?.click()
+                                }
+                              >
+                                <Upload />
+                                <Input
+                                  id="picture"
+                                  type="file"
+                                  className="hidden"
+                                  onChange={(
+                                    e: ChangeEvent<HTMLInputElement>
+                                  ) => {
+                                    const currentFiles = files
+                                      ? [...files]
+                                      : [];
+                                    if (e.target.files?.[0]) {
+                                      setFiles([
+                                        ...currentFiles,
+                                        e.target.files[0],
+                                      ]);
+                                      toast({ title: "Image Uploaded" });
+                                    }
+                                  }}
+                                />
+                              </button>
+                            </span> */}
                           </div>
                         </div>
-                      );
-                    })}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="flex flex-col w-[30%] border-solid border p-3 items-end">
+                  {slotsArray.map((adSlot) => {
+                    const selected = Boolean(
+                      slotsArray.find(
+                        (slot) => slot.id == adSlot.id && slot.isSelected
+                      )
+                    );
+                    if (!selected) return;
+                    return (
+                      <div key={adSlot.id} className="flex gap-4">
+                        <span className="flex items-center gap-1">
+                          {Number(adSlot.price) / LAMPORTS_PER_SOL}
+                        </span>
+                      </div>
+                    );
+                  })}
+                  <div className="border-solid border-y p-2 flex justify-between items-center font-semibold w-full">
+                    <span>Total:</span> {Number(totalPrice) / LAMPORTS_PER_SOL}
+                    <span className="flex items-center gap-1">
+                      <svg
+                        version="1.1"
+                        id="Layer_1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        x="0"
+                        y="0"
+                        width="16px"
+                        height="16px"
+                        viewBox="0 0 450 352.69"
+                      >
+                        <path
+                          d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"
+                          style={{ fill: "white" }}
+                        ></path>
+                        <path
+                          d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"
+                          style={{ fill: "white" }}
+                        ></path>
+                        <path
+                          d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
+                          style={{ fill: "white" }}
+                        ></path>
+                      </svg>
+                    </span>
                   </div>
-                  <div className="flex flex-col w-[30%] border-solid border p-3 items-end">
-                    {Array.from(adSlotToPriceMapping).map(([slot, value]) => {
-                      return (
-                        <div key={slot} className="flex gap-4">
-                          <span className="flex items-center gap-1">
-                            {value[2]}
-                          </span>
-                        </div>
-                      );
-                    })}
-                    <div className="border-solid border-y p-2 flex justify-between items-center font-semibold w-full">
-                      <span>Total:</span> {adPrice}
+                </div>
+              </div>
+              <DialogFooter>
+                <Dialog>
+                  <DialogTrigger>
+                    <Button
+                      variant="secondary"
+                      className="font-semibold flex items-center"
+                    >
+                      <span>Pay</span>
                       <span className="flex items-center gap-1">
+                        {Number(totalPrice) / LAMPORTS_PER_SOL}
                         <svg
                           version="1.1"
                           id="Layer_1"
@@ -243,62 +281,20 @@ export default function MarketPage({
                           ></path>
                         </svg>
                       </span>
-                    </div>
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Dialog>
-                    <DialogTrigger>
-                      <DialogClose>
-                        <Button
-                          variant="secondary"
-                          className="font-semibold flex items-center"
-                        >
-                          <span>Pay</span>
-                          <span className="flex items-center gap-1">
-                            {adPrice}
-                            <svg
-                              version="1.1"
-                              id="Layer_1"
-                              xmlns="http://www.w3.org/2000/svg"
-                              x="0"
-                              y="0"
-                              width="16px"
-                              height="16px"
-                              viewBox="0 0 450 352.69"
-                            >
-                              <path
-                                d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"
-                                style={{ fill: "white" }}
-                              ></path>
-                              <path
-                                d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"
-                                style={{ fill: "white" }}
-                              ></path>
-                              <path
-                                d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
-                                style={{ fill: "white" }}
-                              ></path>
-                            </svg>
-                          </span>
-                        </Button>
-                      </DialogClose>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>Confirm Transaction</DialogHeader>
-                      <BuyMultiple
-                        inventoryImageUri={inventory?.inventoryImageUri!}
-                        inventoryName={inventory?.inventoryName!}
-                        session={session}
-                        transactionAmount={adPrice}
-                        selectedSlots={selectedSlots}
-                        files={files}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                </DialogFooter>
-              </>
-            )}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>Confirm Transaction</DialogHeader>
+                    {/* <BuyMultiple
+                      inventoryImageUri={inventory?.inventoryImageUri!}
+                      inventoryName={inventory?.inventoryName!}
+                      session={session}
+                      transactionAmount={totalPrice}
+                    /> */}
+                  </DialogContent>
+                </Dialog>
+              </DialogFooter>
+            </>
           </DialogContent>
         </Dialog>
       }
@@ -311,17 +307,29 @@ export default function MarketPage({
                   adSlot.inventory.projects[0]?.adNft?.nftMintAddress;
                 const wa =
                   walletAddress?.slice(0, 4) + ".." + walletAddress?.slice(-4);
+                const rented = Boolean(
+                  slotsArray.find(
+                    (slot) => slot.id == adSlot.id && slot.isRented
+                  )
+                );
+                const selected = Boolean(
+                  slotsArray.find(
+                    (slot) => slot.id == adSlot.id && slot.isSelected
+                  )
+                );
+                const mint =
+                  adSlot.inventory.projects[0]?.adNft?.nftMintAddress;
+                const mintAddress = mint?.slice(0.4) + ".." + mint?.slice(-4);
                 return (
                   <Card
                     onClick={() => {
-                      handleClick(
-                        adSlot.id,
-                        adSlot.slotName,
-                        adSlot.slotImageUri,
-                        Number(adSlot.slotPrice) / LAMPORTS_PER_SOL
-                      );
+                      if (rented) {
+                        return;
+                      }
+                      handleClick(adSlot.id);
                     }}
-                    className="rounded-lg"
+                    disabled={rented}
+                    className={`rounded-lg hover:shadow-[0_0_2rem_-0.5rem_#3178c6] cursor-pointer ${selected && !rented && "shadow-[0_0_2rem_-0.5rem_#3178c6] border-blue-600"}`}
                   >
                     <div className="flex flex-col gap-1">
                       <div className="aspect-video overflow-hidden ">
@@ -347,7 +355,7 @@ export default function MarketPage({
                           <div className="text-xs flex flex-col gap-1">
                             <p className="leading-none flex text-base pb-0.5 justify-between gap-2">
                               <span className="text-green-400 font-semibold">
-                                Floor Price :
+                                Floor Price
                               </span>
                               <span className="flex items-center gap-1">
                                 {Number(adSlot.slotPrice) / LAMPORTS_PER_SOL}{" "}
@@ -378,31 +386,37 @@ export default function MarketPage({
                             </p>
                             <p className=" leading-none flex justify-between gap-2">
                               <span className="text-muted-foreground font-medium">
-                                Slot Area :
+                                Slot Area
                               </span>
                               <span>{`${adSlot.slotWidth} x ${adSlot.slotLength} `}</span>
                             </p>
                             <p className=" leading-none flex justify-between gap-2">
                               <span className="text-muted-foreground font-medium">
-                                Ad Space Type :
+                                Ad Space Type
                               </span>
                               <span>{adSlot.slotType}</span>
                             </p>
                             <p className=" leading-none flex justify-between gap-2">
                               <span className="text-muted-foreground font-medium">
-                                Platform :
+                                Platform
                               </span>
                               <span>{adSlot.slotPlatform}</span>
                             </p>
-                            {/* {adSlot.ownerAddress?.length &&
-                              adSlot.ownerAddress?.length > 1 && (
-                                <p className=" leading-none flex justify-between gap-2">
-                                  <span className="text-muted-foreground font-medium">
-                                    Renter :
-                                  </span>
-                                  <span>{wa}</span>
-                                </p>
-                              )} */}
+                            {rented ? (
+                              <p className=" leading-none flex justify-between gap-2">
+                                <span className="text-muted-foreground font-medium">
+                                  Mint
+                                </span>
+                                <span>{mintAddress}</span>
+                              </p>
+                            ) : (
+                              <p className=" leading-none flex justify-between gap-2">
+                                <span className="text-muted-foreground font-medium">
+                                  Available
+                                </span>
+                                <span>Yes</span>
+                              </p>
+                            )}
                           </div>
                         </div>
                       </div>
