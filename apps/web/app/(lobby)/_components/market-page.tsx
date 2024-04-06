@@ -1,13 +1,10 @@
 "use client";
-import BuyMultiple from "@/app/buy/_buyMultipleAdNFTs";
-
-import { GetActiveInventoryById, GetInventoryById } from "@repo/api";
+import { GetActiveInventoryById } from "@repo/api";
 import {
   Badge,
   Button,
   Card,
   Dialog,
-  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -25,6 +22,7 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { SlotMap } from "../market/[inventory]/page";
 import { Session } from "@repo/auth";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import BuyMultiple from "./_buyMultipleAdNFTs";
 
 interface MarketPageProps {
   inventory: NonNullable<GetActiveInventoryById>;
@@ -58,7 +56,7 @@ export default function MarketPage({
       (updatedAccountInfo) => {
         setBalance(BigInt(updatedAccountInfo.lamports));
       },
-      "confirmed"
+      "confirmed",
     );
 
     connection.getAccountInfo(publicKey).then((info) => {
@@ -199,7 +197,7 @@ export default function MarketPage({
                                   <img
                                     className="object-cover rounded-lg"
                                     src={URL.createObjectURL(
-                                      new Blob([adSlot.file])
+                                      new Blob([adSlot.file]),
                                     )}
                                     style={{
                                       aspectRatio: "25/25",
@@ -217,7 +215,7 @@ export default function MarketPage({
                                   type="file"
                                   className="hidden"
                                   onChange={(
-                                    e: ChangeEvent<HTMLInputElement>
+                                    e: ChangeEvent<HTMLInputElement>,
                                   ) => {
                                     if (e.target.files?.[0]) {
                                       toast({ title: "Image Added." });
@@ -230,7 +228,7 @@ export default function MarketPage({
                                             };
                                           }
                                           return slot;
-                                        }
+                                        },
                                       );
                                       setSlotsArray(updatedSlots);
                                     }
@@ -289,7 +287,11 @@ export default function MarketPage({
                     <span>Balance</span>
                     <div className="flex-1 flex gap-2 justify-end">
                       <span
-                        className={`${balance < totalPrice ? "text-red-500" : "text-green-500"}`}
+                        className={`${
+                          balance < totalPrice
+                            ? "text-red-500"
+                            : "text-green-500"
+                        }`}
                       >
                         {Number(balance) / LAMPORTS_PER_SOL}
                       </span>
@@ -390,13 +392,13 @@ export default function MarketPage({
             : inventory?.adSlots.map((adSlot) => {
                 const rented = Boolean(
                   slotsArray.find(
-                    (slot) => slot.id == adSlot.id && slot.isRented
-                  )
+                    (slot) => slot.id == adSlot.id && slot.isRented,
+                  ),
                 );
                 const selected = Boolean(
                   slotsArray.find(
-                    (slot) => slot.id == adSlot.id && slot.isSelected
-                  )
+                    (slot) => slot.id == adSlot.id && slot.isSelected,
+                  ),
                 );
 
                 const walletAddress = adSlot.owner?.walletAddress;
