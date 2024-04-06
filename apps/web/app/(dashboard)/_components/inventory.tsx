@@ -25,7 +25,7 @@ import {
 import { ChevronLeft } from "@repo/ui/icons";
 import { trpc } from "@repo/trpc/trpc/client";
 import { useForm } from "react-hook-form";
-import { Inventory, insertInventoryForm } from "@repo/db";
+import { type Inventory, insertInventoryForm } from "@repo/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { s3Upload } from "./s3Upload";
