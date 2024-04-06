@@ -25,7 +25,7 @@ import {
 import { ChevronLeft } from "@repo/ui/icons";
 import { trpc } from "@repo/trpc/trpc/client";
 import { useForm } from "react-hook-form";
-import { Inventory, insertInventoryParams } from "@repo/db";
+import { Inventory, insertInventoryForm } from "@repo/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { s3Upload } from "./s3Upload";
@@ -38,8 +38,8 @@ export default function Inventory() {
   const router = useRouter();
   const toast = useToast();
   const [image, setImage] = useState<File | null>(null);
-  const form = useForm<z.infer<typeof insertInventoryParams>>({
-    resolver: zodResolver(insertInventoryParams),
+  const form = useForm<z.infer<typeof insertInventoryForm>>({
+    resolver: zodResolver(insertInventoryForm),
   });
   return (
     <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
@@ -60,7 +60,7 @@ export default function Inventory() {
                 inventoryImageUri: s3ImageUri,
               });
               if (!res) {
-                await deleteS3Image(s3ImageUri!);
+                await deleteS3Image(s3ImageUri);
               }
               toast.toast({ title: "Inventory created successfully." });
               router.push("/inventories");

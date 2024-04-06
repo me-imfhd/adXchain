@@ -23,28 +23,62 @@ datasource db {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
+  name          String
+  email         String    @unique
   emailVerified DateTime?
   walletAddress String    @unique
 
+  nftProject Project[]
+
   inventory Inventory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
-// model VerificationToken {
-//   identifier String
-//   token      String   @unique
-//   expires    DateTime
+model Project {
+  id String @id @default(cuid())
 
-//   @@unique([identifier, token])
-// }
+  inventoryId String
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+
+  underdogProjectId     Int
+  collectionMintAddress String
+  adNft                 AdNft?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([inventoryId])
+}
+
+model AdNft {
+  id String @id @default(cuid())
+
+  underdogNftId  Int
+  nftMintAddress String?
+
+  nftDisplayUri  String
+  nftRedirectUri String
+  nftFileType    String
+
+  projectId  String   @unique
+  nftProject Project? @relation(fields: [projectId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
 
 model Inventory {
   id                   String       @id @default(cuid())
   inventoryName        String
   inventoryWebsiteUri  String
-  inventoryImageUri    String?
-  inventoryDescription String?
+  inventoryImageUri    String
+  inventoryDescription String
   inventoryAttributes  Attributes[]
 
   adSlots AdSlot[]
@@ -55,6 +89,8 @@ model Inventory {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  projects Project[]
+
   @@index([inventoryName])
   @@index([userId])
 }
@@ -62,36 +98,28 @@ model Inventory {
 model Attributes {
   id String @id @default(cuid())
 
-  key         String?
-  value       String?
+  key         String
+  value       String
   Inventory   Inventory? @relation(fields: [inventoryId], references: [id])
-  inventoryId String?
+  inventoryId String
 
   @@index([inventoryId])
 }
 
 model AdSlot {
-  id              String  @id @default(cuid())
+  id              String @id @default(cuid())
   slotName        String
-  slotDescription String?
-  slotLength      Float?
-  slotWidth       Float?
+  slotDescription String
+  slotLength      Float
+  slotWidth       Float
   slotWebsiteUri  String
-  slotImageUri    String?
+  slotImageUri    String
   slotType        String
-  slotPrice       Float
+  slotPrice       BigInt
   status          String
   slotPlatform    String
 
-  lent         Boolean?
-  mintAddress  String?
-  ownerAddress String?
-  ownerEmail   String?
-
-  // // attribute 1
-  // displayUri  String?
-  // // attribute 2
-  // redirectUri String?
+  lent Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -101,12 +129,3 @@ model AdSlot {
 
   @@index([inventoryId])
 }
-
-// model SlotAttributes {
-//   id String @id @default(cuid())
-
-//   key      String?
-//   value    String?
-//   adSlot   AdSlot? @relation(fields: [adSlotId], references: [id])
-//   adSlotId String?
-// }

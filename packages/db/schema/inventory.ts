@@ -10,6 +10,9 @@ export const insertInventoryParams = baseSchema.omit({
   createdAt: true,
   updatedAt: true,
 });
+export const insertInventoryForm = insertInventoryParams.omit({
+  inventoryImageUri: true,
+});
 
 export const updateInventorySchema = baseSchema;
 export const updateInventoryParams = updateInventorySchema.omit({
@@ -18,8 +21,9 @@ export const updateInventoryParams = updateInventorySchema.omit({
 });
 export const inventoryIdSchema = baseSchema.pick({ id: true });
 export const inventoryNameSchema = baseSchema.pick({ inventoryName: true });
-export const inventoryImageSchema = baseSchema.pick({ inventoryImageUri: true });
-
+export const inventoryImageSchema = baseSchema.pick({
+  inventoryImageUri: true,
+});
 
 // Types for inventory - used to type API request params and within Components
 export type Inventory = z.infer<typeof inventorySchema>;

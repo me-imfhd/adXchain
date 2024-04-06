@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 export default async function LobbyLayout({ children }: PropsWithChildren) {
   const session = await getUserAuth();
   if (session) {
-    redirect("/trade");
+    redirect("/market");
   }
   return (
     <div className="relative flex flex-col min-h-screen">

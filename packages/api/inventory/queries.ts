@@ -21,11 +21,43 @@ export const getAllInventories = async () => {
 };
 
 export const getInventoryById = async (id: InventoryId) => {
-  const session = await getUserAuth();
-  const { id: inventoryId } = inventoryIdSchema.parse({ id });
-  const i = await db.inventory.findFirst({
-    where: { id: inventoryId, userId: session?.user.id! },
-    include: { adSlots: true },
+  const i = await db.inventory.findUnique({
+    where: { id },
+    include: {
+      adSlots: {
+        include: {
+          inventory: {
+            select: {
+              projects: {
+                where: { inventoryId: id },
+                select: { adNft: { select: { nftMintAddress: true } } },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  return i;
+};
+export const getActiveInventoryById = async (id: InventoryId) => {
+  const i = await db.inventory.findUnique({
+    where: { id },
+    include: {
+      adSlots: {
+        where: { status: "active" },
+        include: {
+          inventory: {
+            select: {
+              projects: {
+                where: { inventoryId: id },
+                select: { adNft: { select: { nftMintAddress: true } } },
+              },
+            },
+          },
+        },
+      },
+    },
   });
   return i;
 };

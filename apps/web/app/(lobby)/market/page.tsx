@@ -18,10 +18,11 @@ export default async function Page() {
     <div className="grid gap-6 lg:gap-8 mt-16">
       <Shell>
         <div className="flex flex-col gap-1">
-          <h1 className="text-3xl font-semibold">Discover NFT Collections</h1>
+          <h1 className="text-3xl font-semibold">Discover Ad Inventories</h1>
           <div className="">
-            Explore a diverse range of unique NFT collections created by
-            talented artists and creators from around the world.
+            Explore a diverse range of unique ad inventories listed across
+            widest range of network apps from around the world best to reach
+            your advertisiment goals.
           </div>
         </div>
         <div className="grid gap-4">
@@ -29,7 +30,7 @@ export default async function Page() {
             <SearchIcon className="absolute left-3 top-3 h-4 w-4 " />
             <Input
               className="pl-8"
-              placeholder="Search collections..."
+              placeholder="Search Inventories..."
               type="search"
             />
           </div>
@@ -42,7 +43,7 @@ export default async function Page() {
             const totalSpaces = inventory.adSlots.length;
             const walletAddress = inventory.user.walletAddress;
             const wa =
-              walletAddress?.slice(0, 4) + ".." + walletAddress?.slice(-4);
+              walletAddress.slice(0, 4) + ".." + walletAddress.slice(-4);
             return (
               <Card className="rounded-xl">
                 <div className="flex flex-col gap-1">

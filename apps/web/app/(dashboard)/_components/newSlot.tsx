@@ -29,10 +29,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { s3Upload } from "./s3Upload";
 import { useRouter } from "next/navigation";
-import { insertAdSlotParams } from "@repo/db";
+import { insertAdSlotForm } from "@repo/db";
 import { GetInventoryById } from "@repo/api";
 import { deleteS3Image } from "./s3Delete";
 import Link from "next/link";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 export default function NewSlot({
   inventory,
 }: {
@@ -43,14 +44,12 @@ export default function NewSlot({
   const router = useRouter();
   const toast = useToast();
   const [image, setImage] = useState<File | null>(null);
-  const form = useForm<z.infer<typeof insertAdSlotParams>>({
-    resolver: zodResolver(insertAdSlotParams),
+  const form = useForm<z.infer<typeof insertAdSlotForm>>({
+    resolver: zodResolver(insertAdSlotForm),
     defaultValues: {
       inventoryId: inventory?.id,
       lent: false,
-      mintAddress: null,
-      ownerAddress: null,
-      ownerEmail: null,
+      slotPrice: 0,
       status: "active",
       slotType: "Aside Ad",
       slotPlatform: "Web App",
@@ -74,14 +73,13 @@ export default function NewSlot({
               if (!image) {
                 throw new Error("Please upload image.");
               }
+
+              const slotPrice = BigInt(LAMPORTS_PER_SOL * data.slotPrice);
               const s3ImageUri = await s3Upload(image);
               const res = await createAdSlot.mutateAsync({
                 ...data,
+                slotPrice: slotPrice,
                 slotImageUri: s3ImageUri,
-                lent: false,
-                mintAddress: null,
-                ownerAddress: null,
-                ownerEmail: null,
               });
               if (!res) {
                 await deleteS3Image(s3ImageUri);
@@ -149,11 +147,7 @@ export default function NewSlot({
                         name="slotDescription"
                         control={form.control}
                         render={({ field }) => (
-                          <Textarea
-                            className="min-h-32"
-                            {...field}
-                            value={field.value ?? ""}
-                          />
+                          <Textarea className="min-h-32" {...field} />
                         )}
                       />
                     </div>
@@ -163,12 +157,7 @@ export default function NewSlot({
                         name="slotWebsiteUri"
                         control={form.control}
                         render={({ field }) => (
-                          <Input
-                            type="text"
-                            className="w-full"
-                            {...field}
-                            value={field.value ?? ""}
-                          />
+                          <Input type="text" className="w-full" {...field} />
                         )}
                       />
                     </div>
@@ -198,44 +187,43 @@ export default function NewSlot({
                             {...form.register("slotPrice", {
                               valueAsNumber: true,
                             })}
-                            value={field.value ?? ""}
                           />
                         )}
                       />
                     </div>
                     <div className="grid gap-3">
-                      <Label htmlFor="slotWidth">Slot Width ( in % )</Label>
+                      <Label htmlFor="slotWidth">Slot Width</Label>
 
                       <FormField
                         control={form.control}
                         name="slotWidth"
                         render={({ field }) => (
                           <Input
+                            placeholder="728"
                             type="number"
                             className="w-full"
                             {...field}
                             {...form.register("slotWidth", {
                               valueAsNumber: true,
                             })}
-                            value={field.value ?? ""}
                           />
                         )}
                       />
                     </div>
                     <div className="grid gap-3">
-                      <Label htmlFor="slotLength">Slot Length ( in % )</Label>
+                      <Label htmlFor="slotLength">Slot Length</Label>
                       <FormField
                         control={form.control}
                         name="slotLength"
                         render={({ field }) => (
                           <Input
+                            placeholder="90"
                             type="number"
                             className="w-full"
                             {...field}
                             {...form.register("slotLength", {
                               valueAsNumber: true,
                             })}
-                            value={field.value ?? ""}
                           />
                         )}
                       />

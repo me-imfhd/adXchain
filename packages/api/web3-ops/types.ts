@@ -8,7 +8,6 @@ export type NftCreationResponse = {
   transactionId: string;
   nftId: number;
   projectId: number;
-  mintAddress: string;
 };
 
 export type NftBodyParams = {

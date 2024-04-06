@@ -7,7 +7,7 @@ import { cn } from "@repo/ui/cn";
 export const SiteFooter = () => {
   return (
     <footer className="w-full  border-t bg-background">
-      <Shell as={"div"} className="flex justify-between">
+      <Shell as={"div"} className="flex justify-between md:py-4">
         <section
           id="footer-content"
           aria-labelledby="footer-content-heading"
