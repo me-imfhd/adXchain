@@ -6,7 +6,7 @@ import Image from "next/image";
 export function About() {
   return (
     <div className=" w-full flex justify-center items-center text-center mt-10">
-      <svg
+    {/*  <svg
         width="23"
         height="298"
         viewBox="0 0 23 298"
@@ -14,7 +14,7 @@ export function About() {
         xmlns="http://www.w3.org/2000/svg"
         className="hidden md:block"
       >
-        {/* @ts-ignore */}
+         @ts-ignore 
         <g>
           <path
             d="M21.1496 286.405V11.6055C21.1496 6.20872 16.7738 1.8694 11.4134 1.8694C6.05311 1.8694 1.67734 6.24516 1.67734 11.6055V286.405C1.67734 291.801 6.05311 296.141 11.4134 296.141C16.7738 296.141 21.1496 291.765 21.1496 286.405Z"
@@ -101,9 +101,9 @@ export function About() {
             fill="#F38FE1"
           />
         </g>
-      </svg>
+      </svg>*/}
       <div className="w-full flex flex-col justify-center items-center text-center">
-        <h2 className="md:pt-2 lg:leading-[48px] mt-4 xs:max-w-xs sm:max-w-[740px] tracking-wide md:tracking-normal text-center animate-fade-up text-3xl font-bold  text-black dark:text-white sm:text-[37px]">
+        {/* <h2 className="md:pt-2 lg:leading-[48px] mt-4 xs:max-w-xs sm:max-w-[740px] tracking-wide md:tracking-normal text-center animate-fade-up text-3xl font-bold  text-black dark:text-white sm:text-[37px]">
           Say Goodbye to Fraud, Hello to Transparency with adXchain
         </h2>
         <p className="animate-fade-up lg:leading-[30px] max-w-[898px] tracking-wide md:tracking-normal  mt-2  text-center text-lg   text-muted-foreground md:text-xl lg:text-[24px]">
@@ -111,14 +111,14 @@ export function About() {
           decentralized ad spaces and blockchain technology. Say goodbye to
           fraud and malicious activities, and hello to transparent, efficient
           advertising.
-        </p>
+        </p> */}
         <div className="mt-5 relative hidden md:block">
           <div className="relative">
-            <Image src={laptop} alt="laptop" height={700} width={700} />
-            <div className="absolute top-9 left-28 ">
+            <Image src={laptop} alt="laptop" height={900} width={900} />
+            <div className="absolute top-9 left-32">
               <iframe
-                width="480"
-                height="300"
+                width="635"
+                height="420"
                 src="https://www.youtube.com/embed/y96oyPvMe54?si=BFprFiPxh7IQaEzV"
                 title="YouTube video player"
                 frameBorder="0"
@@ -130,7 +130,7 @@ export function About() {
           </div>
         </div>
       </div>
-      <svg
+    {/*  <svg
         width="23"
         height="298"
         viewBox="0 0 23 298"
@@ -138,7 +138,7 @@ export function About() {
         xmlns="http://www.w3.org/2000/svg"
         className="hidden md:block"
       >
-        {/* @ts-ignore */}
+         @ts-ignore 
         <g>
           <path
             d="M21.1861 11.4499L21.1861 286.25C21.1861 291.647 16.8104 295.986 11.45 295.986C6.08966 295.986 1.71387 291.61 1.71387 286.25L1.71387 11.4499C1.71387 6.05311 6.08966 1.71378 11.45 1.71378C16.8104 1.71378 21.1861 6.08957 21.1861 11.4499Z"
@@ -225,7 +225,7 @@ export function About() {
             fill="#C9A6FD"
           />
         </g>
-      </svg>
+      </svg>*/}
     </div>
   );
 }
