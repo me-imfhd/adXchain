@@ -1,6 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { type WalletAdapterProps } from "@solana/wallet-adapter-base";
 import { z } from "zod";
 import {
   Form,
@@ -23,6 +24,13 @@ import { trpc } from "@repo/trpc/trpc/client";
 import { NftBodyParams } from "@repo/api/web3-ops/types";
 import { SlotMap } from "../(lobby)/market/[inventory]/page";
 import { useRouter } from "next/navigation";
+import {
+  Connection,
+  SystemProgram,
+  Transaction,
+  sendAndConfirmTransaction,
+} from "@solana/web3.js";
+import { PublicKey } from "@metaplex-foundation/js";
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/jpeg",
@@ -37,15 +45,25 @@ const underdogApiEndpoint = "https://devnet.underdogprotocol.com";
 type InventorySchema = z.infer<typeof multipleAdSlotForm>;
 interface BuyAdNFTProps {
   selectedSlots: SlotMap[];
+  sendTransaction: WalletAdapterProps["sendTransaction"];
+  balance: bigint;
   session: Session;
   inventoryName: string;
   inventoryId: string;
   inventoryImageUri: string;
   transactionAmount: bigint;
+  recieversAddress: string;
+  payersAddress: PublicKey;
+  connection: Connection;
 }
 export default function BuyMultiple({
   session,
   selectedSlots,
+  connection,
+  balance,
+  payersAddress,
+  recieversAddress,
+  sendTransaction,
   transactionAmount,
   inventoryImageUri,
   inventoryName,
@@ -111,7 +129,20 @@ export default function BuyMultiple({
                   "3. adXchain Project for underdog project created: ",
                   web2Project
                 );
-
+                try {
+                  const payTransaction = await sendSol(
+                    recieversAddress,
+                    payersAddress,
+                    transactionAmount,
+                    connection,
+                    sendTransaction
+                  );
+                  if (!payTransaction) {
+                    throw new Error("Transaction Not Completed, try again.");
+                  }
+                } catch (err) {
+                  throw new Error((err as Error).message);
+                }
                 // Create NFTs
                 await Promise.all(
                   selectedSlots.map(async (slot) => {
@@ -161,11 +192,37 @@ export default function BuyMultiple({
                         return;
                       }
                     } catch (err) {
+                      const payTransaction = await sendSol(
+                        payersAddress.toBase58(),
+                        new PublicKey(recieversAddress),
+                        transactionAmount,
+                        connection,
+                        sendTransaction
+                      );
+                      toast({
+                        title: "Ad Nft failed.",
+                        description:
+                          "Your sols are sent back to you, Please retry.",
+                      });
                       throw new Error("Ad NFT creation failed.");
                     }
                   })
                 );
               } else {
+                try {
+                  const payTransaction = await sendSol(
+                    recieversAddress,
+                    payersAddress,
+                    transactionAmount,
+                    connection,
+                    sendTransaction
+                  );
+                  if (!payTransaction) {
+                    throw new Error("Transaction Not Completed, try again.");
+                  }
+                } catch (err) {
+                  throw new Error((err as Error).message);
+                }
                 // If project exists, create NFTs for existing project
                 await Promise.all(
                   selectedSlots.map(async (slot) => {
@@ -210,11 +267,26 @@ export default function BuyMultiple({
                       });
                       if (res) {
                         setIsLoading(false);
-                        toast({ title: "Operation Successful" });
+                        toast({
+                          title: "Success",
+                          description: "Your Ad will be running shortly.",
+                        });
                         router.push(`/market`);
                         return;
                       }
                     } catch (err) {
+                      const payTransaction = await sendSol(
+                        payersAddress.toBase58(),
+                        new PublicKey(recieversAddress),
+                        transactionAmount,
+                        connection,
+                        sendTransaction
+                      );
+                      toast({
+                        title: "Ad Nft failed.",
+                        description:
+                          "Your sols are sent back to you, Please retry.",
+                      });
                       throw new Error("Ad NFT creation failed. Please retry.");
                     }
                   })
@@ -279,3 +351,25 @@ async function retry(fn: any, retries: number, delayMs: number) {
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+const sendSol = async (
+  recieverAddress: string,
+  payerPublicKey: PublicKey,
+  amountLamports: bigint,
+  connection: Connection,
+  sendTransaction: WalletAdapterProps["sendTransaction"]
+) => {
+  const transaction = new Transaction();
+  const recipientPubKey = new PublicKey(recieverAddress);
+
+  const sendSolInstruction = SystemProgram.transfer({
+    fromPubkey: payerPublicKey,
+    toPubkey: recipientPubKey,
+    lamports: Number(amountLamports),
+  });
+
+  transaction.add(sendSolInstruction);
+  const tx = await sendTransaction(transaction, connection);
+  console.log(tx);
+  return tx;
+};

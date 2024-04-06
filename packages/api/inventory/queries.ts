@@ -25,6 +25,7 @@ export const getInventoryById = async (id: InventoryId) => {
     where: { id },
     include: {
       adSlots: { include: { owner: true } },
+      user: true,
     },
   });
   return i;
@@ -33,6 +34,7 @@ export const getActiveInventoryById = async (id: InventoryId) => {
   const i = await db.inventory.findUnique({
     where: { id },
     include: {
+      user: true,
       adSlots: {
         where: { status: "active" },
         include: { owner: true },
