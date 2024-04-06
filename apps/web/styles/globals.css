@@ -227,8 +227,8 @@ main {
   border-image: linear-gradient(
     to right,
     white,
-    rgb(105, 67, 228),
-    rgb(187, 75, 222)
+    rgb(37, 36, 38),
+    rgb(233, 219, 237)
   );
   border-image-slice: 1;
   border-image-width: 1 0 1 1;
@@ -239,8 +239,8 @@ main {
   border-image: linear-gradient(
     to right,
     white,
-    rgb(105, 67, 228),
-    rgb(187, 75, 222)
+    rgb(37, 36, 38),
+    rgb(233, 219, 237)
   );
   border-image-slice: 1;
   border-image-width: 1 1 1 0;

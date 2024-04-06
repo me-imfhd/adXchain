@@ -1,5 +1,3 @@
-import { Button } from "@repo/ui/components";
-import { ShinyButton } from "@repo/ui/components/buttons";
 import { Hero } from "./hero";
 import { About } from "./about";
 import FAQS from "@/components/landing-page/faqs";

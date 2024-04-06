@@ -40,7 +40,7 @@ const WhyUS = () => {
                 width="142.6"
                 height="142.6"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                color-interpolation-filters="white"
               >
                 <feFlood flood-opacity="0" result="BackgroundImageFix" />
                 <feColorMatrix
