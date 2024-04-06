@@ -1,16 +1,16 @@
-"use client"
-import InventoryCard from '@/components/layout/InventoryCard';
-import { GetInventoryById } from '@repo/api';
-import { Button } from '@repo/ui/components';
-import { PlusCircle } from '@repo/ui/icons';
-import Link from 'next/link';
-import React, { useEffect, useState } from 'react'
+"use client";
+import InventoryCard from "@/components/layout/InventoryCard";
+import { GetInventoryById } from "@repo/api";
+import { Button } from "@repo/ui/components";
+import { PlusCircle } from "@repo/ui/icons";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 
 interface InventoriesPageProps {
   inventory: any;
 }
 
-const InventoriesPage = ({inventory}:InventoriesPageProps) => {
+const InventoriesPage = ({ inventory }: InventoriesPageProps) => {
   const [i, setInventory] = useState([]);
 
   useEffect(() => {
@@ -78,21 +78,28 @@ const InventoriesPage = ({inventory}:InventoriesPageProps) => {
         </div>
       )}
       <div className="flex flex-wrap gap-4 items-center">
-        {i.map((inventory: { id: string; inventoryImageUri: string; inventoryName: string; inventoryWebsiteUri: string; }) => {
-          return (
-            <Link href={`/inventories/${inventory.id}`}>
-              <InventoryCard
-                imgURL={inventory.inventoryImageUri!}
-                CollectionName={inventory.inventoryName}
-                CollectionWebsite={inventory.inventoryWebsiteUri!}
-                Collectionid={inventory.id}
-              />
-            </Link>
-          );
-        })}
+        {i.map(
+          (inventory: {
+            id: string;
+            inventoryImageUri: string;
+            inventoryName: string;
+            inventoryWebsiteUri: string;
+          }) => {
+            return (
+              <Link href={`/inventories/${inventory.id}`}>
+                <InventoryCard
+                  imgURL={inventory.inventoryImageUri!}
+                  CollectionName={inventory.inventoryName}
+                  CollectionWebsite={inventory.inventoryWebsiteUri!}
+                  Collectionid={inventory.id}
+                />
+              </Link>
+            );
+          },
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default InventoriesPage
+export default InventoriesPage;

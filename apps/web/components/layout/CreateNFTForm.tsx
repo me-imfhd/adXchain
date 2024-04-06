@@ -41,7 +41,7 @@ const CreateNFTFormSchema = z.object({
     }, `Max image size is 5MB.`)
     .refine(
       (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported."
+      "Only .jpg, .jpeg, .png and .webp formats are supported.",
     ),
   NFTAnimation: z
     .any()
@@ -50,7 +50,7 @@ const CreateNFTFormSchema = z.object({
     }, `Max image size is 5MB.`)
     .refine(
       (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported."
+      "Only .jpg, .jpeg, .png and .webp formats are supported.",
     ),
   NFTWebsite: z.string().url(),
   NFTSymbol: z.string().min(2),
@@ -64,7 +64,7 @@ type CreateNFTFormValues = z.infer<typeof CreateNFTFormSchema>;
 export function CreateNFTForm() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedAnimation, setSelectedIAnimation] = useState<File | null>(
-    null
+    null,
   );
 
   const form = useForm<CreateNFTFormValues>({

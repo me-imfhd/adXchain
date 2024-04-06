@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  Ad,
   NftBodyParams,
   NftCreationResponse,
   ProjectCreationResponse,
@@ -92,15 +93,41 @@ export async function retrieveNft({
   underdogApiEndpoint,
   underdogApiKey,
 }: RetrieveNft) {
-  const retrieveNft = await axios.get(
-    `${underdogApiEndpoint}/v2/projects/${projectId}/nfts/${nftId}`,
-    {
-      headers: { Authorization: `Bearer ${underdogApiKey}` },
+  let retrieveNft;
+  do {
+    try {
+      retrieveNft = await axios.get(
+        `${underdogApiEndpoint}/v2/projects/${projectId}/nfts/${nftId}`,
+        {
+          headers: { Authorization: `Bearer ${underdogApiKey}` },
+        }
+      );
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    } catch (e) {
+      console.log("retrying");
     }
-  );
-  const data = {
-    ...retrieveNft.data,
-    mintAddress: retrieveNft.data.mintAddress,
-  };
+  } while (retrieveNft?.data.status !== "confirmed");
+  const data = retrieveNft.data;
   return data;
+}
+
+interface RetrieveNftByMint {
+  underdogApiEndpoint: string;
+  mintAddresses: string[];
+}
+
+export async function retrieveNftByMint({
+  underdogApiEndpoint,
+  mintAddresses,
+}: RetrieveNftByMint) {
+  const ads = await Promise.all(
+    mintAddresses.map(async (mint) => {
+      const retrieveNft = await axios.get(
+        `${underdogApiEndpoint}/v2/nfts/${mint}`
+      );
+      const data = retrieveNft.data as Ad;
+      return data;
+    })
+  );
+  return ads;
 }

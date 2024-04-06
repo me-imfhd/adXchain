@@ -1,6 +1,6 @@
 import React from "react";
 import { TypographyH3 } from "@repo/ui/components";
-import { GetInventoryById } from "@repo/api";
+import { GetActiveInventoryById } from "@repo/api";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 export default function InventoryPageLayout({
   i,
@@ -11,7 +11,7 @@ export default function InventoryPageLayout({
   total,
   totalBuyablePrice,
 }: {
-  i: GetInventoryById;
+  i: GetActiveInventoryById;
   totalBuyablePrice: bigint;
   dialog: React.ReactNode;
   cards: React.ReactNode;

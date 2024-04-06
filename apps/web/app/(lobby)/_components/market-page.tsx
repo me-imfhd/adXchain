@@ -1,6 +1,7 @@
 "use client";
 import BuyMultiple from "@/app/buy/_buyMultipleAdNFTs";
-import { GetInventoryById } from "@repo/api";
+
+import { GetActiveInventoryById, GetInventoryById } from "@repo/api";
 import {
   Badge,
   Button,
@@ -18,14 +19,15 @@ import {
 import { GlowingButton } from "@repo/ui/components/buttons";
 import { ExternalLink, Upload } from "@repo/ui/icons";
 import Link from "next/link";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import InventoryPageLayout from "./inventoryPageLayout";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { SlotMap } from "../market/[inventory]/page";
 import { Session } from "@repo/auth";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
 interface MarketPageProps {
-  inventory: NonNullable<GetInventoryById>;
+  inventory: NonNullable<GetActiveInventoryById>;
   totalBuyablePrice: bigint;
   supply: number;
   percentage: number;
@@ -43,6 +45,26 @@ export default function MarketPage({
   total,
   initial,
 }: MarketPageProps) {
+  const { connection } = useConnection();
+  const { publicKey, sendTransaction } = useWallet();
+  const [balance, setBalance] = useState<bigint>(0n);
+  useEffect(() => {
+    if (!connection || !publicKey) {
+      return;
+    }
+
+    connection.onAccountChange(
+      publicKey,
+      (updatedAccountInfo) => {
+        setBalance(BigInt(updatedAccountInfo.lamports));
+      },
+      "confirmed"
+    );
+
+    connection.getAccountInfo(publicKey).then((info) => {
+      setBalance(BigInt(info?.lamports!));
+    });
+  }, [connection, publicKey]);
   const [slotsArray, setSlotsArray] = useState<SlotMap[]>(initial);
   const selectedSlots = slotsArray.filter((slot) => slot.isSelected);
 
@@ -111,7 +133,7 @@ export default function MarketPage({
             </DialogHeader>
             <>
               <div className="flex items-start flex-wrap justify-between p-2">
-                <div className="flex flex-col gap-4 items-start w-[70%] border-solid border p-3">
+                <div className="flex flex-col gap-4 items-start w-[64%] border-solid border p-3">
                   {selectedSlots.map((adSlot) => {
                     return (
                       <div
@@ -222,7 +244,7 @@ export default function MarketPage({
                     );
                   })}
                 </div>
-                <div className="flex flex-col w-[30%] border-solid border p-3 items-end">
+                <div className="flex flex-col w-[35%] border-solid border p-3 items-end">
                   {selectedSlots.map((adSlot) => {
                     return (
                       <div key={adSlot.id} className="flex gap-4">
@@ -233,45 +255,10 @@ export default function MarketPage({
                     );
                   })}
                   <div className="border-solid border-y p-2 flex justify-between items-center font-semibold w-full">
-                    <span>Total:</span> {Number(totalPrice) / LAMPORTS_PER_SOL}
-                    <span className="flex items-center gap-1">
-                      <svg
-                        version="1.1"
-                        id="Layer_1"
-                        xmlns="http://www.w3.org/2000/svg"
-                        x="0"
-                        y="0"
-                        width="16px"
-                        height="16px"
-                        viewBox="0 0 450 352.69"
-                      >
-                        <path
-                          d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"
-                          style={{ fill: "white" }}
-                        ></path>
-                        <path
-                          d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"
-                          style={{ fill: "white" }}
-                        ></path>
-                        <path
-                          d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
-                          style={{ fill: "white" }}
-                        ></path>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <DialogFooter>
-                <Dialog>
-                  <DialogTrigger>
-                    <Button
-                      variant="secondary"
-                      className="font-semibold flex items-center"
-                    >
-                      <span>Pay</span>
+                    <span>Total</span>{" "}
+                    <div className="flex-1 flex gap-2 justify-end">
+                      <span>{Number(totalPrice) / LAMPORTS_PER_SOL}</span>
                       <span className="flex items-center gap-1">
-                        {Number(totalPrice) / LAMPORTS_PER_SOL}
                         <svg
                           version="1.1"
                           id="Layer_1"
@@ -296,21 +283,101 @@ export default function MarketPage({
                           ></path>
                         </svg>
                       </span>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>Confirm Transaction</DialogHeader>
-                    <BuyMultiple
-                    inventoryId={inventory.id}
-                      inventoryImageUri={inventory?.inventoryImageUri!}
-                      inventoryName={inventory?.inventoryName!}
-                      session={session}
-                      transactionAmount={totalPrice}
-                      selectedSlots={selectedSlots}
-
-                    />
-                  </DialogContent>
-                </Dialog>
+                    </div>
+                  </div>
+                  <div className="border-solid border-y p-2 flex justify-between items-center font-semibold w-full">
+                    <span>Balance</span>
+                    <div className="flex-1 flex gap-2 justify-end">
+                      <span
+                        className={`${balance < totalPrice ? "text-red-500" : "text-green-500"}`}
+                      >
+                        {Number(balance) / LAMPORTS_PER_SOL}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <svg
+                          version="1.1"
+                          id="Layer_1"
+                          xmlns="http://www.w3.org/2000/svg"
+                          x="0"
+                          y="0"
+                          width="16px"
+                          height="16px"
+                          viewBox="0 0 450 352.69"
+                        >
+                          <path
+                            d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"
+                            style={{ fill: "white" }}
+                          ></path>
+                          <path
+                            d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"
+                            style={{ fill: "white" }}
+                          ></path>
+                          <path
+                            d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
+                            style={{ fill: "white" }}
+                          ></path>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                {publicKey && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        className="font-semibold flex items-center"
+                        disabled={BigInt(balance) < totalPrice}
+                      >
+                        <span>Pay</span>
+                        <span className="flex items-center gap-1">
+                          {Number(totalPrice) / LAMPORTS_PER_SOL}
+                          <svg
+                            version="1.1"
+                            id="Layer_1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0"
+                            y="0"
+                            width="16px"
+                            height="16px"
+                            viewBox="0 0 450 352.69"
+                          >
+                            <path
+                              d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"
+                              style={{ fill: "white" }}
+                            ></path>
+                            <path
+                              d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"
+                              style={{ fill: "white" }}
+                            ></path>
+                            <path
+                              d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"
+                              style={{ fill: "white" }}
+                            ></path>
+                          </svg>
+                        </span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>Confirm Transaction</DialogHeader>
+                      <BuyMultiple
+                        connection={connection}
+                        payersAddress={publicKey}
+                        recieversAddress={inventory.user.walletAddress}
+                        sendTransaction={sendTransaction}
+                        balance={balance}
+                        inventoryId={inventory.id}
+                        inventoryImageUri={inventory?.inventoryImageUri!}
+                        inventoryName={inventory?.inventoryName!}
+                        session={session}
+                        transactionAmount={totalPrice}
+                        selectedSlots={selectedSlots}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                )}
               </DialogFooter>
             </>
           </DialogContent>
@@ -321,10 +388,6 @@ export default function MarketPage({
           {inventory?.adSlots.length === 0
             ? "This inventory has not ad slots listed."
             : inventory?.adSlots.map((adSlot) => {
-                const walletAddress =
-                  adSlot.inventory.projects[0]?.adNft?.nftMintAddress;
-                const wa =
-                  walletAddress?.slice(0, 4) + ".." + walletAddress?.slice(-4);
                 const rented = Boolean(
                   slotsArray.find(
                     (slot) => slot.id == adSlot.id && slot.isRented
@@ -335,9 +398,10 @@ export default function MarketPage({
                     (slot) => slot.id == adSlot.id && slot.isSelected
                   )
                 );
-                const mint =
-                  adSlot.inventory.projects[0]?.adNft?.nftMintAddress;
-                const mintAddress = mint?.slice(0.4) + ".." + mint?.slice(-4);
+
+                const walletAddress = adSlot.owner?.walletAddress;
+                const wa =
+                  walletAddress?.slice(0, 4) + ".." + walletAddress?.slice(-4);
                 return (
                   <Card
                     onClick={() => {
@@ -347,7 +411,11 @@ export default function MarketPage({
                       handleClick(adSlot.id);
                     }}
                     disabled={rented}
-                    className={`rounded-lg hover:shadow-[0_0_2rem_-0.5rem_#3178c6] cursor-pointer ${selected && !rented && "shadow-[0_0_2rem_-0.5rem_#3178c6] border-blue-600"}`}
+                    className={`rounded-lg hover:shadow-[0_0_2rem_-0.5rem_#3178c6] cursor-pointer ${
+                      selected &&
+                      !rented &&
+                      "shadow-[0_0_2rem_-0.5rem_#3178c6] border-blue-600"
+                    }`}
                   >
                     <div className="flex flex-col gap-1">
                       <div className="aspect-video overflow-hidden ">
@@ -420,12 +488,12 @@ export default function MarketPage({
                               </span>
                               <span>{adSlot.slotPlatform}</span>
                             </p>
-                            {rented ? (
+                            {rented && walletAddress ? (
                               <p className=" leading-none flex justify-between gap-2">
                                 <span className="text-muted-foreground font-medium">
-                                  Mint
+                                  Owner
                                 </span>
-                                <span>{mintAddress}</span>
+                                <span>{wa}</span>
                               </p>
                             ) : (
                               <p className=" leading-none flex justify-between gap-2">

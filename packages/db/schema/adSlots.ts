@@ -18,7 +18,9 @@ export const insertAdSlotParams = baseSchema.omit({
 export const insertAdSlotForm = insertAdSlotParams
   .omit({
     slotImageUri: true,
+    ownerId: true,
     slotPrice: true,
+    nftMintAddress: true,
   })
   .extend({
     slotPrice: z.number(),
@@ -28,6 +30,8 @@ export const editAdSlotForm = baseSchema
   .omit({
     createdAt: true,
     slotPrice: true,
+    ownerId: true,
+    nftMintAddress: true,
   })
   .extend({
     slotPrice: z.number(),

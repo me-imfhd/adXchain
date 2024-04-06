@@ -30,7 +30,9 @@ export default function Profile({ session: { user } }: { session: Session }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel className="text-muted-foreground">{user.email}</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-muted-foreground">
+          {user.email}
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
       </DropdownMenuContent>

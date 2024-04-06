@@ -76,7 +76,7 @@ export default function LoginForm() {
               name: data.name,
               email: data.email,
             });
-            router.push("/trade");
+            router.push("/market");
             setIsLoading(false);
             return;
           } catch (e) {
