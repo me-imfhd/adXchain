@@ -22,7 +22,7 @@ export const createAdSlot = async (adSlot: NewAdSlotParams) => {
 
 export const updateAdSlot = async (
   id: AdSlotId,
-  adSlot: UpdateAdSlotParams
+  adSlot: UpdateAdSlotParams,
 ) => {
   try {
     const a = await db.adSlot.update({

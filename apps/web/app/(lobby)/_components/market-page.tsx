@@ -1,6 +1,6 @@
 "use client";
 import BuyMultiple from "@/app/buy/_buyMultipleAdNFTs";
-import { GetInventoryById } from "@repo/api";
+import { GetActiveInventoryById, GetInventoryById } from "@repo/api";
 import {
   Badge,
   Button,
@@ -25,7 +25,7 @@ import { SlotMap } from "../market/[inventory]/page";
 import { Session } from "@repo/auth";
 
 interface MarketPageProps {
-  inventory: NonNullable<GetInventoryById>;
+  inventory: NonNullable<GetActiveInventoryById>;
   totalBuyablePrice: bigint;
   supply: number;
   percentage: number;
@@ -177,7 +177,7 @@ export default function MarketPage({
                                   <img
                                     className="object-cover rounded-lg"
                                     src={URL.createObjectURL(
-                                      new Blob([adSlot.file])
+                                      new Blob([adSlot.file]),
                                     )}
                                     style={{
                                       aspectRatio: "25/25",
@@ -195,7 +195,7 @@ export default function MarketPage({
                                   type="file"
                                   className="hidden"
                                   onChange={(
-                                    e: ChangeEvent<HTMLInputElement>
+                                    e: ChangeEvent<HTMLInputElement>,
                                   ) => {
                                     if (e.target.files?.[0]) {
                                       toast({ title: "Image Added." });
@@ -208,7 +208,7 @@ export default function MarketPage({
                                             };
                                           }
                                           return slot;
-                                        }
+                                        },
                                       );
                                       setSlotsArray(updatedSlots);
                                     }
@@ -301,13 +301,12 @@ export default function MarketPage({
                   <DialogContent>
                     <DialogHeader>Confirm Transaction</DialogHeader>
                     <BuyMultiple
-                    inventoryId={inventory.id}
+                      inventoryId={inventory.id}
                       inventoryImageUri={inventory?.inventoryImageUri!}
                       inventoryName={inventory?.inventoryName!}
                       session={session}
                       transactionAmount={totalPrice}
                       selectedSlots={selectedSlots}
-
                     />
                   </DialogContent>
                 </Dialog>
@@ -321,23 +320,20 @@ export default function MarketPage({
           {inventory?.adSlots.length === 0
             ? "This inventory has not ad slots listed."
             : inventory?.adSlots.map((adSlot) => {
-                const walletAddress =
-                  adSlot.inventory.projects[0]?.adNft?.nftMintAddress;
-                const wa =
-                  walletAddress?.slice(0, 4) + ".." + walletAddress?.slice(-4);
                 const rented = Boolean(
                   slotsArray.find(
-                    (slot) => slot.id == adSlot.id && slot.isRented
-                  )
+                    (slot) => slot.id == adSlot.id && slot.isRented,
+                  ),
                 );
                 const selected = Boolean(
                   slotsArray.find(
-                    (slot) => slot.id == adSlot.id && slot.isSelected
-                  )
+                    (slot) => slot.id == adSlot.id && slot.isSelected,
+                  ),
                 );
-                const mint =
-                  adSlot.inventory.projects[0]?.adNft?.nftMintAddress;
-                const mintAddress = mint?.slice(0.4) + ".." + mint?.slice(-4);
+
+                const walletAddress = adSlot.owner?.walletAddress;
+                const wa =
+                  walletAddress?.slice(0, 4) + ".." + walletAddress?.slice(-4);
                 return (
                   <Card
                     onClick={() => {
@@ -347,7 +343,11 @@ export default function MarketPage({
                       handleClick(adSlot.id);
                     }}
                     disabled={rented}
-                    className={`rounded-lg hover:shadow-[0_0_2rem_-0.5rem_#3178c6] cursor-pointer ${selected && !rented && "shadow-[0_0_2rem_-0.5rem_#3178c6] border-blue-600"}`}
+                    className={`rounded-lg hover:shadow-[0_0_2rem_-0.5rem_#3178c6] cursor-pointer ${
+                      selected &&
+                      !rented &&
+                      "shadow-[0_0_2rem_-0.5rem_#3178c6] border-blue-600"
+                    }`}
                   >
                     <div className="flex flex-col gap-1">
                       <div className="aspect-video overflow-hidden ">
@@ -420,12 +420,12 @@ export default function MarketPage({
                               </span>
                               <span>{adSlot.slotPlatform}</span>
                             </p>
-                            {rented ? (
+                            {rented && walletAddress ? (
                               <p className=" leading-none flex justify-between gap-2">
                                 <span className="text-muted-foreground font-medium">
-                                  Mint
+                                  Owner
                                 </span>
-                                <span>{mintAddress}</span>
+                                <span>{wa}</span>
                               </p>
                             ) : (
                               <p className=" leading-none flex justify-between gap-2">

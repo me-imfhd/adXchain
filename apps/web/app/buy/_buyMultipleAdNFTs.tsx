@@ -22,6 +22,7 @@ import { deleteS3Image } from "../(dashboard)/_components/s3Delete";
 import { trpc } from "@repo/trpc/trpc/client";
 import { NftBodyParams } from "@repo/api/web3-ops/types";
 import { SlotMap } from "../(lobby)/market/[inventory]/page";
+import { useRouter } from "next/navigation";
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/jpeg",
@@ -53,6 +54,7 @@ export default function BuyMultiple({
   const [isLoading, setIsLoading] = useState(false);
   const oldProject = trpc.project.getUserProjectByInventoryId.useMutation();
   const createNft = trpc.adNft.createNftAndUpdateLent.useMutation();
+  const router = useRouter();
   const createNewProject = trpc.project.createProject.useMutation();
   const toast = useToast().toast;
   const form = useForm<InventorySchema>({
@@ -96,7 +98,7 @@ export default function BuyMultiple({
                 });
                 console.log(
                   "2. Underdog Project Created: ",
-                  underdogProject.projectId
+                  underdogProject.projectId,
                 );
 
                 const web2Project = await createNewProject.mutateAsync({
@@ -107,7 +109,7 @@ export default function BuyMultiple({
                 });
                 console.log(
                   "3. adXchain Project for underdog project created: ",
-                  web2Project.project.id
+                  web2Project.project.id,
                 );
 
                 // Create NFTs
@@ -126,25 +128,36 @@ export default function BuyMultiple({
                       name: slot.slotName,
                     } as NftBodyParams;
                     console.log(nftBody);
-                    const nft = await createUnderdogNFT({
-                      projectId: underdogProject.projectId,
-                      underdogApiEndpoint,
-                      underdogApiKey: data.underdogApi,
-                      nftBody,
-                    });
-                    console.log("Underdog Nft Created Successfully.");
-
-                    await createNft.mutateAsync({
-                      adSlotId: { id: slot.id },
-                      nftDisplayUri: s3ImageUri,
-                      nftFileType: slot.file?.type!,
-                      nftMintAddress: null,
-                      projectId: web2Project.project.id,
-                      underdogNftId: nft.nftId,
-                      nftRedirectUri: "",
-                    });
-                    console.log("Ad NFT created and lent set to true.");
-                  })
+                    try {
+                      const nft = await createUnderdogNFT({
+                        projectId: underdogProject.projectId,
+                        underdogApiEndpoint,
+                        underdogApiKey: data.underdogApi,
+                        nftBody,
+                      });
+                      if (nft) {
+                        toast({ title: "Ad Space Initialized successfully." });
+                      }
+                      const res = await createNft.mutateAsync({
+                        adSlotId: slot.id,
+                        mintAddress: null,
+                        nftDisplayUri: s3ImageUri,
+                        nftFileType: slot.file?.type!,
+                        projectId: web2Project.project.id,
+                        underdogNftId: nft.nftId,
+                        nftRedirectUri: "",
+                        ownerId: session.user.id,
+                      });
+                      if (res) {
+                        setIsLoading(false);
+                        toast({ title: "Operation Successful" });
+                        router.push(`/market/${inventoryId}`);
+                        return;
+                      }
+                    } catch (err) {
+                      throw new Error("Ad NFT creation failed.");
+                    }
+                  }),
                 );
               } else {
                 // If project exists, create NFTs for existing project
@@ -163,40 +176,50 @@ export default function BuyMultiple({
                       name: slot.slotName,
                     } as NftBodyParams;
                     console.log(nftBody);
-                    const nft = await createUnderdogNFT({
-                      projectId: projectAlreadyExist?.underdogProjectId,
-                      underdogApiEndpoint,
-                      underdogApiKey: data.underdogApi,
-                      nftBody,
-                    });
-                    console.log("Underdog Nft created", nft);
-
-                    await createNft.mutateAsync({
-                      adSlotId: { id: slot.id },
-                      nftDisplayUri: s3ImageUri,
-                      nftFileType: slot.file?.type!,
-                      projectId: projectAlreadyExist?.id,
-                      nftMintAddress: null,
-                      underdogNftId: nft.nftId,
-                      nftRedirectUri: "",
-                    });
-                  })
+                    try {
+                      const nft = await createUnderdogNFT({
+                        projectId: projectAlreadyExist.underdogProjectId,
+                        underdogApiEndpoint,
+                        underdogApiKey: data.underdogApi,
+                        nftBody,
+                      });
+                      if (nft) {
+                        toast({ title: "Ad NFT Initialized successfully." });
+                      }
+                      const res = await createNft.mutateAsync({
+                        adSlotId: slot.id,
+                        mintAddress: null,
+                        nftDisplayUri: s3ImageUri,
+                        nftFileType: slot.file?.type!,
+                        projectId: projectAlreadyExist?.id,
+                        underdogNftId: nft.nftId,
+                        nftRedirectUri: "",
+                        ownerId: session.user.id,
+                      });
+                      if (res) {
+                        setIsLoading(false);
+                        toast({ title: "Operation Successful" });
+                        router.push(`/market/${inventoryId}`);
+                        return;
+                      }
+                    } catch (err) {
+                      throw new Error("Ad NFT creation failed.");
+                    }
+                  }),
                 );
               }
             } catch (err) {
               console.log(err);
-              await Promise.all(
-                s3ImagesUri.map(
-                  async (s3ImageUri) => await deleteS3Image(s3ImageUri)
-                )
-              );
               setIsLoading(false);
               toast({
                 title: "Operation Failed",
                 description: (err as Error).message,
               });
-            } finally {
-              setIsLoading(false);
+              await Promise.all(
+                s3ImagesUri.map(
+                  async (s3ImageUri) => await deleteS3Image(s3ImageUri),
+                ),
+              );
             }
           })}
           className="space-y-8"

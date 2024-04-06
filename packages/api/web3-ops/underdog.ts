@@ -25,7 +25,7 @@ export async function createUnderdogProject({
     },
     {
       headers: { Authorization: `Bearer ${underdogApiKey}` },
-    }
+    },
   );
   return createProjectResponse.data as ProjectCreationResponse;
 }
@@ -48,7 +48,7 @@ export async function createUnderdogNFT({
     nftBody,
     {
       headers: { Authorization: `Bearer ${underdogApiKey}` },
-    }
+    },
   );
   return createNftResponse.data as NftCreationResponse;
 }
@@ -71,10 +71,10 @@ export async function createUnderdogNFTs({
         nft,
         {
           headers: { Authorization: `Bearer ${underdogApiKey}` },
-        }
+        },
       );
       return res.data as NftCreationResponse;
-    })
+    }),
   );
   return nftArrayResponse;
 }
@@ -96,7 +96,7 @@ export async function retrieveNft({
     `${underdogApiEndpoint}/v2/projects/${projectId}/nfts/${nftId}`,
     {
       headers: { Authorization: `Bearer ${underdogApiKey}` },
-    }
+    },
   );
   const data = {
     ...retrieveNft.data,

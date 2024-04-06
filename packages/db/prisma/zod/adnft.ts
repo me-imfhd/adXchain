@@ -4,7 +4,6 @@ import { CompleteProject, relatedProjectSchema } from "./index";
 export const adNftSchema = z.object({
   id: z.string(),
   underdogNftId: z.number().int(),
-  nftMintAddress: z.string().nullish(),
   nftDisplayUri: z.string(),
   nftRedirectUri: z.string(),
   nftFileType: z.string(),

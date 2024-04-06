@@ -10,12 +10,12 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         "bg-card text-card-foreground rounded-3xl border shadow-sm animate-fade-up",
         className,
         !disabled && "hover:brightness-110 active:brightness-90",
-        disabled && "opacity-60"
+        disabled && "opacity-60",
       )}
       ref={ref}
       {...props}
     />
-  )
+  ),
 );
 Card.displayName = "Card";
 
@@ -38,7 +38,7 @@ const CardTitle = React.forwardRef<
   <h3
     className={cn(
       "text-lg font-semibold leading-none tracking-tight",
-      className
+      className,
     )}
     ref={ref}
     {...props}

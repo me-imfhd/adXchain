@@ -15,7 +15,7 @@ const NFTDemo: React.FC<NFTDemoProps> = ({ NFTImage }) => {
           <Skeleton
             className={cn(
               buttonVariants({ size: "default" }),
-              "w-[200px] h-[200px] md:w-[360px] md:h-[360px] bg-muted "
+              "w-[200px] h-[200px] md:w-[360px] md:h-[360px] bg-muted ",
             )}
           ></Skeleton>
         )}

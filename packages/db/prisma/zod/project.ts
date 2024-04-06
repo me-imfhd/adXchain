@@ -20,7 +20,7 @@ export const projectSchema = z.object({
 
 export interface CompleteProject extends z.infer<typeof projectSchema> {
   inventory: CompleteInventory;
-  adNft?: CompleteAdNft | null;
+  adNft: CompleteAdNft[];
   user: CompleteUser;
 }
 
@@ -32,7 +32,7 @@ export interface CompleteProject extends z.infer<typeof projectSchema> {
 export const relatedProjectSchema: z.ZodSchema<CompleteProject> = z.lazy(() =>
   projectSchema.extend({
     inventory: relatedInventorySchema,
-    adNft: relatedAdNftSchema.nullish(),
+    adNft: relatedAdNftSchema.array(),
     user: relatedUserSchema,
   }),
 );

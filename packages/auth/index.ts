@@ -73,7 +73,7 @@ export const authOptions: AuthOptions = {
       async authorize(credentials, req) {
         try {
           const signinMessage = new SigninMessage(
-            JSON.parse(credentials?.message || "{}")
+            JSON.parse(credentials?.message || "{}"),
           );
           const walletAddress = signinMessage.publicKey as string;
           const name = credentials?.name;
@@ -90,7 +90,7 @@ export const authOptions: AuthOptions = {
           }
 
           const validationResult = await signinMessage.validate(
-            credentials?.signature || ""
+            credentials?.signature || "",
           );
 
           if (!validationResult)

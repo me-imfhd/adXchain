@@ -37,7 +37,7 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 export default function NewSlot({
   inventory,
 }: {
-  inventory: GetInventoryById;
+  inventory: NonNullable<GetInventoryById>;
 }) {
   const createAdSlot = trpc.adSlots.createAdSlot.useMutation();
   const [isLoading, setIsLoading] = useState(false);
@@ -47,9 +47,9 @@ export default function NewSlot({
   const form = useForm<z.infer<typeof insertAdSlotForm>>({
     resolver: zodResolver(insertAdSlotForm),
     defaultValues: {
-      inventoryId: inventory?.id,
-      lent: false,
+      inventoryId: inventory.id,
       slotPrice: 0,
+      lent: false,
       status: "active",
       slotType: "Aside Ad",
       slotPlatform: "Web App",

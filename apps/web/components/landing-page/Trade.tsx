@@ -46,344 +46,344 @@ export default function Trade() {
         onButtonClick={handleButtonClick}
       />
       <div className="grid gap-6 lg:gap-8 mt-16">
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {action === "Buy" && (
-          <>
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 1"}
-              Price={"1"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 2"}
-              Price={"2"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 3"}
-              Price={"3"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 4"}
-              Price={"4"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 5"}
-              Price={"5"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 6"}
-              Price={"6"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 7"}
-              Price={"7"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 8"}
-              Price={"8"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 9"}
-              Price={"9"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 10"}
-              Price={"10"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />{" "}
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />{" "}
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-            <NFTCard
-              imgURL={imgURL}
-              NFTName={"collection 11"}
-              Price={"11"}
-              BuyPrice={"xxxx"}
-              SellPrice={"xxxx"}
-              BID={"xxxx"}
-              onSelect={(NFTName: string, price: string) =>
-                handleCardSelection(NFTName, price)
-              }
-            />
-          </>
-        )}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {action === "Buy" && (
+            <>
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 1"}
+                Price={"1"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 2"}
+                Price={"2"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 3"}
+                Price={"3"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 4"}
+                Price={"4"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 5"}
+                Price={"5"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 6"}
+                Price={"6"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 7"}
+                Price={"7"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 8"}
+                Price={"8"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 9"}
+                Price={"9"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 10"}
+                Price={"10"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />{" "}
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />{" "}
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+              <NFTCard
+                imgURL={imgURL}
+                NFTName={"collection 11"}
+                Price={"11"}
+                BuyPrice={"xxxx"}
+                SellPrice={"xxxx"}
+                BID={"xxxx"}
+                onSelect={(NFTName: string, price: string) =>
+                  handleCardSelection(NFTName, price)
+                }
+              />
+            </>
+          )}
 
-        {/* commented for adding feature in future */}
-        {/* {action === "Sell" && (
+          {/* commented for adding feature in future */}
+          {/* {action === "Sell" && (
           <>
             <NFTCard
               imgURL={imgURL}

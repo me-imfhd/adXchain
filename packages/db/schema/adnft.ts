@@ -8,6 +8,10 @@ export const createAdNftSchema = adNftSchema
     updatedAt: true,
     id: true,
   })
-  .extend({ adSlotId: adSlotIdSchema });
+  .extend({
+    adSlotId: z.string(),
+    mintAddress: z.string().nullable(),
+    ownerId: z.string(),
+  });
 
 export type CreateAdNftSchema = z.infer<typeof createAdNftSchema>;

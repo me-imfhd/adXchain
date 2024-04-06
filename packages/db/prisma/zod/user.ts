@@ -2,6 +2,8 @@ import * as z from "zod";
 import {
   CompleteProject,
   relatedProjectSchema,
+  CompleteAdSlot,
+  relatedAdSlotSchema,
   CompleteInventory,
   relatedInventorySchema,
 } from "./index";
@@ -18,6 +20,7 @@ export const userSchema = z.object({
 
 export interface CompleteUser extends z.infer<typeof userSchema> {
   nftProject: CompleteProject[];
+  adSlots: CompleteAdSlot[];
   inventory: CompleteInventory[];
 }
 
@@ -29,6 +32,7 @@ export interface CompleteUser extends z.infer<typeof userSchema> {
 export const relatedUserSchema: z.ZodSchema<CompleteUser> = z.lazy(() =>
   userSchema.extend({
     nftProject: relatedProjectSchema.array(),
+    adSlots: relatedAdSlotSchema.array(),
     inventory: relatedInventorySchema.array(),
   }),
 );
