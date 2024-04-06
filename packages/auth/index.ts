@@ -76,8 +76,8 @@ export const authOptions: AuthOptions = {
             JSON.parse(credentials?.message || "{}"),
           );
           const walletAddress = signinMessage.publicKey as string;
-          const name = credentials?.name;
-          const email = credentials?.email;
+          const name = credentials?.name!;
+          const email = credentials?.email!;
           const nextAuthUrl = new URL(process.env.NEXTAUTH_URL!);
           if (signinMessage.domain !== nextAuthUrl.host) {
             return null;
