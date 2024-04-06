@@ -28,7 +28,6 @@ CREATE TABLE "Project" (
 CREATE TABLE "AdNft" (
     "id" TEXT NOT NULL,
     "underdogNftId" INTEGER NOT NULL,
-    "nftMintAddress" TEXT NOT NULL,
     "nftDisplayUri" TEXT NOT NULL,
     "nftRedirectUri" TEXT NOT NULL,
     "nftFileType" TEXT NOT NULL,
@@ -77,6 +76,8 @@ CREATE TABLE "AdSlot" (
     "status" TEXT NOT NULL,
     "slotPlatform" TEXT NOT NULL,
     "lent" BOOLEAN NOT NULL DEFAULT false,
+    "nftMintAddress" TEXT,
+    "ownerId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "inventoryId" TEXT NOT NULL,
@@ -97,10 +98,7 @@ CREATE INDEX "Project_userId_idx" ON "Project"("userId");
 CREATE INDEX "Project_inventoryId_idx" ON "Project"("inventoryId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "AdNft_projectId_key" ON "AdNft"("projectId");
-
--- CreateIndex
-CREATE INDEX "Inventory_inventoryName_idx" ON "Inventory"("inventoryName");
+CREATE INDEX "AdNft_projectId_idx" ON "AdNft"("projectId");
 
 -- CreateIndex
 CREATE INDEX "Inventory_userId_idx" ON "Inventory"("userId");
@@ -110,3 +108,6 @@ CREATE INDEX "Attributes_inventoryId_idx" ON "Attributes"("inventoryId");
 
 -- CreateIndex
 CREATE INDEX "AdSlot_inventoryId_idx" ON "AdSlot"("inventoryId");
+
+-- CreateIndex
+CREATE INDEX "AdSlot_ownerId_idx" ON "AdSlot"("ownerId");
