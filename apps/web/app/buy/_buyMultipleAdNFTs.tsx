@@ -15,7 +15,11 @@ import {
   useToast,
 } from "@repo/ui/components";
 import { useState } from "react";
-import { createUnderdogNFT, createUnderdogProject } from "@repo/api";
+import {
+  createUnderdogNFT,
+  createUnderdogProject,
+  retrieveNft,
+} from "@repo/api";
 import { BuySlot, multipleAdSlotForm } from "@repo/db";
 import { Session } from "@repo/auth";
 import { s3Upload } from "../(dashboard)/_components/s3Upload";
@@ -79,6 +83,86 @@ export default function BuyMultiple({
     resolver: zodResolver(multipleAdSlotForm),
   });
 
+  async function operation(
+    underdogApiKey: string,
+    s3ImagesUri: string[],
+    web2ProjectId: string,
+    underdogProjectId: number
+  ) {
+    try {
+      const payTransaction = await sendSol(
+        recieversAddress,
+        payersAddress,
+        transactionAmount,
+        connection,
+        sendTransaction
+      );
+      if (!payTransaction) {
+        throw new Error("Transaction Not Completed, try again.");
+      }
+    } catch (err) {
+      throw new Error((err as Error).message);
+    }
+    try {
+      await Promise.all(
+        selectedSlots.map(async (slot) => {
+          const s3ImageUri = await s3Upload(slot.file!);
+          s3ImagesUri.push(s3ImageUri);
+
+          const nftBody = {
+            attributes: {
+              displayUri: s3ImageUri,
+              fileType: slot.file!.type,
+            },
+            delegated: true,
+            image: slot.imageUri,
+            name: slot.slotName,
+          } as NftBodyParams;
+          console.log(nftBody);
+          try {
+            const nft = await createUnderdogNFT({
+              projectId: underdogProjectId,
+              underdogApiEndpoint,
+              underdogApiKey,
+              nftBody,
+            });
+            if (nft) {
+              toast({ title: "Ad Space Initialized successfully." });
+            }
+            const nftMint = await retrieveNft({
+              nftId: nft.nftId,
+              projectId: underdogProjectId,
+              underdogApiKey,
+              underdogApiEndpoint,
+            });
+            await createNft.mutateAsync({
+              adSlotId: slot.id,
+              mintAddress: nftMint.mintAddress,
+              nftDisplayUri: s3ImageUri,
+              nftFileType: slot.file?.type!,
+              projectId: web2ProjectId,
+              underdogNftId: nft.nftId,
+              nftRedirectUri: "",
+              ownerId: session.user.id,
+            });
+          } catch (err) {
+            throw new Error("Ad NFT creation failed.");
+          }
+        })
+      );
+      setIsLoading(false);
+      toast({ title: "Operation Successful" });
+      router.push(`/market`);
+      return;
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Some Nft Operation failed",
+        description: (error as Error).message,
+      });
+    }
+  }
+
   return (
     <>
       <Form {...form}>
@@ -99,197 +183,36 @@ export default function BuyMultiple({
                   throw new Error("Max image size is 5mb.");
                 }
               });
-              console.log("1. Image Validation Passed");
 
-              // Check if project already exists
               const projectAlreadyExist = await oldProject.mutateAsync({
                 id: inventoryId,
               });
 
               if (!projectAlreadyExist?.underdogProjectId) {
-                // Create new project if it doesn't exist
                 const underdogProject = await createUnderdogProject({
                   inventoryImageUri: inventoryImageUri,
                   inventoryName: inventoryName,
                   underdogApiEndpoint,
                   underdogApiKey: data.underdogApi,
                 });
-                console.log(
-                  "2. Underdog Project Created: ",
-                  underdogProject.projectId
-                );
-
                 const web2Project = await createNewProject.mutateAsync({
                   collectionMintAddress: underdogProject.mintAddress,
                   inventoryId,
                   underdogProjectId: underdogProject.projectId,
                   userId: session.user.id,
                 });
-                console.log(
-                  "3. adXchain Project for underdog project created: ",
-                  web2Project
-                );
-                try {
-                  const payTransaction = await sendSol(
-                    recieversAddress,
-                    payersAddress,
-                    transactionAmount,
-                    connection,
-                    sendTransaction
-                  );
-                  if (!payTransaction) {
-                    throw new Error("Transaction Not Completed, try again.");
-                  }
-                } catch (err) {
-                  throw new Error((err as Error).message);
-                }
-                // Create NFTs
-                await Promise.all(
-                  selectedSlots.map(async (slot) => {
-                    const s3ImageUri = await s3Upload(slot.file!);
-                    s3ImagesUri.push(s3ImageUri);
-
-                    const nftBody = {
-                      attributes: {
-                        displayUri: s3ImageUri,
-                        fileType: slot.file!.type,
-                      },
-                      delegated: true,
-                      image: slot.imageUri,
-                      name: slot.slotName,
-                    } as NftBodyParams;
-                    console.log(nftBody);
-                    try {
-                      const nft = await retry(
-                        async () => {
-                          return await createUnderdogNFT({
-                            projectId: web2Project.project.underdogProjectId,
-                            underdogApiEndpoint,
-                            underdogApiKey: data.underdogApi,
-                            nftBody,
-                          });
-                        },
-                        3,
-                        1000
-                      );
-                      if (nft) {
-                        toast({ title: "Ad Space Initialized successfully." });
-                      }
-                      const res = await createNft.mutateAsync({
-                        adSlotId: slot.id,
-                        mintAddress: null,
-                        nftDisplayUri: s3ImageUri,
-                        nftFileType: slot.file?.type!,
-                        projectId: web2Project.project.id,
-                        underdogNftId: nft.nftId,
-                        nftRedirectUri: "",
-                        ownerId: session.user.id,
-                      });
-                      if (res) {
-                        setIsLoading(false);
-                        toast({ title: "Operation Successful" });
-                        router.push(`/market`);
-                        return;
-                      }
-                    } catch (err) {
-                      const payTransaction = await sendSol(
-                        payersAddress.toBase58(),
-                        new PublicKey(recieversAddress),
-                        transactionAmount,
-                        connection,
-                        sendTransaction
-                      );
-                      toast({
-                        title: "Ad Nft failed.",
-                        description:
-                          "Your sols are sent back to you, Please retry.",
-                      });
-                      throw new Error("Ad NFT creation failed.");
-                    }
-                  })
+                await operation(
+                  data.underdogApi,
+                  s3ImagesUri,
+                  web2Project.project.id,
+                  web2Project.project.underdogProjectId
                 );
               } else {
-                try {
-                  const payTransaction = await sendSol(
-                    recieversAddress,
-                    payersAddress,
-                    transactionAmount,
-                    connection,
-                    sendTransaction
-                  );
-                  if (!payTransaction) {
-                    throw new Error("Transaction Not Completed, try again.");
-                  }
-                } catch (err) {
-                  throw new Error((err as Error).message);
-                }
-                // If project exists, create NFTs for existing project
-                await Promise.all(
-                  selectedSlots.map(async (slot) => {
-                    const s3ImageUri = await s3Upload(slot.file!);
-                    s3ImagesUri.push(s3ImageUri);
-
-                    const nftBody = {
-                      attributes: {
-                        displayUri: s3ImageUri,
-                        fileType: slot.file!.type,
-                      },
-                      delegated: true,
-                      image: slot.imageUri,
-                      name: slot.slotName,
-                    } as NftBodyParams;
-                    console.log(nftBody);
-                    try {
-                      const nft = await retry(
-                        async () => {
-                          return await createUnderdogNFT({
-                            projectId: projectAlreadyExist.underdogProjectId,
-                            underdogApiEndpoint,
-                            underdogApiKey: data.underdogApi,
-                            nftBody,
-                          });
-                        },
-                        3,
-                        1000
-                      );
-                      if (nft) {
-                        toast({ title: "Ad NFT Initialized successfully." });
-                      }
-                      const res = await createNft.mutateAsync({
-                        adSlotId: slot.id,
-                        mintAddress: null,
-                        nftDisplayUri: s3ImageUri,
-                        nftFileType: slot.file?.type!,
-                        projectId: projectAlreadyExist?.id,
-                        underdogNftId: nft.nftId,
-                        nftRedirectUri: "",
-                        ownerId: session.user.id,
-                      });
-                      if (res) {
-                        setIsLoading(false);
-                        toast({
-                          title: "Success",
-                          description: "Your Ad will be running shortly.",
-                        });
-                        router.push(`/market`);
-                        return;
-                      }
-                    } catch (err) {
-                      const payTransaction = await sendSol(
-                        payersAddress.toBase58(),
-                        new PublicKey(recieversAddress),
-                        transactionAmount,
-                        connection,
-                        sendTransaction
-                      );
-                      toast({
-                        title: "Ad Nft failed.",
-                        description:
-                          "Your sols are sent back to you, Please retry.",
-                      });
-                      throw new Error("Ad NFT creation failed. Please retry.");
-                    }
-                  })
+                await operation(
+                  data.underdogApi,
+                  s3ImagesUri,
+                  projectAlreadyExist.id,
+                  projectAlreadyExist.underdogProjectId
                 );
               }
             } catch (err) {

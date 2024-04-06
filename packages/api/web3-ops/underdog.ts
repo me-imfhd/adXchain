@@ -25,7 +25,7 @@ export async function createUnderdogProject({
     },
     {
       headers: { Authorization: `Bearer ${underdogApiKey}` },
-    },
+    }
   );
   return createProjectResponse.data as ProjectCreationResponse;
 }
@@ -48,7 +48,7 @@ export async function createUnderdogNFT({
     nftBody,
     {
       headers: { Authorization: `Bearer ${underdogApiKey}` },
-    },
+    }
   );
   return createNftResponse.data as NftCreationResponse;
 }
@@ -71,10 +71,10 @@ export async function createUnderdogNFTs({
         nft,
         {
           headers: { Authorization: `Bearer ${underdogApiKey}` },
-        },
+        }
       );
       return res.data as NftCreationResponse;
-    }),
+    })
   );
   return nftArrayResponse;
 }
@@ -92,15 +92,20 @@ export async function retrieveNft({
   underdogApiEndpoint,
   underdogApiKey,
 }: RetrieveNft) {
-  const retrieveNft = await axios.get(
-    `${underdogApiEndpoint}/v2/projects/${projectId}/nfts/${nftId}`,
-    {
-      headers: { Authorization: `Bearer ${underdogApiKey}` },
-    },
-  );
-  const data = {
-    ...retrieveNft.data,
-    mintAddress: retrieveNft.data.mintAddress,
-  };
+  let retrieveNft;
+  do {
+    try {
+      retrieveNft = await axios.get(
+        `${underdogApiEndpoint}/v2/projects/${projectId}/nfts/${nftId}`,
+        {
+          headers: { Authorization: `Bearer ${underdogApiKey}` },
+        }
+      );
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    } catch (e) {
+      console.log("retrying");
+    }
+  } while (retrieveNft?.data.status !== "confirmed");
+  const data = retrieveNft.data;
   return data;
 }
