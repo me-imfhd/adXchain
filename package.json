@@ -2,7 +2,7 @@
   "name": "repo",
   "private": true,
   "engines": {
-    "node": ">=v20.10.0"
+    "node": ">=v18.20.1"
   },
   "packageManager": "pnpm@8.9.0",
   "scripts": {
