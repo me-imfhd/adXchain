@@ -1,5 +1,10 @@
-import * as z from "zod"
-import { CompleteProject, relatedProjectSchema, CompleteInventory, relatedInventorySchema } from "./index"
+import * as z from "zod";
+import {
+  CompleteProject,
+  relatedProjectSchema,
+  CompleteInventory,
+  relatedInventorySchema,
+} from "./index";
 
 export const userSchema = z.object({
   id: z.string(),
@@ -9,11 +14,11 @@ export const userSchema = z.object({
   walletAddress: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
-})
+});
 
 export interface CompleteUser extends z.infer<typeof userSchema> {
-  nftProject: CompleteProject[]
-  inventory: CompleteInventory[]
+  nftProject: CompleteProject[];
+  inventory: CompleteInventory[];
 }
 
 /**
@@ -21,7 +26,9 @@ export interface CompleteUser extends z.infer<typeof userSchema> {
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const relatedUserSchema: z.ZodSchema<CompleteUser> = z.lazy(() => userSchema.extend({
-  nftProject: relatedProjectSchema.array(),
-  inventory: relatedInventorySchema.array(),
-}))
+export const relatedUserSchema: z.ZodSchema<CompleteUser> = z.lazy(() =>
+  userSchema.extend({
+    nftProject: relatedProjectSchema.array(),
+    inventory: relatedInventorySchema.array(),
+  }),
+);

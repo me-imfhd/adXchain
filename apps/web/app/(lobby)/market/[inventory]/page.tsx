@@ -10,6 +10,7 @@ export type SlotMap = {
   isRented: boolean;
   imageUri: string;
   slotName: string;
+  file: File | null | undefined;
 };
 export default async function InventoryPage({
   params: { inventory },
@@ -33,6 +34,7 @@ export default async function InventoryPage({
     isRented: adSlot.lent,
     imageUri: adSlot.slotImageUri,
     slotName: adSlot.slotName,
+    file: null,
   }));
   const totalBuyablePrice = initial
     .filter((slot) => !slot.isRented)
@@ -40,7 +42,7 @@ export default async function InventoryPage({
 
   return (
     <MarketPage
-    totalBuyablePrice={totalBuyablePrice}
+      totalBuyablePrice={totalBuyablePrice}
       initial={initial}
       total={total}
       supply={supply}

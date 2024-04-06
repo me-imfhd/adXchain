@@ -20,10 +20,9 @@ import { ExternalLink, Upload } from "@repo/ui/icons";
 import Link from "next/link";
 import React, { ChangeEvent, useState } from "react";
 import InventoryPageLayout from "./inventoryPageLayout";
-import { Session } from "@repo/auth";
-import { SelectedSlotSchema } from "@repo/db";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { SlotMap } from "../market/[inventory]/page";
+import { Session } from "@repo/auth";
 
 interface MarketPageProps {
   inventory: NonNullable<GetInventoryById>;
@@ -45,6 +44,8 @@ export default function MarketPage({
   initial,
 }: MarketPageProps) {
   const [slotsArray, setSlotsArray] = useState<SlotMap[]>(initial);
+  const selectedSlots = slotsArray.filter((slot) => slot.isSelected);
+
   const totalPrice = slotsArray
     .filter((slot) => slot.isSelected && !slot.isRented)
     .reduce((accumulator, slot) => accumulator + slot.price, BigInt(0));
@@ -63,7 +64,7 @@ export default function MarketPage({
   };
   return (
     <InventoryPageLayout
-    totalBuyablePrice={totalBuyablePrice}
+      totalBuyablePrice={totalBuyablePrice}
       percentage={percentage}
       supply={supply}
       total={total}
@@ -111,17 +112,12 @@ export default function MarketPage({
             <>
               <div className="flex items-start flex-wrap justify-between p-2">
                 <div className="flex flex-col gap-4 items-start w-[70%] border-solid border p-3">
-                  {slotsArray.map((adSlot) => {
-                    const selected = Boolean(
-                      slotsArray.find(
-                        (slot) => slot.id == adSlot.id && slot.isSelected
-                      )
-                    );
-                    if (!selected) {
-                      return;
-                    }
+                  {selectedSlots.map((adSlot) => {
                     return (
-                      <div key={adSlot.id} className="flex gap-5 w-full">
+                      <div
+                        key={adSlot.id}
+                        className="flex gap-5 w-full items-center"
+                      >
                         <Badge
                           className="bg-secondary text-primary font-medium "
                           size={"xs"}
@@ -138,7 +134,7 @@ export default function MarketPage({
                           width={25}
                           height={25}
                         />
-                        <div className="flex justify-between w-full">
+                        <div className="flex justify-between w-full items-center">
                           <span>{adSlot.slotName}</span>
                           <div className="flex items-center gap-4">
                             <span className="flex items-center gap-1">
@@ -167,34 +163,59 @@ export default function MarketPage({
                                 ></path>
                               </svg>
                             </span>
-                            {/* <span>
-                              <button
-                                onClick={() =>
-                                  document.getElementById("picture")?.click()
-                                }
+                            <span>
+                              <Button
+                                onClick={() => {
+                                  document
+                                    .getElementById(`picture-${adSlot.id}`)
+                                    ?.click();
+                                }}
+                                variant="outline"
+                                size="icon"
                               >
-                                <Upload />
+                                {adSlot.file ? (
+                                  <img
+                                    className="object-cover rounded-lg"
+                                    src={URL.createObjectURL(
+                                      new Blob([adSlot.file])
+                                    )}
+                                    style={{
+                                      aspectRatio: "25/25",
+                                      objectFit: "cover",
+                                    }}
+                                    width={25}
+                                    height={25}
+                                  />
+                                ) : (
+                                  <Upload className="size-4" />
+                                )}
+
                                 <Input
-                                  id="picture"
+                                  id={`picture-${adSlot.id}`}
                                   type="file"
                                   className="hidden"
                                   onChange={(
                                     e: ChangeEvent<HTMLInputElement>
                                   ) => {
-                                    const currentFiles = files
-                                      ? [...files]
-                                      : [];
                                     if (e.target.files?.[0]) {
-                                      setFiles([
-                                        ...currentFiles,
-                                        e.target.files[0],
-                                      ]);
-                                      toast({ title: "Image Uploaded" });
+                                      toast({ title: "Image Added." });
+                                      const updatedSlots = slotsArray.map(
+                                        (slot) => {
+                                          if (slot.id === adSlot.id) {
+                                            return {
+                                              ...slot,
+                                              file: e.target.files?.[0],
+                                            };
+                                          }
+                                          return slot;
+                                        }
+                                      );
+                                      setSlotsArray(updatedSlots);
                                     }
                                   }}
                                 />
-                              </button>
-                            </span> */}
+                              </Button>
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -202,13 +223,7 @@ export default function MarketPage({
                   })}
                 </div>
                 <div className="flex flex-col w-[30%] border-solid border p-3 items-end">
-                  {slotsArray.map((adSlot) => {
-                    const selected = Boolean(
-                      slotsArray.find(
-                        (slot) => slot.id == adSlot.id && slot.isSelected
-                      )
-                    );
-                    if (!selected) return;
+                  {selectedSlots.map((adSlot) => {
                     return (
                       <div key={adSlot.id} className="flex gap-4">
                         <span className="flex items-center gap-1">
@@ -285,12 +300,15 @@ export default function MarketPage({
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>Confirm Transaction</DialogHeader>
-                    {/* <BuyMultiple
+                    <BuyMultiple
+                    inventoryId={inventory.id}
                       inventoryImageUri={inventory?.inventoryImageUri!}
                       inventoryName={inventory?.inventoryName!}
                       session={session}
                       transactionAmount={totalPrice}
-                    /> */}
+                      selectedSlots={selectedSlots}
+
+                    />
                   </DialogContent>
                 </Dialog>
               </DialogFooter>

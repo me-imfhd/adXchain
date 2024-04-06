@@ -15,17 +15,13 @@ import {
 } from "@repo/ui/components";
 import { useState } from "react";
 import { createUnderdogNFT, createUnderdogProject } from "@repo/api";
-import {
-  AdSlot,
-  BuySlot,
-  SelectedSlotSchema,
-  multipleAdSlotForm,
-} from "@repo/db";
+import { BuySlot, multipleAdSlotForm } from "@repo/db";
 import { Session } from "@repo/auth";
 import { s3Upload } from "../(dashboard)/_components/s3Upload";
 import { deleteS3Image } from "../(dashboard)/_components/s3Delete";
 import { trpc } from "@repo/trpc/trpc/client";
 import { NftBodyParams } from "@repo/api/web3-ops/types";
+import { SlotMap } from "../(lobby)/market/[inventory]/page";
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/jpeg",
@@ -39,32 +35,28 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
 const underdogApiEndpoint = "https://devnet.underdogprotocol.com";
 type InventorySchema = z.infer<typeof multipleAdSlotForm>;
 interface BuyAdNFTProps {
-  selectedSlots: SelectedSlotSchema[];
+  selectedSlots: SlotMap[];
   session: Session;
   inventoryName: string;
+  inventoryId: string;
   inventoryImageUri: string;
   transactionAmount: bigint;
-  files: File[];
 }
 export default function BuyMultiple({
-  selectedSlots,
-  files,
   session,
+  selectedSlots,
+  transactionAmount,
   inventoryImageUri,
   inventoryName,
+  inventoryId,
 }: BuyAdNFTProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const buyMultipleSlots = trpc.adSlots.buyMultipleSlots.useMutation();
+  const oldProject = trpc.project.getUserProjectByInventoryId.useMutation();
+  const createNft = trpc.adNft.createNftAndUpdateLent.useMutation();
+  const createNewProject = trpc.project.createProject.useMutation();
   const toast = useToast().toast;
   const form = useForm<InventorySchema>({
     resolver: zodResolver(multipleAdSlotForm),
-    defaultValues: {
-      slotArray: [...selectedSlots],
-      inventoryName,
-      inventoryImageUri,
-      ownerAddress: session.user.walletAddress!,
-      ownerEmail: session.user.email!,
-    },
   });
 
   return (
@@ -72,14 +64,14 @@ export default function BuyMultiple({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(async (data) => {
-            console.log(files);
             setIsLoading(true);
-            console.log(files?.length, data.slotArray.length);
+            const s3ImagesUri: string[] = [];
             try {
-              if (!files || files.length !== data.slotArray.length) {
-                throw new Error("Please upload your display ad file.");
-              }
-              files.map((file) => {
+              // Validate files
+              selectedSlots.forEach(({ file }) => {
+                if (!file) {
+                  throw new Error("File Not Found");
+                }
                 if (!ACCEPTED_IMAGE_MIME_TYPES.includes(file.type)) {
                   throw new Error("Format not supported");
                 }
@@ -87,65 +79,123 @@ export default function BuyMultiple({
                   throw new Error("Max image size is 5mb.");
                 }
               });
-              if (!data.ownerAddress) {
-                throw new Error("No wallet address found");
-              }
-              const project = await createUnderdogProject({
-                inventoryImageUri: data.inventoryImageUri!,
-                inventoryName: data.inventoryName,
-                underdogApiEndpoint,
-                underdogApiKey: data.underdogApi,
-              });
-              if (project.projectId) {
-                console.log("Underdog Project Created");
-              }
-              const s3ImagesUri: Array<string> = [];
-              const buy: BuySlot[] = [];
-              try {
-                const slotArray: NftBodyParams[] = [];
-                console.log("Uploading images");
-                for (let i = 0; i < data.slotArray.length; i++) {
-                  const s3ImageUri = await s3Upload(files[i]!);
-                  s3ImagesUri.push(s3ImageUri);
-                  const nftBody = {
-                    attributes: {
-                      displayUri: s3ImageUri,
-                      fileType: files[i]?.type,
-                    },
-                    delegated: true,
-                    image: data.slotArray[i]?.slotImageUri,
-                    name: data.slotArray[i]?.slotName,
-                    receiverAddress: data.ownerAddress,
-                  } as NftBodyParams;
-                  const nft = await createUnderdogNFT({
-                    projectId: project.projectId,
-                    underdogApiEndpoint,
-                    underdogApiKey: data.underdogApi,
-                    nftBody,
-                  });
-                  // buy.push({
-                  //   id: data.slotArray[i]?.id!,
-                  //   lent: true,
-                  //   mintAddress: nft.mintAddress,
-                  //   ownerAddress: data.ownerAddress,
-                  // });
-                }
-                // update database slots table
-                await buyMultipleSlots.mutateAsync(buy);
+              console.log("1. Image Validation Passed");
 
-                setIsLoading(false);
-              } catch (e) {
-                s3ImagesUri.map(
-                  async (s3ImageUri) => await deleteS3Image(s3ImageUri)
+              // Check if project already exists
+              const projectAlreadyExist = await oldProject.mutateAsync({
+                id: inventoryId,
+              });
+
+              if (!projectAlreadyExist?.underdogProjectId) {
+                // Create new project if it doesn't exist
+                const underdogProject = await createUnderdogProject({
+                  inventoryImageUri: inventoryImageUri,
+                  inventoryName: inventoryName,
+                  underdogApiEndpoint,
+                  underdogApiKey: data.underdogApi,
+                });
+                console.log(
+                  "2. Underdog Project Created: ",
+                  underdogProject.projectId
                 );
-                throw new Error("Nft creation failed.");
+
+                const web2Project = await createNewProject.mutateAsync({
+                  collectionMintAddress: underdogProject.mintAddress,
+                  inventoryId,
+                  underdogProjectId: underdogProject.projectId,
+                  userId: session.user.id,
+                });
+                console.log(
+                  "3. adXchain Project for underdog project created: ",
+                  web2Project.project.id
+                );
+
+                // Create NFTs
+                await Promise.all(
+                  selectedSlots.map(async (slot) => {
+                    const s3ImageUri = await s3Upload(slot.file!);
+                    s3ImagesUri.push(s3ImageUri);
+
+                    const nftBody = {
+                      attributes: {
+                        displayUri: s3ImageUri,
+                        fileType: slot.file!.type,
+                      },
+                      delegated: true,
+                      image: slot.imageUri,
+                      name: slot.slotName,
+                    } as NftBodyParams;
+                    console.log(nftBody);
+                    const nft = await createUnderdogNFT({
+                      projectId: underdogProject.projectId,
+                      underdogApiEndpoint,
+                      underdogApiKey: data.underdogApi,
+                      nftBody,
+                    });
+                    console.log("Underdog Nft Created Successfully.");
+
+                    await createNft.mutateAsync({
+                      adSlotId: { id: slot.id },
+                      nftDisplayUri: s3ImageUri,
+                      nftFileType: slot.file?.type!,
+                      nftMintAddress: null,
+                      projectId: web2Project.project.id,
+                      underdogNftId: nft.nftId,
+                      nftRedirectUri: "",
+                    });
+                    console.log("Ad NFT created and lent set to true.");
+                  })
+                );
+              } else {
+                // If project exists, create NFTs for existing project
+                await Promise.all(
+                  selectedSlots.map(async (slot) => {
+                    const s3ImageUri = await s3Upload(slot.file!);
+                    s3ImagesUri.push(s3ImageUri);
+
+                    const nftBody = {
+                      attributes: {
+                        displayUri: s3ImageUri,
+                        fileType: slot.file!.type,
+                      },
+                      delegated: true,
+                      image: slot.imageUri,
+                      name: slot.slotName,
+                    } as NftBodyParams;
+                    console.log(nftBody);
+                    const nft = await createUnderdogNFT({
+                      projectId: projectAlreadyExist?.underdogProjectId,
+                      underdogApiEndpoint,
+                      underdogApiKey: data.underdogApi,
+                      nftBody,
+                    });
+                    console.log("Underdog Nft created", nft);
+
+                    await createNft.mutateAsync({
+                      adSlotId: { id: slot.id },
+                      nftDisplayUri: s3ImageUri,
+                      nftFileType: slot.file?.type!,
+                      projectId: projectAlreadyExist?.id,
+                      nftMintAddress: null,
+                      underdogNftId: nft.nftId,
+                      nftRedirectUri: "",
+                    });
+                  })
+                );
               }
             } catch (err) {
               console.log(err);
+              await Promise.all(
+                s3ImagesUri.map(
+                  async (s3ImageUri) => await deleteS3Image(s3ImageUri)
+                )
+              );
+              setIsLoading(false);
               toast({
                 title: "Operation Failed",
                 description: (err as Error).message,
               });
+            } finally {
               setIsLoading(false);
             }
           })}

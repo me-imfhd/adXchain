@@ -3,7 +3,5 @@ export * from "./auth";
 export * from "./adSlots";
 export * from "./inventory";
 export * from "./user";
-export const timestamps: { createdAt: true; updatedAt: true } = {
-  createdAt: true,
-  updatedAt: true,
-};
+export * from "./project";
+export * from "./adnft";

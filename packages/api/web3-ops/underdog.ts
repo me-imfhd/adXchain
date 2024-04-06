@@ -78,3 +78,29 @@ export async function createUnderdogNFTs({
   );
   return nftArrayResponse;
 }
+
+interface RetrieveNft {
+  underdogApiEndpoint: string;
+  projectId: number;
+  nftId: number;
+  underdogApiKey: string;
+}
+
+export async function retrieveNft({
+  projectId,
+  nftId,
+  underdogApiEndpoint,
+  underdogApiKey,
+}: RetrieveNft) {
+  const retrieveNft = await axios.get(
+    `${underdogApiEndpoint}/v2/projects/${projectId}/nfts/${nftId}`,
+    {
+      headers: { Authorization: `Bearer ${underdogApiKey}` },
+    }
+  );
+  const data = {
+    ...retrieveNft.data,
+    mintAddress: retrieveNft.data.mintAddress,
+  };
+  return data;
+}

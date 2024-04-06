@@ -60,7 +60,7 @@ model AdNft {
   id String @id @default(cuid())
 
   underdogNftId  Int
-  nftMintAddress String
+  nftMintAddress String?
 
   nftDisplayUri  String
   nftRedirectUri String
