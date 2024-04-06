@@ -19,14 +19,10 @@ import {
   createUnderdogNFT,
   createUnderdogProject,
   retrieveNft,
+  s3Upload,
 } from "@repo/api";
 import { BuySlot, multipleAdSlotForm } from "@repo/db";
 import { Session } from "@repo/auth";
-import { s3Upload } from "../(dashboard)/_components/s3Upload";
-import { deleteS3Image } from "../(dashboard)/_components/s3Delete";
-import { trpc } from "@repo/trpc/trpc/client";
-import { NftBodyParams } from "@repo/api/web3-ops/types";
-import { SlotMap } from "../(lobby)/market/[inventory]/page";
 import { useRouter } from "next/navigation";
 import {
   Connection,
@@ -35,6 +31,10 @@ import {
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import { PublicKey } from "@metaplex-foundation/js";
+import { SlotMap } from "../market/[inventory]/page";
+import { trpc } from "@repo/trpc/trpc/client";
+import { NftBodyParams } from "@repo/api/web3-ops/types";
+import { GlowingButton } from "@repo/ui/components/buttons";
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/jpeg",
@@ -87,7 +87,7 @@ export default function BuyMultiple({
     underdogApiKey: string,
     s3ImagesUri: string[],
     web2ProjectId: string,
-    underdogProjectId: number
+    underdogProjectId: number,
   ) {
     try {
       const payTransaction = await sendSol(
@@ -95,7 +95,7 @@ export default function BuyMultiple({
         payersAddress,
         transactionAmount,
         connection,
-        sendTransaction
+        sendTransaction,
       );
       if (!payTransaction) {
         throw new Error("Transaction Not Completed, try again.");
@@ -148,7 +148,7 @@ export default function BuyMultiple({
           } catch (err) {
             throw new Error("Ad NFT creation failed.");
           }
-        })
+        }),
       );
       setIsLoading(false);
       toast({ title: "Operation Successful" });
@@ -205,14 +205,14 @@ export default function BuyMultiple({
                   data.underdogApi,
                   s3ImagesUri,
                   web2Project.project.id,
-                  web2Project.project.underdogProjectId
+                  web2Project.project.underdogProjectId,
                 );
               } else {
                 await operation(
                   data.underdogApi,
                   s3ImagesUri,
                   projectAlreadyExist.id,
-                  projectAlreadyExist.underdogProjectId
+                  projectAlreadyExist.underdogProjectId,
                 );
               }
             } catch (err) {
@@ -222,11 +222,6 @@ export default function BuyMultiple({
                 title: "Operation Failed",
                 description: (err as Error).message,
               });
-              await Promise.all(
-                s3ImagesUri.map(
-                  async (s3ImageUri) => await deleteS3Image(s3ImageUri)
-                )
-              );
             }
           })}
           className="space-y-8"
@@ -245,9 +240,14 @@ export default function BuyMultiple({
             )}
           />
 
-          <Button type="submit" isLoading={isLoading} disabled={isLoading}>
+          <GlowingButton
+            type="submit"
+            className="w-full"
+            isLoading={isLoading}
+            disabled={isLoading}
+          >
             Buy
-          </Button>
+          </GlowingButton>
         </form>
       </Form>
     </>
@@ -280,7 +280,7 @@ const sendSol = async (
   payerPublicKey: PublicKey,
   amountLamports: bigint,
   connection: Connection,
-  sendTransaction: WalletAdapterProps["sendTransaction"]
+  sendTransaction: WalletAdapterProps["sendTransaction"],
 ) => {
   const transaction = new Transaction();
   const recipientPubKey = new PublicKey(recieverAddress);

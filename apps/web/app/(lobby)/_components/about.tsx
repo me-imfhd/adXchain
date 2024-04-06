@@ -6,7 +6,7 @@ import Image from "next/image";
 export function About() {
   return (
     <div className=" w-full flex justify-center items-center text-center mt-10">
-    {/*  <svg
+      {/*  <svg
         width="23"
         height="298"
         viewBox="0 0 23 298"
@@ -130,7 +130,7 @@ export function About() {
           </div>
         </div>
       </div>
-    {/*  <svg
+      {/*  <svg
         width="23"
         height="298"
         viewBox="0 0 23 298"
