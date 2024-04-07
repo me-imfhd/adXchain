@@ -37,22 +37,24 @@ export default async function Page() {
           id={data?.slotId} // Will be used for navigating to the add directly
           className="w-screen h-screen flex justify-center items-center"
         >
-          <img
-            src={data?.ad.attributes.displayUri}
-            className="w-[400px] h-[400px]" // set the dimesions as in adSlots dimension or update accordingly
-          />
+          {data?.ad.attributes.displayUri && (
+            <img
+              src={data.ad.attributes.displayUri}
+              className="w-[400px] h-[400px]" // set the dimesions as in adSlots dimension or update accordingly
+            />
+          )}
         </div>
       );
     }
   } catch (error) {
-    console.log("Nft not minted yet");
-    return (
-      <div className="w-screen h-screen flex justify-center items-center">
-        <img
-          src={""} // default placeholder
-          className="w-[400px] h-[400px]" // set the dimesions as in adSlots dimension or update accordingly
-        />
-      </div>
-    );
+    console.log(error);
   }
+  return (
+    <div className="w-screen h-screen flex justify-center items-center">
+      <img
+        src={""} // default placeholder
+        className="w-[400px] h-[400px]" // set the dimesions as in adSlots dimension or update accordingly
+      />
+    </div>
+  );
 }
