@@ -35,5 +35,5 @@ export async function GET(
   }
 }
 
-const endpoint = `http://localhost:3000/api/publisher/getAd/cluo6i6in000510j1ig9db00b?network=devnet`;
+const endpoint = `http://localhost:3000/api/publisher/getAd/slot-id?network=devnet`;
 type responseType = GetAd;

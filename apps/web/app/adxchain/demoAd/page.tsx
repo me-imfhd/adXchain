@@ -11,7 +11,7 @@ type GetAd = {
 
 export default async function AdSlotComponent() {
   const adxchainURI = "https://adxchain-web.vercel.app";
-  const adSlotId = "cluplx4lx0004ad0d90rgwm29";
+  const adSlotId = "clupviled0003sc62onlnb05d";
   try {
     const response = await axios.get(
       `${adxchainURI}/api/publisher/getAd/${adSlotId}`,

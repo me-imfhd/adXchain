@@ -1,11 +1,10 @@
 import { GetAds } from "@repo/api";
-import { getAdsSchema } from "@repo/db";
 import { api } from "@repo/trpc";
 import { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params: { inventory } }: { params: { inventory: string } },
+  { params: { inventory } }: { params: { inventory: string } }
 ) {
   try {
     const searchParams = await request.nextUrl.searchParams;
@@ -20,13 +19,9 @@ export async function GET(
     } else {
       return new Response("Invalid network selection", { status: 400 });
     }
-    const object = getAdsSchema.parse({ inventoryId, underdogApiEndpoint });
-    if (!object) {
-      return new Response("BAD REQUEST", { status: 400 });
-    }
     const response = await api.publisher.getAds.query({
-      inventoryId: object.inventoryId,
-      underdogApiEndpoint: object.underdogApiEndpoint,
+      inventoryId: inventoryId,
+      underdogApiEndpoint: underdogApiEndpoint,
     });
     return new Response(JSON.stringify(response), {
       headers: {
@@ -39,5 +34,5 @@ export async function GET(
   }
 }
 
-const endpoint = `http://localhost:3000/api/publisher/getAds/cluo6i6in000510j1ig9db00b?network=devnet`;
+const endpoint = `http://localhost:3000/api/publisher/getAds/inventory-id?network=devnet`;
 type responseType = GetAds;

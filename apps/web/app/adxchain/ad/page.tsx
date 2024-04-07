@@ -2,27 +2,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-export interface NFT {
-  mintAddress: string;
-  status: string;
-  ownerAddress: string;
-  claimerAddress: string | null;
-  collectionAddress: string;
-  delegated: boolean;
-  core: boolean;
-  uri: string | null;
-  name: string;
-  image: string;
-  attributes: {
-    displayUri: string;
-    fileType: string;
-  };
-}
-
 type GetAd = {
   slotId: string;
-  ad: NFT;
-} | null;
+  minted: boolean;
+  ad: {
+    displayUri: string;
+  };
+};
 
 const Page = () => {
   const adxchainURI = "https://adxchain-web.vercel.app";
@@ -38,9 +24,6 @@ const Page = () => {
         );
         if (response.status === 200) {
           setData(response.data);
-        } else {
-          console.error("Failed to fetch ad data", response.status);
-          setData(null);
         }
       } catch (error) {
         console.error("Error fetching ad data", error);
@@ -63,10 +46,7 @@ const Page = () => {
 
   return (
     <div className="w-screen h-screen flex justify-center items-center">
-      <img
-        src={data.ad.attributes.displayUri}
-        className="w-[400px] h-[400px]"
-      />
+      <img src={data.ad.displayUri} className="w-[400px] h-[400px]" />
     </div>
   );
 };
