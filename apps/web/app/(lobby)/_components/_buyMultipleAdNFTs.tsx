@@ -10,7 +10,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Button,
   Input,
   useToast,
 } from "@repo/ui/components";
@@ -21,15 +20,10 @@ import {
   retrieveNft,
   s3Upload,
 } from "@repo/api";
-import { BuySlot, multipleAdSlotForm } from "@repo/db";
+import { multipleAdSlotForm } from "@repo/db";
 import { Session } from "@repo/auth";
 import { useRouter } from "next/navigation";
-import {
-  Connection,
-  SystemProgram,
-  Transaction,
-  sendAndConfirmTransaction,
-} from "@solana/web3.js";
+import { Connection, SystemProgram, Transaction } from "@solana/web3.js";
 import { PublicKey } from "@metaplex-foundation/js";
 import { SlotMap } from "../market/[inventory]/page";
 import { trpc } from "@repo/trpc/trpc/client";
@@ -75,7 +69,7 @@ export default function BuyMultiple({
 }: BuyAdNFTProps) {
   const [isLoading, setIsLoading] = useState(false);
   const oldProject = trpc.project.getUserProjectByInventoryId.useMutation();
-  const createNft = trpc.adNft.createNftAndUpdateLent.useMutation();
+  const updateSlot = trpc.adSlots.buySlot.useMutation();
   const router = useRouter();
   const createNewProject = trpc.project.createProject.useMutation();
   const toast = useToast().toast;
@@ -86,8 +80,7 @@ export default function BuyMultiple({
   async function operation(
     underdogApiKey: string,
     s3ImagesUri: string[],
-    web2ProjectId: string,
-    underdogProjectId: number,
+    underdogProjectId: number
   ) {
     try {
       const payTransaction = await sendSol(
@@ -95,7 +88,7 @@ export default function BuyMultiple({
         payersAddress,
         transactionAmount,
         connection,
-        sendTransaction,
+        sendTransaction
       );
       if (!payTransaction) {
         throw new Error("Transaction Not Completed, try again.");
@@ -135,20 +128,16 @@ export default function BuyMultiple({
               underdogApiKey,
               underdogApiEndpoint,
             });
-            await createNft.mutateAsync({
-              adSlotId: slot.id,
-              mintAddress: nftMint.mintAddress,
-              nftDisplayUri: s3ImageUri,
-              nftFileType: slot.file?.type!,
-              projectId: web2ProjectId,
-              underdogNftId: nft.nftId,
-              nftRedirectUri: "",
+            await updateSlot.mutateAsync({
+              id: slot.id,
+              nftMintAddress: nftMint.mintAddress,
               ownerId: session.user.id,
+              lent: true,
             });
           } catch (err) {
             throw new Error("Ad NFT creation failed.");
           }
-        }),
+        })
       );
       setIsLoading(false);
       toast({ title: "Operation Successful" });
@@ -204,15 +193,13 @@ export default function BuyMultiple({
                 await operation(
                   data.underdogApi,
                   s3ImagesUri,
-                  web2Project.project.id,
-                  web2Project.project.underdogProjectId,
+                  web2Project.project.underdogProjectId
                 );
               } else {
                 await operation(
                   data.underdogApi,
                   s3ImagesUri,
-                  projectAlreadyExist.id,
-                  projectAlreadyExist.underdogProjectId,
+                  projectAlreadyExist.underdogProjectId
                 );
               }
             } catch (err) {
@@ -280,7 +267,7 @@ const sendSol = async (
   payerPublicKey: PublicKey,
   amountLamports: bigint,
   connection: Connection,
-  sendTransaction: WalletAdapterProps["sendTransaction"],
+  sendTransaction: WalletAdapterProps["sendTransaction"]
 ) => {
   const transaction = new Transaction();
   const recipientPubKey = new PublicKey(recieverAddress);

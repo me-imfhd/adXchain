@@ -6,7 +6,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardFooter,
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -25,14 +24,15 @@ import {
 import {
   ChevronLeft,
   ChevronRight,
+  Copy,
   ListFilter,
   MoreHorizontal,
   PlusCircle,
 } from "@repo/ui/icons";
-import Image from "next/image";
 import Link from "next/link";
 import DeleteSlot from "./_deleteSlot";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import CopyButton from "../../_components/copyButton";
 
 export default async function InventoryLayout({
   params: { inventory },
@@ -134,7 +134,10 @@ export default async function InventoryLayout({
                         Ad Space Type
                       </TableHead>
                       <TableHead className="hidden md:table-cell font-semibold">
-                        Rented
+                        Renter
+                      </TableHead>
+                      <TableHead className="hidden md:table-cell font-semibold">
+                        Slot Id
                       </TableHead>
                       <TableHead className="font-semibold">Actions</TableHead>
                     </TableRow>
@@ -197,6 +200,9 @@ export default async function InventoryLayout({
                               ? adSlot.owner.walletAddress
                               : "No Renter Yet"}
                           </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            <CopyButton id={adSlot.id} key={adSlot.id} />
+                          </TableCell>
                           <TableCell>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -204,6 +210,7 @@ export default async function InventoryLayout({
                                   aria-haspopup="true"
                                   size="icon"
                                   variant="ghost"
+                                  disabled={!!adSlot.nftMintAddress}
                                 >
                                   <MoreHorizontal className="h-4 w-4" />
                                   <span className="sr-only">Toggle menu</span>

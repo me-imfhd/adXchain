@@ -11,14 +11,12 @@ import {
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import {
   adSlotIdSchema,
-  adSlotNameSchema,
   buyMultipleSlotSchema,
   buySlotSchema,
   insertAdSlotParams,
   inventoryIdSchema,
   updateAdSlotParams,
 } from "@repo/db";
-import { getJSDocReturnType } from "typescript";
 
 export const adSlotsRouter = createTRPCRouter({
   getAdSlots: publicProcedure

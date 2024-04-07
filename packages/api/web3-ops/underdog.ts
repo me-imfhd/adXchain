@@ -1,6 +1,6 @@
 import axios from "axios";
 import {
-  Ad,
+  NFT,
   NftBodyParams,
   NftCreationResponse,
   ProjectCreationResponse,
@@ -125,7 +125,7 @@ export async function retrieveNftByMint({
       const retrieveNft = await axios.get(
         `${underdogApiEndpoint}/v2/nfts/${mint}`,
       );
-      const data = retrieveNft.data as Ad;
+      const data = retrieveNft.data as NFT;
       return data;
     }),
   );

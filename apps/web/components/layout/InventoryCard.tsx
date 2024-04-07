@@ -51,11 +51,6 @@ export default function InventoryCard({
               Edit
             </Button>
           </Link>
-          <DeleteInventory id={Collectionid}>
-            <Button size="sm" variant="destructive">
-              Delete
-            </Button>
-          </DeleteInventory>
         </CardFooter>
       </Card>
     </>

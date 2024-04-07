@@ -115,7 +115,12 @@ export default function Inventory() {
                         name="inventoryName"
                         control={form.control}
                         render={({ field }) => (
-                          <Input type="text" className="w-full" {...field} />
+                          <Input
+                            type="text"
+                            className="w-full"
+                            {...field}
+                            placeholder="Superteam"
+                          />
                         )}
                       />
                     </div>
@@ -128,7 +133,9 @@ export default function Inventory() {
                           <Textarea
                             className="min-h-32"
                             {...field}
-                            value={field.value ?? ""}
+                            value={
+                              field.value ?? "Description about your website"
+                            }
                           />
                         )}
                       />
@@ -144,6 +151,7 @@ export default function Inventory() {
                             className="w-full"
                             {...field}
                             value={field.value ?? ""}
+                            placeholder="https://superteam.fun"
                           />
                         )}
                       />

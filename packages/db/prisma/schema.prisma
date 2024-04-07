@@ -44,7 +44,6 @@ model Project {
 
   underdogProjectId     Int
   collectionMintAddress String
-  adNft                 AdNft[]
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -54,24 +53,6 @@ model Project {
 
   @@index([userId])
   @@index([inventoryId])
-}
-
-model AdNft {
-  id String @id @default(cuid())
-
-  underdogNftId Int
-
-  nftDisplayUri  String
-  nftRedirectUri String
-  nftFileType    String
-
-  projectId  String
-  nftProject Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-
-  @@index([projectId])
 }
 
 model Inventory {

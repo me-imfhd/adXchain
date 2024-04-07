@@ -33,7 +33,7 @@ export type NftBodyParams = {
 //   batch : NftBodyParams[]
 // };
 
-export interface Ad {
+export interface NFT {
   mintAddress: string;
   status: string;
   ownerAddress: string;
@@ -48,4 +48,38 @@ export interface Ad {
     displayUri: string;
     fileType: string;
   };
+}
+
+interface NFTAttributes {
+  displayUri: string;
+  fileType: string;
+}
+
+interface NFTInCollection {
+  mintAddress: string;
+  transferable: boolean;
+  compressed: boolean;
+  ownerAddress: string;
+  status: string;
+  name: string;
+  image: string;
+  attributes: NFTAttributes;
+}
+
+interface NFTs {
+  results: NFTInCollection[];
+}
+
+export interface Root {
+  nfts: NFTs;
+  mintAddress: string;
+  transferable: boolean;
+  compressed: boolean;
+  status: string;
+  name: string;
+  image: string;
+  page: number;
+  limit: number;
+  totalPages: number;
+  totalResults: number;
 }

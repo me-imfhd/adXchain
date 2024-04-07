@@ -1,5 +1,5 @@
 import { getUserAuth } from "@repo/auth";
-import { InventoryId, db, inventoryIdSchema } from "@repo/db";
+import { InventoryId, db } from "@repo/db";
 
 export const getInventories = async () => {
   const session = await getUserAuth();
@@ -14,7 +14,10 @@ export const getAllInventories = async () => {
   const i = await db.inventory.findMany({
     include: {
       user: { select: { walletAddress: true } },
-      adSlots: true,
+      adSlots: {
+        where: { status: "active" },
+        include: { owner: true },
+      },
     },
   });
   return i;

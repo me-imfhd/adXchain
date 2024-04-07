@@ -1,10 +1,10 @@
 import axios from "axios";
 import { db } from "@repo/db";
-import { Ad } from "./types";
+import { NFT } from "./types";
 
 export const getAds = async (
   inventoryId: string,
-  underdogApiEndpoint: string,
+  underdogApiEndpoint: string
 ) => {
   const adNft = await db.inventory.findUnique({
     where: { id: inventoryId },
@@ -20,11 +20,11 @@ export const getAds = async (
         return null;
       }
       const retrieveNft = await axios.get(
-        `${underdogApiEndpoint}/v2/nfts/${mint}`,
+        `${underdogApiEndpoint}/v2/nfts/${mint}`
       );
-      const data = retrieveNft.data as Ad;
+      const data = retrieveNft.data as NFT;
       return data;
-    }),
+    })
   );
 
   const combinedData =
@@ -36,3 +36,25 @@ export const getAds = async (
   return combinedData;
 };
 export type GetAds = Awaited<ReturnType<typeof getAds>>;
+
+export const getAd = async (slotId: string, underdogApiEndpoint: string) => {
+  const adSlot = await db.adSlot.findUnique({
+    where: { id: slotId },
+    select: {
+      nftMintAddress: true,
+      owner: { select: { walletAddress: true } },
+    },
+  });
+  if (!adSlot?.nftMintAddress) {
+    return null;
+  }
+  const retrieveNft = await axios.get(
+    `${underdogApiEndpoint}/v2/nfts/${adSlot.nftMintAddress}`
+  );
+  const data = retrieveNft.data as NFT;
+  return {
+    slotId,
+    ad: data,
+  };
+};
+export type GetAd = Awaited<ReturnType<typeof getAd>>;

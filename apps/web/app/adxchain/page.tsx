@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 
-type Ad = {
+export interface NFT {
   mintAddress: string;
   status: string;
   ownerAddress: string;
@@ -16,20 +16,43 @@ type Ad = {
     displayUri: string;
     fileType: string;
   };
-};
-
-type responseArray = {
+}
+type GetAd = {
   slotId: string;
-  ads: Ad | null | undefined;
-}[];
+  ad: NFT;
+} | null;
 
 export default async function Page() {
-  const adxchainURI = "https://adxchain-web.vercel.app/";
-  const inventoryId = "cluomxiqq00025pnj2boy225o";
-//   const response = await axios.get(
-//     `${adxchainURI}/api/publisher/getAds/${inventoryId}?network=devnet`
-//   );
-//   const adsArray = response.data as responseArray;
-
-  return <div>{}</div>;
+  const adxchainURI = "https://adxchain-web.vercel.app";
+  const adSlotId = "cluon5jbp00065pnjage76sko";
+  try {
+    const response = await axios.get(
+      `${adxchainURI}/api/publisher/getAd/${adSlotId}`,
+      { params: { network: "devnet" } }
+    );
+    if (response?.status == 200) {
+      const data = response.data as GetAd;
+      return (
+        <div
+          id={data?.slotId} // Will be used for navigating to the add directly
+          className="w-screen h-screen flex justify-center items-center"
+        >
+          <img
+            src={data?.ad.attributes.displayUri}
+            className="w-[400px] h-[400px]" // set the dimesions as in adSlots dimension or update accordingly
+          />
+        </div>
+      );
+    }
+  } catch (error) {
+    console.log("Nft not minted yet");
+    return (
+      <div className="w-screen h-screen flex justify-center items-center">
+        <img
+          src={""} // default placeholder
+          className="w-[400px] h-[400px]" // set the dimesions as in adSlots dimension or update accordingly
+        />
+      </div>
+    );
+  }
 }

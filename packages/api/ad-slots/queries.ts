@@ -1,5 +1,5 @@
-import { AdSlotName, BuySlot, InventoryId, InventoryName, db } from "@repo/db";
-import { AdSlotId, adSlotIdSchema, inventoryIdSchema } from "@repo/db";
+import { BuySlot, InventoryId, db } from "@repo/db";
+import { AdSlotId } from "@repo/db";
 
 export const getAdSlots = async (id: InventoryId) => {
   const a = await db.inventory.findUnique({

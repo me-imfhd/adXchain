@@ -50,7 +50,6 @@ export default function NewSlot({
       inventoryId: inventory.id,
       slotPrice: 0,
       lent: false,
-      status: "active",
       slotType: "Aside Ad",
       slotPlatform: "Web App",
     },
@@ -80,6 +79,7 @@ export default function NewSlot({
                 ...data,
                 slotPrice: slotPrice,
                 slotImageUri: s3ImageUri,
+                status: "draft",
               });
               if (!res) {
                 await deleteS3Image(s3ImageUri);
@@ -137,7 +137,12 @@ export default function NewSlot({
                         name="slotName"
                         control={form.control}
                         render={({ field }) => (
-                          <Input type="text" className="w-full" {...field} />
+                          <Input
+                            type="text"
+                            className="w-full"
+                            {...field}
+                            placeholder="Superteam Ad #1"
+                          />
                         )}
                       />
                     </div>
@@ -147,17 +152,30 @@ export default function NewSlot({
                         name="slotDescription"
                         control={form.control}
                         render={({ field }) => (
-                          <Textarea className="min-h-32" {...field} />
+                          <Textarea
+                            className="min-h-32"
+                            {...field}
+                            placeholder="Description about your adSpace"
+                          />
                         )}
                       />
                     </div>
                     <div className="grid gap-3">
                       <Label htmlFor="name">Website URI</Label>
+                      <CardDescription>
+                        The Website URI of the page where ad space is supposed
+                        to be listed.
+                      </CardDescription>
                       <FormField
                         name="slotWebsiteUri"
                         control={form.control}
                         render={({ field }) => (
-                          <Input type="text" className="w-full" {...field} />
+                          <Input
+                            type="url"
+                            className="w-full"
+                            {...field}
+                            placeholder="https://superteam.fun/blogs"
+                          />
                         )}
                       />
                     </div>
@@ -187,6 +205,7 @@ export default function NewSlot({
                             {...form.register("slotPrice", {
                               valueAsNumber: true,
                             })}
+                            placeholder="3.97"
                           />
                         )}
                       />
@@ -360,7 +379,7 @@ export default function NewSlot({
                   </div>
                 </CardContent>
               </Card>
-              <Card>
+              {/* <Card>
                 <CardHeader>
                   <CardTitle>Status</CardTitle>
                 </CardHeader>
@@ -374,7 +393,7 @@ export default function NewSlot({
                           <FormItem>
                             <Select
                               onValueChange={field.onChange}
-                              defaultValue={field.value ?? "active"}
+                              defaultValue={field.value ?? "draft"}
                             >
                               <FormControl>
                                 <SelectTrigger
@@ -383,7 +402,7 @@ export default function NewSlot({
                                 >
                                   <SelectValue
                                     placeholder="Select status"
-                                    defaultValue="active"
+                                    defaultValue="draft"
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -399,7 +418,7 @@ export default function NewSlot({
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
             </div>
           </div>
           <div className="flex items-center justify-center gap-2 md:hidden">

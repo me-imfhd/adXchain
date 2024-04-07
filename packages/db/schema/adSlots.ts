@@ -19,6 +19,7 @@ export const insertAdSlotForm = insertAdSlotParams
   .omit({
     slotImageUri: true,
     ownerId: true,
+    status: true,
     slotPrice: true,
     nftMintAddress: true,
   })
@@ -42,10 +43,9 @@ export const adSlotNameSchema = baseSchema.pick({ slotName: true });
 
 export const buySlotSchema = baseSchema.pick({
   id: true,
-  mintAddress: true,
-  ownerAddress: true,
-  ownerEmail: true,
   lent: true,
+  nftMintAddress: true,
+  ownerId: true,
 });
 export const buyMultipleSlotSchema = z.array(buySlotSchema);
 
