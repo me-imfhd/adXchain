@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params: { slot } }: { params: { slot: string } },
+  { params: { slot } }: { params: { slot: string } }
 ) {
   try {
     const searchParams = await request.nextUrl.searchParams;
@@ -20,13 +20,9 @@ export async function GET(
     } else {
       return new Response("Invalid network selection", { status: 400 });
     }
-    const object = getAdSchema.parse({ slotId, underdogApiEndpoint });
-    if (!object) {
-      return new Response("BAD REQUEST", { status: 400 });
-    }
     const response = await api.publisher.getAd.query({
-      adSlotId: object.adSlotId,
-      underdogApiEndpoint: object.underdogApiEndpoint,
+      adSlotId: slot,
+      underdogApiEndpoint: underdogApiEndpoint,
     });
     return new Response(JSON.stringify(response), {
       headers: {
