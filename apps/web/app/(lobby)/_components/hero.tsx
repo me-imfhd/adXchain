@@ -30,7 +30,7 @@ export function Hero() {
         Future Of Web3 Advertising is Here!
       </h2>
       <div className="pt-6 flex justify-center items-center gap-5 animate-fade-up">
-        <Link href="/create-nft">
+        <Link href="/inventories">
           <ShinyButton animationType="up" tap="in">
             Get Started
           </ShinyButton>
