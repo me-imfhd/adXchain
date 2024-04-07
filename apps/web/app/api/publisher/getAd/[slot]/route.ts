@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params: { slot } }: { params: { slot: string } }
+  { params: { slot } }: { params: { slot: string } },
 ) {
   try {
     const searchParams = await request.nextUrl.searchParams;

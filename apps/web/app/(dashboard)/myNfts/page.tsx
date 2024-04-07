@@ -13,7 +13,7 @@ export default async function Page() {
   const underdogEndpoint = "https://devnet.underdogprotocol.com";
   response.map(async (project) => {
     const undgResponse = await axios.get(
-      `${underdogEndpoint}/v2/collections/${project.collectionMintAddress}`
+      `${underdogEndpoint}/v2/collections/${project.collectionMintAddress}`,
     );
   });
 

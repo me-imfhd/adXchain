@@ -80,7 +80,7 @@ export default function BuyMultiple({
   async function operation(
     underdogApiKey: string,
     s3ImagesUri: string[],
-    underdogProjectId: number
+    underdogProjectId: number,
   ) {
     try {
       const payTransaction = await sendSol(
@@ -88,7 +88,7 @@ export default function BuyMultiple({
         payersAddress,
         transactionAmount,
         connection,
-        sendTransaction
+        sendTransaction,
       );
       if (!payTransaction) {
         throw new Error("Transaction Not Completed, try again.");
@@ -137,7 +137,7 @@ export default function BuyMultiple({
           } catch (err) {
             throw new Error("Ad NFT creation failed.");
           }
-        })
+        }),
       );
       setIsLoading(false);
       toast({ title: "Operation Successful" });
@@ -193,13 +193,13 @@ export default function BuyMultiple({
                 await operation(
                   data.underdogApi,
                   s3ImagesUri,
-                  web2Project.project.underdogProjectId
+                  web2Project.project.underdogProjectId,
                 );
               } else {
                 await operation(
                   data.underdogApi,
                   s3ImagesUri,
-                  projectAlreadyExist.underdogProjectId
+                  projectAlreadyExist.underdogProjectId,
                 );
               }
             } catch (err) {
@@ -267,7 +267,7 @@ const sendSol = async (
   payerPublicKey: PublicKey,
   amountLamports: bigint,
   connection: Connection,
-  sendTransaction: WalletAdapterProps["sendTransaction"]
+  sendTransaction: WalletAdapterProps["sendTransaction"],
 ) => {
   const transaction = new Transaction();
   const recipientPubKey = new PublicKey(recieverAddress);
