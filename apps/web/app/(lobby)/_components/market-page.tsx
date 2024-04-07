@@ -56,7 +56,7 @@ export default function MarketPage({
       (updatedAccountInfo) => {
         setBalance(BigInt(updatedAccountInfo.lamports));
       },
-      "confirmed",
+      "confirmed"
     );
 
     connection.getAccountInfo(publicKey).then((info) => {
@@ -197,7 +197,7 @@ export default function MarketPage({
                                   <img
                                     className="object-cover rounded-lg"
                                     src={URL.createObjectURL(
-                                      new Blob([adSlot.file]),
+                                      new Blob([adSlot.file])
                                     )}
                                     style={{
                                       aspectRatio: "25/25",
@@ -215,7 +215,7 @@ export default function MarketPage({
                                   type="file"
                                   className="hidden"
                                   onChange={(
-                                    e: ChangeEvent<HTMLInputElement>,
+                                    e: ChangeEvent<HTMLInputElement>
                                   ) => {
                                     if (e.target.files?.[0]) {
                                       toast({ title: "Image Added." });
@@ -228,7 +228,7 @@ export default function MarketPage({
                                             };
                                           }
                                           return slot;
-                                        },
+                                        }
                                       );
                                       setSlotsArray(updatedSlots);
                                     }
@@ -392,13 +392,13 @@ export default function MarketPage({
             : inventory?.adSlots.map((adSlot) => {
                 const rented = Boolean(
                   slotsArray.find(
-                    (slot) => slot.id == adSlot.id && slot.isRented,
-                  ),
+                    (slot) => slot.id == adSlot.id && slot.isRented
+                  )
                 );
                 const selected = Boolean(
                   slotsArray.find(
-                    (slot) => slot.id == adSlot.id && slot.isSelected,
-                  ),
+                    (slot) => slot.id == adSlot.id && slot.isSelected
+                  )
                 );
 
                 const walletAddress = adSlot.owner?.walletAddress;
@@ -495,7 +495,14 @@ export default function MarketPage({
                                 <span className="text-muted-foreground font-medium">
                                   Owner
                                 </span>
-                                <span>{wa}</span>
+                                <Link
+                                  href={`https://explorer.solana.com/address/${walletAddress}?cluster=devnet`}
+                                >
+                                  <span className="flex items-center hover:underline hover:-translate-y-[1px] gap-1 ">
+                                    <ExternalLink className="h-3 w-3" />
+                                    {wa}
+                                  </span>
+                                </Link>
                               </p>
                             ) : (
                               <p className=" leading-none flex justify-between gap-2">
@@ -511,7 +518,7 @@ export default function MarketPage({
                       <div className="px-2 py-2  flex  items-center justify-between">
                         <Link
                           className="flex items-center gap-2 hover:underline  hover:-translate-y-[1px]"
-                          href={adSlot.slotWebsiteUri}
+                          href={`${adSlot.slotWebsiteUri}#${adSlot.id}`}
                         >
                           <ExternalLink className="h-4 w-4" />
                           Website

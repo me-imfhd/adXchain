@@ -24,11 +24,11 @@ type GetAd = {
 
 export default async function Page() {
   const adxchainURI = "https://adxchain-web.vercel.app";
-  const adSlotId = "cluon5jbp00065pnjage76sko";
+  const adSlotId = "cluplx4lx0004ad0d90rgwm29";
   try {
     const response = await axios.get(
       `${adxchainURI}/api/publisher/getAd/${adSlotId}`,
-      { params: { network: "devnet" } },
+      { params: { network: "devnet" } }
     );
     if (response?.status == 200) {
       const data = response.data as GetAd;
