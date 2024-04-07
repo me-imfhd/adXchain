@@ -50,7 +50,7 @@ export interface NFT {
   };
 }
 
-interface NFTAttributes {
+export interface NFTAttributes {
   displayUri: string;
   fileType: string;
 }
