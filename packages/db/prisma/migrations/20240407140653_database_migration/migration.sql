@@ -25,20 +25,6 @@ CREATE TABLE "Project" (
 );
 
 -- CreateTable
-CREATE TABLE "AdNft" (
-    "id" TEXT NOT NULL,
-    "underdogNftId" INTEGER NOT NULL,
-    "nftDisplayUri" TEXT NOT NULL,
-    "nftRedirectUri" TEXT NOT NULL,
-    "nftFileType" TEXT NOT NULL,
-    "projectId" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "AdNft_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Inventory" (
     "id" TEXT NOT NULL,
     "inventoryName" TEXT NOT NULL,
@@ -96,9 +82,6 @@ CREATE INDEX "Project_userId_idx" ON "Project"("userId");
 
 -- CreateIndex
 CREATE INDEX "Project_inventoryId_idx" ON "Project"("inventoryId");
-
--- CreateIndex
-CREATE INDEX "AdNft_projectId_idx" ON "AdNft"("projectId");
 
 -- CreateIndex
 CREATE INDEX "Inventory_userId_idx" ON "Inventory"("userId");
