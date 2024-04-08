@@ -53,7 +53,7 @@ export const SiteFooter = () => {
             Built by{" "}
             <a
               aria-label="Kickflip tutorial on YouTube"
-              href="/twitter"
+              href="https://linktr.ee/adXchainTeam"
               target="_blank"
               rel="noreferrer"
             >

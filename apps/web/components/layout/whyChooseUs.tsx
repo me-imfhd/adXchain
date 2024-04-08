@@ -19,13 +19,13 @@ const whyChooseUsCard: React.FC<whyChooseUsCardProps> = ({
         reverse
           ? "flex-row-reverse gradient-border-left"
           : "gradient-border-right"
-      }  justify-between  p-5 w-full`}
+      } gap-3 md:gap-0 justify-center md:justify-between  p-5 w-full -mt-5 md:mt-0`}
     >
       <div className="flex flex-col gap-2 items-start justify-between">
         <h2 className="font-semibold text-white text-2xl">{title}</h2>
         <p className="md:w-[40rem] text-[#BBBBBB]">{description}</p>
       </div>
-      <div>{svg}</div>
+      <div className="hidden md:block">{svg}</div>
     </div>
   );
 };
