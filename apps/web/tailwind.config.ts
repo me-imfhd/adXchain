@@ -64,6 +64,10 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        blink: {
+          '0%, 100%': { opacity: 1 },
+          '50%': { opacity: 0 },
+        },
         gradient: {
           "0%": { backgroundPosition: "0% 50%" },
           "100%": { backgroundPosition: "100% 50%" },
@@ -131,6 +135,7 @@ module.exports = {
       },
       animation: {
         gradient: "gradient 8s linear infinite",
+        blink: 'blink 1s infinite',
         "fade-up": "fade-up 0.5s ease-in-out",
         "fade-down": "fade-down 0.5s ease-in-out",
         "fade-right": "fade-right 0.5s ease-in-out",
