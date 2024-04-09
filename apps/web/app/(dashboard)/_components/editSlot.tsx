@@ -20,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-  useToast,
 } from "@repo/ui/components";
 import { ChevronLeft } from "@repo/ui/icons";
 import { trpc } from "@repo/trpc/trpc/client";
@@ -34,11 +33,11 @@ import { GetAdSlotById } from "@repo/api";
 import { deleteS3Image } from "./s3Delete";
 import Link from "next/link";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { toast } from "sonner";
 export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
   const updateAdSlot = trpc.adSlots.updateAdSlot.useMutation();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const toast = useToast();
   const [image, setImage] = useState<File | null>(null);
   const slotPrice = Number(slot?.slotPrice) / LAMPORTS_PER_SOL;
   const form = useForm<z.infer<typeof editAdSlotForm>>({
@@ -68,7 +67,7 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
                   updatedAt: new Date(),
                 });
                 if (res) {
-                  toast.toast({ title: "Ad slot updated successfully." });
+                  toast("Ad slot updated successfully.");
                   router.push(`/inventories/${slot?.inventoryId}`);
                   router.refresh();
                   setIsLoading(false);
@@ -86,14 +85,13 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
                 await deleteS3Image(s3ImageUri);
                 return;
               }
-              toast.toast({ title: "Ad slot updated successfully." });
+              toast("Ad slot updated successfully.");
               router.push(`/inventories/${slot?.inventoryId}`);
               router.refresh();
               setIsLoading(false);
             } catch (err) {
               console.log(err);
-              toast.toast({
-                title: "Operation Failed",
+              toast("INTERNAL_SERVER_ERROR", {
                 description:
                   (err as Error).message ?? "Check console for errors",
               });

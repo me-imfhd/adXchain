@@ -20,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-  useToast,
 } from "@repo/ui/components";
 import { ChevronLeft } from "@repo/ui/icons";
 import { trpc } from "@repo/trpc/trpc/client";
@@ -34,6 +33,7 @@ import { GetInventoryById } from "@repo/api";
 import { deleteS3Image } from "./s3Delete";
 import Link from "next/link";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { toast } from "sonner";
 export default function NewSlot({
   inventory,
 }: {
@@ -42,7 +42,6 @@ export default function NewSlot({
   const createAdSlot = trpc.adSlots.createAdSlot.useMutation();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const toast = useToast();
   const [image, setImage] = useState<File | null>(null);
   const form = useForm<z.infer<typeof insertAdSlotForm>>({
     resolver: zodResolver(insertAdSlotForm),
@@ -75,6 +74,7 @@ export default function NewSlot({
 
               const slotPrice = BigInt(LAMPORTS_PER_SOL * data.slotPrice);
               const s3ImageUri = await s3Upload(image);
+              toast("Image Uploaded Successfully");
               const res = await createAdSlot.mutateAsync({
                 ...data,
                 slotPrice: slotPrice,
@@ -84,14 +84,13 @@ export default function NewSlot({
               if (!res) {
                 await deleteS3Image(s3ImageUri);
               }
-              toast.toast({ title: "Ad slot created successfully." });
+              toast("Ad slot created successfully.");
               router.push(`/inventories/${inventory?.id}`);
               router.refresh();
               setIsLoading(false);
             } catch (err) {
               console.log(err);
-              toast.toast({
-                title: "Operation Failed",
+              toast("INTERNAL_SERVER_ERROR", {
                 description:
                   (err as Error).message ?? "Check console for errors",
               });

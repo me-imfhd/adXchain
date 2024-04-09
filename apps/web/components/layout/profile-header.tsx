@@ -56,7 +56,7 @@ export const ProfileHeader = () => {
             className="sm:hidden w-12"
             onClick={async () => {
               disconnect();
-              signOut({ redirect: false });
+              await signOut({ redirect: false });
             }}
           >
             <svg

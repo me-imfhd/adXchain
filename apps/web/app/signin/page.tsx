@@ -19,12 +19,12 @@ import {
   FormMessage,
   Input,
   Label,
-  useToast,
 } from "@repo/ui/components";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 export default function LoginForm() {
@@ -36,7 +36,6 @@ export default function LoginForm() {
     resolver: zodResolver(createUserSchema),
     defaultValues: { walletAddress: "" },
   });
-  const { toast } = useToast();
   useEffect(() => {
     if (walletAddress) {
       form.setValue("walletAddress", walletAddress);
@@ -50,8 +49,7 @@ export default function LoginForm() {
           setIsLoading(true);
           try {
             if (!connected || !data.walletAddress) {
-              toast({
-                title: "Wallet Not Connected",
+              toast("Wallet Not Connected", {
                 description: "Please Connect Your Wallet First.",
               });
               setIsLoading(false);
@@ -62,26 +60,28 @@ export default function LoginForm() {
             const message = new SigninMessage({
               domain: window.location.host,
               publicKey: data.walletAddress,
-              statement: `Sign in to adXchain.`,
+              statement: `Sign in to adXchain. \n\n`,
               nonce: csrf!,
             });
 
             const d = new TextEncoder().encode(message.prepare());
             const signature = await signMessage!(d);
             const serializedSignature = bs58.encode(signature);
-            signIn("credentials", {
+            const a = await signIn("credentials", {
               message: JSON.stringify(message),
               redirect: false,
               signature: serializedSignature,
-              name: data.name,
-              email: data.email,
+              name: "",
+              email: "",
             });
-            router.push("/market");
-            setIsLoading(false);
+            if (a?.ok) {
+              router.push("/market");
+              toast("Locked In 🔒");
+              setIsLoading(false);
+            }
             return;
           } catch (e) {
-            toast({
-              title: "Could not Login",
+            toast("Could Not Login, Please Try Again", {
               description: (e as Error).message ?? "Error Logging In.",
             });
             setIsLoading(false);
@@ -94,7 +94,7 @@ export default function LoginForm() {
             <CardDescription>Create your account</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
-            <div className="grid gap-2">
+            {/* <div className="grid gap-2">
               <Label htmlFor="name">Business Name</Label>
               <FormField
                 control={form.control}
@@ -127,7 +127,7 @@ export default function LoginForm() {
                   </FormItem>
                 )}
               />
-            </div>
+            </div> */}
             <div className="grid gap-2">
               <Label>Wallet Address</Label>
               <FormField

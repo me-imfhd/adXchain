@@ -12,7 +12,6 @@ import {
   Input,
   Label,
   Textarea,
-  useToast,
 } from "@repo/ui/components";
 import { ChevronLeft } from "@repo/ui/icons";
 import Link from "next/link";
@@ -25,6 +24,7 @@ import { s3Upload } from "./s3Upload";
 import { useRouter } from "next/navigation";
 import { GetInventoryById } from "@repo/api";
 import { deleteS3Image } from "./s3Delete";
+import { toast } from "sonner";
 export default function EditInventory({
   inventory,
 }: {
@@ -33,7 +33,7 @@ export default function EditInventory({
   const updateInventory = trpc.inventory.updateInventory.useMutation();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const toast = useToast();
+
   const [image, setImage] = useState<File | null>(null);
   const form = useForm<z.infer<typeof updateInventoryParams>>({
     resolver: zodResolver(updateInventoryParams),
@@ -52,7 +52,7 @@ export default function EditInventory({
                   updatedAt: new Date(),
                 });
                 if (res) {
-                  toast.toast({ title: "Inventory updated successfully." });
+                  toast("Inventory Updated Successfully");
                   router.push("/inventories");
                   router.refresh();
                   setIsLoading(false);
@@ -62,22 +62,21 @@ export default function EditInventory({
               await deleteS3Image(inventory?.inventoryImageUri!);
               const s3ImageUri = await s3Upload(image);
               if (s3ImageUri) {
-                toast.toast({ title: "Image updated successfully." });
+                toast("Image updated successfully.");
               }
               const res = await updateInventory.mutateAsync({
                 ...data,
                 inventoryImageUri: s3ImageUri,
               });
               if (res) {
-                toast.toast({ title: "Inventory updated successfully." });
+                toast("Inventory updated successfully.");
                 router.push("/inventories");
                 router.refresh();
                 setIsLoading(false);
               }
             } catch (err) {
               console.log(err);
-              toast.toast({
-                title: "Operation Failed",
+              toast("INTERNAL_SERVER_ERROR", {
                 description:
                   (err as Error).message ?? "Check console for errors",
               });

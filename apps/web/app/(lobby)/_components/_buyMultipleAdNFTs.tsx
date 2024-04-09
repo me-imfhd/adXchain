@@ -11,7 +11,6 @@ import {
   FormLabel,
   FormMessage,
   Input,
-  useToast,
 } from "@repo/ui/components";
 import { useState } from "react";
 import {
@@ -29,6 +28,7 @@ import { SlotMap } from "../market/[inventory]/page";
 import { trpc } from "@repo/trpc/trpc/client";
 import { NftBodyParams } from "@repo/api/web3-ops/types";
 import { GlowingButton } from "@repo/ui/components/buttons";
+import { toast } from "sonner";
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/jpeg",
@@ -72,7 +72,6 @@ export default function BuyMultiple({
   const updateSlot = trpc.adSlots.buySlot.useMutation();
   const router = useRouter();
   const createNewProject = trpc.project.createProject.useMutation();
-  const toast = useToast().toast;
   const form = useForm<InventorySchema>({
     resolver: zodResolver(multipleAdSlotForm),
   });
@@ -80,7 +79,15 @@ export default function BuyMultiple({
   async function operation(
     underdogApiKey: string,
     s3ImagesUri: string[],
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+    web2ProjectId: string,
+>>>>>>> Stashed changes
     underdogProjectId: number,
+=======
+    underdogProjectId: number
+>>>>>>> Stashed changes
   ) {
     try {
       const payTransaction = await sendSol(
@@ -88,7 +95,7 @@ export default function BuyMultiple({
         payersAddress,
         transactionAmount,
         connection,
-        sendTransaction,
+        sendTransaction
       );
       if (!payTransaction) {
         throw new Error("Transaction Not Completed, try again.");
@@ -120,7 +127,7 @@ export default function BuyMultiple({
               nftBody,
             });
             if (nft) {
-              toast({ title: "Ad Space Initialized successfully." });
+              toast("Ad Space Initialized successfully.");
             }
             const nftMint = await retrieveNft({
               nftId: nft.nftId,
@@ -137,16 +144,15 @@ export default function BuyMultiple({
           } catch (err) {
             throw new Error("Ad NFT creation failed.");
           }
-        }),
+        })
       );
       setIsLoading(false);
-      toast({ title: "Operation Successful" });
+      toast("");
       router.push(`/market`);
       return;
     } catch (error) {
       console.log(error);
-      toast({
-        title: "Some Nft Operation failed",
+      toast("INTERNAL_SERVER_ERROR", {
         description: (error as Error).message,
       });
     }
@@ -193,20 +199,35 @@ export default function BuyMultiple({
                 await operation(
                   data.underdogApi,
                   s3ImagesUri,
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+                  web2Project.project.id,
+>>>>>>> Stashed changes
                   web2Project.project.underdogProjectId,
+=======
+                  web2Project.project.underdogProjectId
+>>>>>>> Stashed changes
                 );
               } else {
                 await operation(
                   data.underdogApi,
                   s3ImagesUri,
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+                  projectAlreadyExist.id,
+>>>>>>> Stashed changes
                   projectAlreadyExist.underdogProjectId,
+=======
+                  projectAlreadyExist.underdogProjectId
+>>>>>>> Stashed changes
                 );
               }
             } catch (err) {
               console.log(err);
               setIsLoading(false);
-              toast({
-                title: "Operation Failed",
+              toast("INTERNAL_SERVER_ERROR", {
                 description: (err as Error).message,
               });
             }
@@ -267,7 +288,7 @@ const sendSol = async (
   payerPublicKey: PublicKey,
   amountLamports: bigint,
   connection: Connection,
-  sendTransaction: WalletAdapterProps["sendTransaction"],
+  sendTransaction: WalletAdapterProps["sendTransaction"]
 ) => {
   const transaction = new Transaction();
   const recipientPubKey = new PublicKey(recieverAddress);

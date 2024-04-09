@@ -20,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-  useToast,
 } from "@repo/ui/components";
 import { ChevronLeft } from "@repo/ui/icons";
 import { trpc } from "@repo/trpc/trpc/client";
@@ -32,11 +31,11 @@ import { s3Upload } from "./s3Upload";
 import { useRouter } from "next/navigation";
 import { deleteS3Image } from "./s3Delete";
 import Link from "next/link";
+import { toast } from "sonner";
 export default function Inventory() {
   const createInventory = trpc.inventory.createInventory.useMutation();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const toast = useToast();
   const [image, setImage] = useState<File | null>(null);
   const form = useForm<z.infer<typeof insertInventoryForm>>({
     resolver: zodResolver(insertInventoryForm),
@@ -53,7 +52,7 @@ export default function Inventory() {
               }
               const s3ImageUri = await s3Upload(image);
               if (s3ImageUri) {
-                toast.toast({ title: "Image upload successfully." });
+                toast("Image upload successfully.");
               }
               const res = await createInventory.mutateAsync({
                 ...data,
@@ -62,14 +61,13 @@ export default function Inventory() {
               if (!res) {
                 await deleteS3Image(s3ImageUri);
               }
-              toast.toast({ title: "Inventory created successfully." });
+              toast("Inventory created successfully.");
               router.push("/inventories");
               router.refresh();
               setIsLoading(false);
             } catch (err) {
               console.log(err);
-              toast.toast({
-                title: "Operation Failed",
+              toast("INTERNAL_SERVER_ERROR", {
                 description:
                   (err as Error).message ?? "Check console for errors",
               });

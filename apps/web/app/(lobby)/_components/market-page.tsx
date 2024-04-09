@@ -11,8 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
   Input,
-  useToast,
 } from "@repo/ui/components";
+import { toast } from "sonner";
 import { GlowingButton } from "@repo/ui/components/buttons";
 import { ExternalLink, Upload } from "@repo/ui/icons";
 import Link from "next/link";
@@ -23,6 +23,8 @@ import { SlotMap } from "../market/[inventory]/page";
 import { Session } from "@repo/auth";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import BuyMultiple from "./_buyMultipleAdNFTs";
+import { signOut } from "@repo/auth";
+import { redirect } from "next/navigation";
 
 interface MarketPageProps {
   inventory: NonNullable<GetActiveInventoryById>;
@@ -50,7 +52,15 @@ export default function MarketPage({
     if (!connection || !publicKey) {
       return;
     }
-
+    if (publicKey.toBase58() !== session.user.walletAddress) {
+      toast("New Wallet Found", {
+        description: "Login With Your New Wallet",
+      });
+      (async () => {
+        await signOut();
+        redirect("/signin");
+      })();
+    }
     connection.onAccountChange(
       publicKey,
       (updatedAccountInfo) => {
@@ -69,7 +79,6 @@ export default function MarketPage({
   const totalPrice = slotsArray
     .filter((slot) => slot.isSelected && !slot.isRented)
     .reduce((accumulator, slot) => accumulator + slot.price, BigInt(0));
-  const toast = useToast().toast;
   const handleClick = (id: string) => {
     console.log(slotsArray);
     const updatedSlotsArray = slotsArray.map((slot) => {
@@ -218,7 +227,7 @@ export default function MarketPage({
                                     e: ChangeEvent<HTMLInputElement>
                                   ) => {
                                     if (e.target.files?.[0]) {
-                                      toast({ title: "Image Added." });
+                                      toast("File Added");
                                       const updatedSlots = slotsArray.map(
                                         (slot) => {
                                           if (slot.id === adSlot.id) {

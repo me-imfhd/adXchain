@@ -4,11 +4,11 @@ import WhyChooseUsCard from "@/components/layout/whyChooseUs";
 const WhyUS = () => {
   return (
     <div className="flex justify-center items-center flex-col gap-5 md:gap-0 w-full">
-      <div className="mx-auto w-full text-center animate-fade-up inline-block bg-clip-text bg-gradient-to-br from-[#CCE8FE] via-[#ece9ed] to-[#d9d7dd] ">
-        <h1 className=" lg:mt-8 font-psp2  flex flex-wrap justify-center w-full text-transparent mt-8 mb-14 md:mt-0 md:mb-0  items-center gap-4 sm:gap-4 h-[5rem] md:h-[4rem] lg:h-[16rem] tracking-tighter sm:text-[5rem] lg:text-[40px] xl:text-[50px] text-[2.2rem]">
+      <div className="mx-auto w-full text-center animate-fade-up inline-block bg-clip-text mb-3 md:mb-0">
+        <h1 className=" lg:mt-8 mt-2 font-bold md:mt-0 md:-mb-8 flex justify-center w-full items-center gap-1 sm:gap-4 h-[5rem] md:h-[4rem] lg:h-[16rem] sm:text-[5rem] lg:text-[30px] xl:text-[50px] text-[2.2rem]">
           <span>Why</span>
           <span>Choose</span>
-          <span>US?</span>
+          <span>Us?</span>
         </h1>
       </div>
       <WhyChooseUsCard
