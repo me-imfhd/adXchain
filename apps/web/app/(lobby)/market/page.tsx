@@ -38,7 +38,7 @@ export default async function Page() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {inventories.map((inventory) => {
             const totalSpacesLeft = inventory.adSlots.filter(
-              (adSlot) => adSlot.lent === false
+              (adSlot) => adSlot.lent === false,
             );
             const totalSpaces = inventory.adSlots.length;
             const walletAddress = inventory.user.walletAddress;

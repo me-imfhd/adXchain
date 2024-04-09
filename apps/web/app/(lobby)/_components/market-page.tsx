@@ -66,7 +66,7 @@ export default function MarketPage({
       (updatedAccountInfo) => {
         setBalance(BigInt(updatedAccountInfo.lamports));
       },
-      "confirmed"
+      "confirmed",
     );
 
     connection.getAccountInfo(publicKey).then((info) => {
@@ -206,7 +206,7 @@ export default function MarketPage({
                                   <img
                                     className="object-cover rounded-lg"
                                     src={URL.createObjectURL(
-                                      new Blob([adSlot.file])
+                                      new Blob([adSlot.file]),
                                     )}
                                     style={{
                                       aspectRatio: "25/25",
@@ -224,7 +224,7 @@ export default function MarketPage({
                                   type="file"
                                   className="hidden"
                                   onChange={(
-                                    e: ChangeEvent<HTMLInputElement>
+                                    e: ChangeEvent<HTMLInputElement>,
                                   ) => {
                                     if (e.target.files?.[0]) {
                                       toast("File Added");
@@ -237,7 +237,7 @@ export default function MarketPage({
                                             };
                                           }
                                           return slot;
-                                        }
+                                        },
                                       );
                                       setSlotsArray(updatedSlots);
                                     }
@@ -401,13 +401,13 @@ export default function MarketPage({
             : inventory?.adSlots.map((adSlot) => {
                 const rented = Boolean(
                   slotsArray.find(
-                    (slot) => slot.id == adSlot.id && slot.isRented
-                  )
+                    (slot) => slot.id == adSlot.id && slot.isRented,
+                  ),
                 );
                 const selected = Boolean(
                   slotsArray.find(
-                    (slot) => slot.id == adSlot.id && slot.isSelected
-                  )
+                    (slot) => slot.id == adSlot.id && slot.isSelected,
+                  ),
                 );
 
                 const walletAddress = adSlot.owner?.walletAddress;

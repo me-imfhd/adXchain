@@ -79,15 +79,7 @@ export default function BuyMultiple({
   async function operation(
     underdogApiKey: string,
     s3ImagesUri: string[],
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-    web2ProjectId: string,
->>>>>>> Stashed changes
     underdogProjectId: number,
-=======
-    underdogProjectId: number
->>>>>>> Stashed changes
   ) {
     try {
       const payTransaction = await sendSol(
@@ -95,7 +87,7 @@ export default function BuyMultiple({
         payersAddress,
         transactionAmount,
         connection,
-        sendTransaction
+        sendTransaction,
       );
       if (!payTransaction) {
         throw new Error("Transaction Not Completed, try again.");
@@ -144,7 +136,7 @@ export default function BuyMultiple({
           } catch (err) {
             throw new Error("Ad NFT creation failed.");
           }
-        })
+        }),
       );
       setIsLoading(false);
       toast("");
@@ -199,29 +191,13 @@ export default function BuyMultiple({
                 await operation(
                   data.underdogApi,
                   s3ImagesUri,
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-                  web2Project.project.id,
->>>>>>> Stashed changes
                   web2Project.project.underdogProjectId,
-=======
-                  web2Project.project.underdogProjectId
->>>>>>> Stashed changes
                 );
               } else {
                 await operation(
                   data.underdogApi,
                   s3ImagesUri,
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-                  projectAlreadyExist.id,
->>>>>>> Stashed changes
                   projectAlreadyExist.underdogProjectId,
-=======
-                  projectAlreadyExist.underdogProjectId
->>>>>>> Stashed changes
                 );
               }
             } catch (err) {
@@ -288,7 +264,7 @@ const sendSol = async (
   payerPublicKey: PublicKey,
   amountLamports: bigint,
   connection: Connection,
-  sendTransaction: WalletAdapterProps["sendTransaction"]
+  sendTransaction: WalletAdapterProps["sendTransaction"],
 ) => {
   const transaction = new Transaction();
   const recipientPubKey = new PublicKey(recieverAddress);

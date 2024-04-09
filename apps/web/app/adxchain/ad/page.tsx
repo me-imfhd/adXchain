@@ -20,7 +20,7 @@ const Page = () => {
       try {
         const response = await axios.get(
           `${adxchainURI}/api/publisher/getAd/${adSlotId}`,
-          { params: { network: "devnet" } }
+          { params: { network: "devnet" } },
         );
         if (response.status === 200) {
           setData(response.data);

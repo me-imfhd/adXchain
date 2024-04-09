@@ -4,7 +4,7 @@ import { NFTAttributes } from "./types";
 
 export const getAds = async (
   inventoryId: string,
-  underdogApiEndpoint: string
+  underdogApiEndpoint: string,
 ) => {
   const adNft = await db.inventory.findUnique({
     where: { id: inventoryId },
@@ -20,11 +20,11 @@ export const getAds = async (
         return null;
       }
       const retrieveNft = await axios.get(
-        `${underdogApiEndpoint}/v2/nfts/${mint}`
+        `${underdogApiEndpoint}/v2/nfts/${mint}`,
       );
       const data = retrieveNft.data.attributes as NFTAttributes;
       return data;
-    })
+    }),
   );
 
   const combinedData =
@@ -36,11 +36,6 @@ export const getAds = async (
   return combinedData;
 };
 export type GetAds = Awaited<ReturnType<typeof getAds>>;
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
 
 export const getAd = async (slotId: string, underdogApiEndpoint: string) => {
   const adSlot = await db.adSlot.findUnique({
@@ -61,11 +56,7 @@ export const getAd = async (slotId: string, underdogApiEndpoint: string) => {
     };
   }
   const retrieveNft = await axios.get(
-<<<<<<< Updated upstream
-    `${underdogApiEndpoint}/v2/nfts/${adSlot.nftMintAddress}`
-=======
     `${underdogApiEndpoint}/v2/nfts/${adSlot.nftMintAddress}`,
->>>>>>> Stashed changes
   );
   const data = retrieveNft.data.attributes as NFTAttributes;
 
@@ -79,7 +70,3 @@ export const getAd = async (slotId: string, underdogApiEndpoint: string) => {
 };
 
 export type GetAd = Awaited<ReturnType<typeof getAd>>;
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes

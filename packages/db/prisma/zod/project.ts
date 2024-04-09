@@ -14,7 +14,7 @@ export const projectSchema = z.object({
   userId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
-})
+});
 
 export interface CompleteProject extends z.infer<typeof projectSchema> {
   inventory: CompleteInventory;

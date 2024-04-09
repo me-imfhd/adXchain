@@ -15,7 +15,7 @@ export default async function AdSlotComponent() {
   try {
     const response = await axios.get(
       `${adxchainURI}/api/publisher/getAd/${adSlotId}`,
-      { params: { network: "devnet" } }
+      { params: { network: "devnet" } },
     );
     if (response?.status == 200) {
       const data = response.data as GetAd;
