@@ -93,9 +93,9 @@ pub struct InitializeAdNFT<'info> {
     pub user: Account<'info, UserAccount>,
     #[account(
         mut, 
-        has_one = authority, 
-        seeds= [b"inventory", authority.key().as_ref(), &[user.last_inventory as u8].as_ref()],
-        bump,
+        // has_one = authority, 
+        // seeds= [b"inventory", authority.key().as_ref(), &[user.last_inventory as u8].as_ref()],
+        // bump,
         )
     ]
     pub inventory: Account<'info, InventoryAccount>,
@@ -103,7 +103,7 @@ pub struct InitializeAdNFT<'info> {
         init, 
         payer = authority, 
         space =  8 + 1 + 32 + 32, 
-        seeds= [b"nft", inventory.key().as_ref() , &[inventory.last_ad_nft as u8].as_ref()],
+        seeds= [b"nft", authority.key().as_ref() , &[inventory.last_ad_nft as u8].as_ref()],
         bump,
         )
     ]

@@ -67,12 +67,12 @@ describe("contract", () => {
     const [adNFTPda] = anchor.web3.PublicKey.findProgramAddressSync(
       [
         Buffer.from("nft"),
-        inventoryPda.toBuffer(),
+        wallet.publicKey.toBuffer(),
         Uint8Array.from([inventory.lastAdNft]),
       ],
       program.programId
     );
-    console.log(adNFTPda.toBase58());
+    // console.log(adNFTPda.toBase58());
     const tx = await program.methods
       .initializeAdNft(adNFTMint.publicKey)
       .accounts({
@@ -83,8 +83,11 @@ describe("contract", () => {
         systemProgram: anchor.web3.SystemProgram.programId,
       })
       .rpc();
-    console.log(program.account.adNftAccount.fetch(adNFTPda));
+    console.log(await program.account.adNftAccount.fetch(adNFTPda));
 
     console.log("Your transaction signature", tx);
+    console.log(await program.account.userAccount.all())
+    console.log(await program.account.inventoryAccount.all())
+    console.log(await program.account.adNftAccount.all())
   });
 });
