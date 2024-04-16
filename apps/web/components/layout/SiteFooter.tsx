@@ -57,7 +57,7 @@ export const SiteFooter = () => {
               target="_blank"
               rel="noreferrer"
             >
-              <span className="tracking-wide font-bold lg:inline-block ">
+              <span className="tracking-wide font-bold lg:inline-block duration-200 hover:text-white">
                 adXchain Team
               </span>
             </a>
