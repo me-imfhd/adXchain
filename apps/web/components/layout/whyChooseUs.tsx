@@ -22,8 +22,8 @@ const whyChooseUsCard: React.FC<whyChooseUsCardProps> = ({
       } gap-3 md:gap-0 justify-center md:justify-between  p-5 w-full -mt-5 md:mt-0`}
     >
       <div className="flex flex-col gap-2 items-start justify-between">
-        <h2 className="font-semibold text-white text-2xl">{title}</h2>
-        <p className="md:w-[40rem] text-[#BBBBBB]">{description}</p>
+        <h2 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-zinc-200/60 via-zinc-200 to-zinc-200/60 text-2xl">{title}</h2>
+        <p className="md:w-[40rem] text-zinc-400">{description}</p>
       </div>
       <div className="hidden md:block">{svg}</div>
     </div>

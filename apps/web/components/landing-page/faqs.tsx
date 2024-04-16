@@ -9,7 +9,7 @@ const FAQS = () => {
   return (
     <div className="flex justify-center items-center flex-col gap-5 md:gap-0 mb-10">
       <div className="mx-auto w-full text-center animate-fade-up inline-block bg-clip-text">
-        <h1 className=" lg:mt-8 mt-2 md:mt-0 md:-mb-8 font-bold flex justify-center w-full items-center gap-1 sm:gap-4 h-[5rem] md:h-[4rem] lg:h-[16rem] sm:text-[5rem] lg:text-[30px] xl:text-[50px] text-[2.2rem]">
+        <h1 className=" lg:mt-8 mt-2 md:mt-0 md:-mb-8 font-bold text-transparent bg-clip-text bg-gradient-to-r from-zinc-200/60 via-zinc-200 to-zinc-200/60 flex justify-center w-full items-center gap-1 sm:gap-4 h-[5rem] md:h-[4rem] lg:h-[16rem] sm:text-[5rem] lg:text-[30px] xl:text-[50px] text-[2.2rem]">
           <span>F</span>
           <span>A</span>
           <span>Q's</span>
@@ -18,9 +18,9 @@ const FAQS = () => {
       <Accordion type="single" collapsible>
         <AccordionItem
           value="item-1"
-          className="border-2 px-2 md:px-10 md:py-2 rounded-xl"
+          className="px-2 md:px-10 md:py-2 rounded-xl"
         >
-          <AccordionTrigger className="text-lg md:text-2xl">
+          <AccordionTrigger className="text-lg md:text-xl text-zinc-400">
             How does adXchain ensure security?
           </AccordionTrigger>
           <AccordionContent>
@@ -32,9 +32,9 @@ const FAQS = () => {
         </AccordionItem>
         <AccordionItem
           value="item-2"
-          className="border-2 px-2 md:px-10 md:py-2 rounded-xl mt-5"
+          className="px-2 md:px-10 md:py-2 rounded-xl mt-5"
         >
-          <AccordionTrigger className="text-lg md:text-2xl">
+          <AccordionTrigger className="text-lg md:text-xl text-zinc-400">
             How are ad spaces priced on adXchain?
           </AccordionTrigger>
           <AccordionContent>
@@ -46,9 +46,9 @@ const FAQS = () => {
         </AccordionItem>
         <AccordionItem
           value="item-3"
-          className="border-2 px-2 md:px-10 md:py-2 rounded-xl mt-5"
+          className="px-2 md:px-10 md:py-2 rounded-xl mt-5"
         >
-          <AccordionTrigger className="text-lg md:text-2xl">
+          <AccordionTrigger className="text-lg md:text-xl text-zinc-400">
             What happens after purchasing an ad space on adXchain?
           </AccordionTrigger>
           <AccordionContent>
@@ -60,9 +60,9 @@ const FAQS = () => {
         </AccordionItem>
         <AccordionItem
           value="item-4"
-          className="border-2 px-2 md:px-10 md:py-2 rounded-xl mt-5"
+          className="px-2 md:px-10 md:py-2 rounded-xl mt-5"
         >
-          <AccordionTrigger className="text-lg md:text-2xl">
+          <AccordionTrigger className="text-lg md:text-xl text-zinc-400">
             Is adXchain suitable for both advertisers and publishers?
           </AccordionTrigger>
           <AccordionContent>
@@ -74,9 +74,9 @@ const FAQS = () => {
         </AccordionItem>
         <AccordionItem
           value="item-5"
-          className="border-2 px-2 md:px-10 md:py-2 rounded-xl mt-5"
+          className="px-2 md:px-10 md:py-2 rounded-xl mt-5"
         >
-          <AccordionTrigger className="text-lg md:text-2xl">
+          <AccordionTrigger className="text-lg md:text-xl text-zinc-400">
             How can I get started with adXchain?
           </AccordionTrigger>
           <AccordionContent>

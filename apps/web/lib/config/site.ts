@@ -142,10 +142,10 @@ export const SiteConfig = {
 };
 export const mySocials: MySocialsProps[] = [
   {
-    title: "Github",
-    href: "https://github.com/adXchain/",
+    title: "Youtube",
+    href: "https://www.youtube.com/@adXchain",
     external: true,
-    icon: "gitHub",
+    icon: "youtube",
   },
   {
     title: "Twitter",
