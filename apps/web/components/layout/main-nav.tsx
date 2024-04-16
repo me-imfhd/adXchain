@@ -8,13 +8,13 @@ export function MainNav() {
   return (
     <div className="gap-1 flex">
       <a aria-label="Home" href="/" className="items-center space-x-2 lg:flex">
-        <h1 className="tracking-wide font-bold lg:inline-block text-3xl ">
+        <h1 className="tracking-wide font-bold text-transparent bg-clip-text bg-gradient-to-r from-zinc-200/60 via-zinc-200 to-zinc-200/60 lg:inline-block text-3xl ">
           adXchain
         </h1>
       </a>
       <div>
         <span className="bg-[#561a04] text-white font-semibold w-10 p-1 px-2 rounded-lg h-5">
-          Beta
+          BETA
         </span>
       </div>
     </div>

@@ -5,7 +5,7 @@ const WhyUS = () => {
   return (
     <div className="flex justify-center items-center flex-col gap-5 md:gap-0 w-full">
       <div className="mx-auto w-full text-center animate-fade-up inline-block bg-clip-text mb-3 md:mb-0">
-        <h1 className=" lg:mt-8 mt-2 font-bold md:mt-0 md:-mb-8 flex justify-center w-full items-center gap-1 sm:gap-4 h-[5rem] md:h-[4rem] lg:h-[16rem] sm:text-[5rem] lg:text-[30px] xl:text-[50px] text-[2.2rem]">
+        <h1 className=" lg:mt-8 mt-2 font-bold text-transparent bg-clip-text bg-gradient-to-r from-zinc-200/60 via-zinc-200 to-zinc-200/60 md:mt-0 md:-mb-8 flex justify-center w-full items-center gap-1 sm:gap-4 h-[5rem] md:h-[4rem] lg:h-[16rem] sm:text-[5rem] lg:text-[30px] xl:text-[50px] text-[2.2rem]">
           <span>Why</span>
           <span>Choose</span>
           <span>Us?</span>
