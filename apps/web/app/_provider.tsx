@@ -2,6 +2,7 @@
 
 import { SessionProvider } from "@repo/auth";
 import { ThemeProvider } from "@repo/ui/components/ThemeProvider";
+import { UseAnchorProvider } from "@/lib/hooks/use-anchor";
 import {
   ConnectionProvider,
   WalletProvider,
@@ -19,7 +20,9 @@ const Provider = ({ children }: PropsWithChildren) => {
       <ConnectionProvider endpoint="https://api.devnet.solana.com">
         <WalletProvider wallets={wallets} autoConnect>
           <SessionProvider>
-            <WalletModalProvider>{children}</WalletModalProvider>
+            <WalletModalProvider>
+              <UseAnchorProvider>{children}</UseAnchorProvider>
+            </WalletModalProvider>
           </SessionProvider>
         </WalletProvider>
       </ConnectionProvider>

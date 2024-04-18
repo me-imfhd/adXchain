@@ -15,6 +15,7 @@
     "@next/eslint-plugin-next": "^14.1.0",
     "@repo/api": "workspace:*",
     "@repo/auth": "workspace:*",
+    "@repo/contract": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/utils": "workspace: *",
     "@tanstack/react-query": "^4.32.6",

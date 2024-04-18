@@ -455,6 +455,9 @@ importers:
       '@repo/auth':
         specifier: workspace:*
         version: link:../auth
+      '@repo/contract':
+        specifier: workspace:*
+        version: link:../contract
       '@repo/db':
         specifier: workspace:*
         version: link:../db
