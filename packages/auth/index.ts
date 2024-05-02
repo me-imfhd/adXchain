@@ -1,32 +1,22 @@
-import { db } from "@repo/db";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { AuthOptions, DefaultSession, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { SigninMessage } from "./signMessage";
 import { getCsrfToken } from "next-auth/react";
-import NextAuth from "next-auth/next";
 import { redirect } from "next/navigation";
 
 declare module "next-auth" {
   interface Session {
     user: DefaultSession["user"] & {
       id: string;
-      walletAddress: string | null | undefined;
     };
-  }
-  interface User {
-    walletAddress: string | null | undefined;
   }
 }
 declare module "next-auth/jwt" {
   interface JWT {
     id: string;
-    walletAddress: string | null | undefined;
   }
 }
-
 export const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(db),
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV !== "production",
   session: {
@@ -41,7 +31,6 @@ export const authOptions: AuthOptions = {
         ...session,
         user: {
           id: token.id,
-          walletAddress: token.walletAddress,
           email: token.email,
           name: token.name,
         },
@@ -72,41 +61,39 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials, req) {
         try {
+          if (!credentials?.signature || !credentials.message) {
+            throw new Error(
+              "Could not validate the signed message, NO CREDENTIALS"
+            );
+          }
           const signinMessage = new SigninMessage(
-            JSON.parse(credentials?.message || "{}"),
+            JSON.parse(credentials.message)
           );
           const walletAddress = signinMessage.publicKey as string;
-          const name = credentials?.name!;
-          const email = credentials?.email!;
+          const name = credentials.name;
+          const email = credentials.email;
           const nextAuthUrl = new URL(process.env.NEXTAUTH_URL!);
           if (signinMessage.domain !== nextAuthUrl.host) {
-            return null;
+            throw new Error(
+              "Could not validate the signed message, DOMAIN MISMATCH"
+            );
           }
 
           const csrfToken = await getCsrfToken({ req: { ...req, body: null } });
 
           if (signinMessage.nonce !== csrfToken) {
-            return null;
+            throw new Error("Could not validate the signed message");
           }
 
           const validationResult = await signinMessage.validate(
-            credentials?.signature || "",
+            credentials.signature
           );
 
-          if (!validationResult)
+          if (!validationResult) {
             throw new Error("Could not validate the signed message");
-
-          const alreadyUser = await db.user.findUnique({
-            where: { walletAddress },
-          });
-          if (alreadyUser) {
-            return alreadyUser;
           }
-          const user = await db.user.create({
-            data: { walletAddress, name, email },
-          });
 
-          return user;
+          return { id: walletAddress, email, name };
         } catch (e) {
           console.log(e);
           return null;
