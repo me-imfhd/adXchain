@@ -1,6 +1,14 @@
 import { z } from "zod";
-import { projectSchema } from "../prisma/zod";
 
+export const projectSchema = z.object({
+  id: z.string(),
+  inventoryId: z.string(),
+  underdogProjectId: z.number().int(),
+  collectionMintAddress: z.string(),
+  userId: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
 export const createProjectSchema = projectSchema.omit({
   createdAt: true,
   updatedAt: true,

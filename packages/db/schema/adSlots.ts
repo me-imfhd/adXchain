@@ -1,53 +1,26 @@
 import { z } from "zod";
 // import { getAdSlots } from "@/lib/api/adSlots/queries";
-import { adSlotSchema } from "../prisma/zod";
 
 // Schema for adSlots - used to validate API requests
-const baseSchema = adSlotSchema;
-
-export const insertAdSlotSchema = baseSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
+const baseSchema = z.object({
+  slotName: z.string(),
+  slotDescription: z.string(),
+  slotWebsiteUri: z.string(),
+  slotPrice: z.number(),
+  slotLength: z.number(),
+  slotWidth: z.number(),
+  slotType: z.enum(["aside", "banner", "popup", "other"]),
+  status: z.enum(["active", "inactive"]),
+  slotPlatform: z.enum(["web", "mobile", "billboard", "other"]),
 });
-export const insertAdSlotParams = baseSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-export const insertAdSlotForm = insertAdSlotParams
-  .omit({
-    slotImageUri: true,
-    ownerId: true,
-    status: true,
-    slotPrice: true,
-    nftMintAddress: true,
-  })
-  .extend({
-    slotPrice: z.number(),
-  });
-export const updateAdSlotParams = baseSchema.omit({ createdAt: true });
-export const editAdSlotForm = baseSchema
-  .omit({
-    createdAt: true,
-    slotPrice: true,
-    ownerId: true,
-    nftMintAddress: true,
-  })
-  .extend({
-    slotPrice: z.number(),
-  });
 
-export const adSlotIdSchema = baseSchema.pick({ id: true });
-export const adSlotNameSchema = baseSchema.pick({ slotName: true });
-
-export const buySlotSchema = baseSchema.pick({
-  id: true,
-  lent: true,
-  nftMintAddress: true,
-  ownerId: true,
+export const insertAdSlotForm = baseSchema.omit({
+  status: true,
 });
-export const buyMultipleSlotSchema = z.array(buySlotSchema);
+export const updateAdSlotParams = baseSchema;
+export const editAdSlotForm = baseSchema.omit({
+  slotPrice: true,
+});
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
@@ -73,7 +46,7 @@ export const inventoryAndAdSlotSchema = baseSchema.extend({
     }, `Max image size is 5MB.`)
     .refine(
       (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
-      "Format not supported.",
+      "Format not supported."
     ),
 });
 export const selectedSlotSchema = z.object({
@@ -88,11 +61,4 @@ export const multipleAdSlotForm = z.object({
 });
 
 // Types for adSlots - used to type API request params and within Components
-export type AdSlot = z.infer<typeof adSlotSchema>;
-export type NewAdSlot = z.infer<typeof insertAdSlotSchema>;
-export type NewAdSlotParams = z.infer<typeof insertAdSlotParams>;
 export type UpdateAdSlotParams = z.infer<typeof updateAdSlotParams>;
-export type AdSlotId = z.infer<typeof adSlotIdSchema>["id"];
-export type AdSlotName = z.infer<typeof adSlotNameSchema>["slotName"];
-export type BuySlot = z.infer<typeof buySlotSchema>;
-// this type infers the return from getAdSlots() - meaning it will include any joins
