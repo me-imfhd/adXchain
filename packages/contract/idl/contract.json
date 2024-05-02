@@ -1,0 +1,435 @@
+{
+  "address": "ADXZ7eEnK2iU8tAPPvUbAw7NBQokSVhirAiHUFBHLfsj",
+  "metadata": {
+    "name": "contract",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "initialize_ad_nft",
+      "discriminator": [
+        156,
+        136,
+        175,
+        5,
+        41,
+        11,
+        233,
+        180
+      ],
+      "accounts": [
+        {
+          "name": "inventory",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  118,
+                  101,
+                  110,
+                  116,
+                  111,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "inventory_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "ad_nft",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  110,
+                  102,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "inventory"
+              },
+              {
+                "kind": "arg",
+                "path": "nft_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "inventory"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "inventory_id",
+          "type": "u64"
+        },
+        {
+          "name": "nft_id",
+          "type": "u64"
+        },
+        {
+          "name": "nft_mint",
+          "type": "pubkey"
+        },
+        {
+          "name": "price_lamports",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_inventory",
+      "discriminator": [
+        75,
+        221,
+        38,
+        238,
+        9,
+        187,
+        237,
+        157
+      ],
+      "accounts": [
+        {
+          "name": "inventory",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  118,
+                  101,
+                  110,
+                  116,
+                  111,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "inventory_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "inventory_id",
+          "type": "u64"
+        },
+        {
+          "name": "collection_mint",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "lend_ad_nft",
+      "discriminator": [
+        174,
+        232,
+        208,
+        79,
+        85,
+        13,
+        182,
+        60
+      ],
+      "accounts": [
+        {
+          "name": "inventory",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  118,
+                  101,
+                  110,
+                  116,
+                  111,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "inventory_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "ad_nft",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  110,
+                  102,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "inventory"
+              },
+              {
+                "kind": "arg",
+                "path": "nft_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "lender"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "inventory_id",
+          "type": "u64"
+        },
+        {
+          "name": "nft_id",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "update_ad_nft",
+      "discriminator": [
+        155,
+        16,
+        60,
+        209,
+        125,
+        159,
+        140,
+        90
+      ],
+      "accounts": [
+        {
+          "name": "inventory",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  118,
+                  101,
+                  110,
+                  116,
+                  111,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "inventory_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "ad_nft",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  110,
+                  102,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "inventory"
+              },
+              {
+                "kind": "arg",
+                "path": "nft_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "inventory"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "inventory_id",
+          "type": "u64"
+        },
+        {
+          "name": "nft_id",
+          "type": "u64"
+        },
+        {
+          "name": "nft_mint",
+          "type": "pubkey"
+        },
+        {
+          "name": "price_lamports",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "AdNFTAccount",
+      "discriminator": [
+        232,
+        201,
+        2,
+        122,
+        175,
+        197,
+        162,
+        55
+      ]
+    },
+    {
+      "name": "InventoryAccount",
+      "discriminator": [
+        107,
+        115,
+        86,
+        10,
+        0,
+        234,
+        7,
+        43
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "AdNFTAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "collection_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "current_renter",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "nft_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "price_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "lent",
+            "type": "bool"
+          },
+          {
+            "name": "id",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InventoryAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "collection_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "id",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ]
+}
