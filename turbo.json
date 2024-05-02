@@ -7,7 +7,7 @@
       "cache": false
     },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "@repo/contract#contract:build"],
       "outputs": [".next/**", "!.next/cache/**", "next-env.d.ts"]
     },
     "dev": {

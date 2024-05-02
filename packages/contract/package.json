@@ -5,7 +5,8 @@
   "types": "./index.ts",
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
-    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
+    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
+    "contract:build": "anchor build"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.0"
