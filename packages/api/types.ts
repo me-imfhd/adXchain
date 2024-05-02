@@ -77,4 +77,5 @@ export type UnderdogNFT = {
   image: string;
   attributes: AdNFTAttributes;
   ownerAddress: string;
+  status: string;
 };
