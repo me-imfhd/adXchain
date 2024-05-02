@@ -1,11 +1,9 @@
 "use client";
 import { type WalletAdapterProps } from "@solana/wallet-adapter-base";
 import { useState } from "react";
-import { lendAdNFT, s3Upload, transferUnderdogNFT } from "@repo/api";
-import { Session } from "@repo/auth";
+import { lendAdNFT, s3Upload } from "@repo/api";
 import { useRouter } from "next/navigation";
-import { Connection, SystemProgram, Transaction } from "@solana/web3.js";
-import { PublicKey } from "@metaplex-foundation/js";
+import { Connection, Transaction } from "@solana/web3.js";
 import { SlotMap } from "../market/[inventory]/page";
 import { GlowingButton } from "@repo/ui/components/buttons";
 import { toast } from "sonner";

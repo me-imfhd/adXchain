@@ -1,12 +1,9 @@
 "use client";
 import { useAnchorContext } from "@/lib/hooks/use-anchor";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { userAdXchainAccount } from "@repo/api";
 import { SigninMessage, getCsrfToken, signIn } from "@repo/auth";
 import bs58 from "@repo/auth/bs58";
-import { anchor } from "@repo/contract";
 
-import { userSchema } from "@repo/db";
 import {
   Button,
   Card,
@@ -30,6 +27,11 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+const userSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+});
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { signMessage } = useWallet();
