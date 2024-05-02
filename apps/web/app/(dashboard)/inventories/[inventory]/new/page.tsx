@@ -1,18 +1,18 @@
 import React from "react";
 import NewSlot from "@/app/(dashboard)/_components/newSlot";
-import { api } from "@repo/trpc";
 import { notFound } from "next/navigation";
+import { checkAuth } from "@repo/auth";
+import { getInventory } from "@repo/api";
 
 export default async function AddNewAdNFTPage({
   params: { inventory },
 }: {
-  params: { inventory: string };
+  params: { inventory: number };
 }) {
-  const i = await api.inventory.getInventoryById.query({
-    id: inventory,
-  });
+  const session = await checkAuth();
+  const i = await getInventory(inventory);
   if (!i) {
     notFound();
   }
-  return <NewSlot inventory={i} />;
+  return <NewSlot session={session} inventoryId={Number(inventory)} />;
 }

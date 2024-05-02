@@ -22,27 +22,46 @@ import {
   Textarea,
 } from "@repo/ui/components";
 import { ChevronLeft } from "@repo/ui/icons";
-import { trpc } from "@repo/trpc/trpc/client";
 import { useForm } from "react-hook-form";
 import { editAdSlotForm } from "@repo/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { s3Upload } from "./s3Upload";
 import { useRouter } from "next/navigation";
-import { GetAdSlotById } from "@repo/api";
+import { GetAdNFT } from "@repo/api";
 import { deleteS3Image } from "./s3Delete";
 import Link from "next/link";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { toast } from "sonner";
-export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
-  const updateAdSlot = trpc.adSlots.updateAdSlot.useMutation();
+import { useWalletSession } from "@/lib/hooks/check-wallet";
+import { Session } from "@repo/auth";
+import { trpc } from "@repo/trpc/trpc/client";
+export default function EditSlot({
+  adNFT,
+  inventoryId,
+  session,
+}: {
+  adNFT: NonNullable<GetAdNFT>;
+  inventoryId: number;
+  session: Session;
+}) {
   const [isLoading, setIsLoading] = useState(false);
+  const { program } = useWalletSession(session);
   const router = useRouter();
+  const { mutateAsync: updateUnderdogNFT } =
+    trpc.underdog.updateUnderdogNFT.useMutation();
   const [image, setImage] = useState<File | null>(null);
-  const slotPrice = Number(slot?.slotPrice) / LAMPORTS_PER_SOL;
   const form = useForm<z.infer<typeof editAdSlotForm>>({
     resolver: zodResolver(editAdSlotForm),
-    defaultValues: { ...slot, slotPrice },
+    defaultValues: {
+      slotDescription: adNFT.description,
+      slotLength: adNFT.attributes.length,
+      slotName: adNFT.name,
+      slotPlatform: adNFT.attributes.platform,
+      slotType: adNFT.attributes.slotType,
+      slotWebsiteUri: adNFT.attributes.websiteUri,
+      slotWidth: adNFT.attributes.width,
+      status: adNFT.attributes.status,
+    },
   });
   return (
     <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
@@ -51,42 +70,68 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
           onSubmit={form.handleSubmit(async (data) => {
             setIsLoading(true);
             try {
-              if (data.slotPrice < 0) {
-                throw new Error("Only Positive Numbers are allowed");
-              }
               if (data.slotWidth && data.slotLength) {
                 if (data.slotWidth < 0 || data.slotLength < 0) {
                   throw new Error("Only Positive Numbers are allowed");
                 }
               }
-              const slotPrice = BigInt(data.slotPrice * LAMPORTS_PER_SOL);
+
+              if (!program) {
+                toast("Please try again.");
+                return;
+              }
+              const underdogApiEndpoint = "https://devnet.underdogprotocol.com";
+
               if (!image) {
-                const res = await updateAdSlot.mutateAsync({
-                  ...data,
-                  slotPrice,
-                  updatedAt: new Date(),
+                await updateUnderdogNFT({
+                  nftId: adNFT.id,
+                  nftBody: {
+                    attributes: {
+                      displayUri: adNFT.attributes.displayUri,
+                      fileType: adNFT.attributes.fileType,
+                      length: data.slotLength,
+                      platform: data.slotPlatform,
+                      slotType: data.slotType,
+                      status: data.status,
+                      websiteUri: data.slotWebsiteUri,
+                      width: data.slotWidth,
+                    },
+                    name: data.slotName,
+                    description: data.slotDescription,
+                    image: adNFT.image,
+                  },
+                  projectId: inventoryId,
+                  underdogApiEndpoint,
                 });
-                if (res) {
-                  toast("Ad slot updated successfully.");
-                  router.push(`/inventories/${slot?.inventoryId}`);
-                  router.refresh();
-                  setIsLoading(false);
-                }
+                toast("Ad slot updated successfully.");
+                router.push(`/inventories/${inventoryId}`);
+                router.refresh();
+                setIsLoading(false);
                 return;
               }
               const s3ImageUri = await s3Upload(image);
-              const res = await updateAdSlot.mutateAsync({
-                ...data,
-                slotPrice,
-                updatedAt: new Date(),
-                slotImageUri: s3ImageUri,
+              await updateUnderdogNFT({
+                nftId: adNFT.id,
+                nftBody: {
+                  attributes: {
+                    displayUri: adNFT.attributes.displayUri,
+                    fileType: adNFT.attributes.fileType,
+                    length: data.slotLength,
+                    platform: data.slotPlatform,
+                    slotType: data.slotType,
+                    status: data.status,
+                    websiteUri: data.slotWebsiteUri,
+                    width: data.slotWidth,
+                  },
+                  name: data.slotName,
+                  description: data.slotDescription,
+                  image: s3ImageUri,
+                },
+                projectId: inventoryId,
+                underdogApiEndpoint,
               });
-              if (!res) {
-                await deleteS3Image(s3ImageUri);
-                return;
-              }
               toast("Ad slot updated successfully.");
-              router.push(`/inventories/${slot?.inventoryId}`);
+              router.push(`/inventories/${inventoryId}`);
               router.refresh();
               setIsLoading(false);
             } catch (err) {
@@ -100,7 +145,7 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
           })}
         >
           <div className="flex items-center gap-4">
-            <Link href={`/inventories/${slot?.inventoryId}`}>
+            <Link href={`/inventories/${inventoryId}`}>
               <Button variant="outline" size="icon" className="h-7 w-7">
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Back</span>
@@ -175,24 +220,6 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
                 <CardContent>
                   <div className="grid gap-6 sm:grid-cols-3">
                     <div className="grid gap-3">
-                      <Label htmlFor="slotPrice">Slot Price ( in sol )</Label>
-                      <FormField
-                        control={form.control}
-                        name="slotPrice"
-                        render={({ field }) => (
-                          <Input
-                            type="number"
-                            className="w-full"
-                            {...field}
-                            {...form.register("slotPrice", {
-                              valueAsNumber: true,
-                            })}
-                            value={field.value ?? ""}
-                          />
-                        )}
-                      />
-                    </div>
-                    <div className="grid gap-3">
                       <Label htmlFor="slotWidth">Slot Width</Label>
 
                       <FormField
@@ -229,7 +256,6 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
                     </div>
                     <div>
                       <Label htmlFor="platform">Platform</Label>
-
                       <FormField
                         control={form.control}
                         name="slotPlatform"
@@ -245,13 +271,14 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="Mobile App">
+                                <SelectItem value="mobile">
                                   Mobile App
                                 </SelectItem>
-                                <SelectItem value="Web App">Web App</SelectItem>
-                                <SelectItem value="Billboard">
+                                <SelectItem value="web">Web App</SelectItem>
+                                <SelectItem value="billboard">
                                   Billboard
                                 </SelectItem>
+                                <SelectItem value="other">Other</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -290,10 +317,10 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Banner Ad">Banner Ad</SelectItem>
-                            <SelectItem value="Pop Up Ad">Pop Up Ad</SelectItem>
-                            <SelectItem value="Aside Ad">Aside Ad</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
+                            <SelectItem value="banner">Banner Ad</SelectItem>
+                            <SelectItem value="popup">Pop Up Ad</SelectItem>
+                            <SelectItem value="aside">Aside Ad</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -324,7 +351,7 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
                         />
                       ) : (
                         <img
-                          src={slot?.slotImageUri!}
+                          src={adNFT.image}
                           alt={"NFTImage"}
                           height={200}
                           width={200}
@@ -367,7 +394,9 @@ export default function EditSlot({ slot }: { slot: GetAdSlotById }) {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="draft">Draft</SelectItem>
+                                <SelectItem value="inactive">
+                                  Inactive
+                                </SelectItem>
                                 <SelectItem value="active">Active</SelectItem>
                               </SelectContent>
                             </Select>

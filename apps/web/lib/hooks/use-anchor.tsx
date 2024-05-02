@@ -2,48 +2,61 @@
 import {
   AnchorWallet,
   useAnchorWallet,
-  useConnection,
   useWallet,
 } from "@solana/wallet-adapter-react";
-import React, { createContext, useContext, useEffect, useMemo } from "react";
-import { Contract, IDL, anchor } from "@repo/contract";
-import { Connection, PublicKey } from "@solana/web3.js";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { Contract, anchor } from "@repo/contract";
+import { WalletProgram } from "@repo/api";
+import { Network } from "../utils";
+import {
+  MessageSignerWalletAdapterProps,
+  WalletAdapterProps,
+} from "@solana/wallet-adapter-base";
 
-export const PROGRAM_KEY = new PublicKey(
-  "FtX5sPSgTzSoefKZaeAqBuaYDUWKREUpiDNxFLsScEH2"
-);
 interface UseAnchorContextType {
-  connection: Connection;
   anchorWallet: AnchorWallet | undefined;
   program: anchor.Program<Contract> | undefined;
+  signMessage: MessageSignerWalletAdapterProps["signMessage"] | undefined;
+  sendTransaction: WalletAdapterProps["sendTransaction"];
+  connection: anchor.web3.Connection | undefined;
+  publicKey: anchor.web3.PublicKey | undefined;
 }
 
 export const UseAnchorProvider = ({
   children,
+  network,
 }: {
   children: React.ReactNode;
+  network: Network;
 }) => {
-  const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
-  const program = useMemo(() => {
+  const { signMessage, sendTransaction } = useWallet();
+  const [program, setProgram] = useState<anchor.Program<Contract> | undefined>(
+    undefined
+  );
+  const [conn, setConn] = useState<anchor.web3.Connection | undefined>(
+    undefined
+  );
+  useEffect(() => {
     if (anchorWallet) {
-      const provider = new anchor.AnchorProvider(
-        connection,
-        anchorWallet,
-        anchor.AnchorProvider.defaultOptions()
+      // Wallet is now available, create or retrieve the program instance
+      const { program, connection } = WalletProgram.getProgram(
+        network,
+        anchorWallet
       );
-      anchor.setProvider(provider);
-      return new anchor.Program(IDL, PROGRAM_KEY, provider);
+      setProgram(program);
+      setConn(connection);
     }
-    return;
-  }, [connection, anchorWallet]);
-
+  }, [anchorWallet]);
   return (
     <anchorContext.Provider
       value={{
-        connection,
         anchorWallet,
         program,
+        signMessage,
+        sendTransaction,
+        connection: conn,
+        publicKey: anchorWallet?.publicKey,
       }}
     >
       {children}

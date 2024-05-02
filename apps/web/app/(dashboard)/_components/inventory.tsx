@@ -24,7 +24,7 @@ import {
 import { ChevronLeft } from "@repo/ui/icons";
 import { trpc } from "@repo/trpc/trpc/client";
 import { useForm } from "react-hook-form";
-import { type Inventory, insertInventoryForm } from "@repo/db";
+import { insertInventoryForm } from "@repo/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { s3Upload } from "./s3Upload";
@@ -32,8 +32,13 @@ import { useRouter } from "next/navigation";
 import { deleteS3Image } from "./s3Delete";
 import Link from "next/link";
 import { toast } from "sonner";
-export default function Inventory() {
-  const createInventory = trpc.inventory.createInventory.useMutation();
+import { createInventoryAccount } from "@repo/api";
+import { useWalletSession } from "@/lib/hooks/check-wallet";
+import { Session } from "@repo/auth";
+export default function Inventory({ session }: { session: Session }) {
+  const { anchorWallet, program } = useWalletSession(session);
+  const { mutateAsync: createCollectionUnderdog } =
+    trpc.underdog.createUnderdogProject.useMutation();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [image, setImage] = useState<File | null>(null);
@@ -45,19 +50,29 @@ export default function Inventory() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(async (data) => {
+            if (!anchorWallet || !program) {
+              toast("Try Again");
+              return;
+            }
             setIsLoading(true);
             try {
               if (!image) {
                 throw new Error("Please upload image.");
               }
               const s3ImageUri = await s3Upload(image);
-              if (s3ImageUri) {
-                toast("Image upload successfully.");
-              }
-              const res = await createInventory.mutateAsync({
-                ...data,
-                inventoryImageUri: s3ImageUri,
+              const collection = await createCollectionUnderdog({
+                description: data.inventoryDescription,
+                image: s3ImageUri,
+                listStatus: "inactive",
+                name: data.inventoryName,
+                websiteUri: data.inventoryWebsiteUri,
               });
+              const res = await createInventoryAccount(
+                collection.collectionMint,
+                anchorWallet.publicKey.toBase58(),
+                collection.underdogProjectId,
+                program
+              );
               if (!res) {
                 await deleteS3Image(s3ImageUri);
               }

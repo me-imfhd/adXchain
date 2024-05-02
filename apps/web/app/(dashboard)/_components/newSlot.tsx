@@ -22,36 +22,35 @@ import {
   Textarea,
 } from "@repo/ui/components";
 import { ChevronLeft } from "@repo/ui/icons";
-import { trpc } from "@repo/trpc/trpc/client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { s3Upload } from "./s3Upload";
 import { useRouter } from "next/navigation";
 import { insertAdSlotForm } from "@repo/db";
-import { GetInventoryById } from "@repo/api";
 import { deleteS3Image } from "./s3Delete";
 import Link from "next/link";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { toast } from "sonner";
+import { GetInventory, createAdNFTAccount } from "@repo/api";
+import { useWalletSession } from "@/lib/hooks/check-wallet";
+import { Session } from "@repo/auth";
+import { trpc } from "@repo/trpc/trpc/client";
 export default function NewSlot({
-  inventory,
+  session,
+  inventoryId,
 }: {
-  inventory: NonNullable<GetInventoryById>;
+  inventoryId: number;
+  session: Session;
 }) {
-  const createAdSlot = trpc.adSlots.createAdSlot.useMutation();
+  const { program, anchorWallet } = useWalletSession(session);
   const [isLoading, setIsLoading] = useState(false);
+  const { mutateAsync: createUnderdogNFT } =
+    trpc.underdog.createUnderdogNFT.useMutation();
   const router = useRouter();
   const [image, setImage] = useState<File | null>(null);
   const form = useForm<z.infer<typeof insertAdSlotForm>>({
     resolver: zodResolver(insertAdSlotForm),
-    defaultValues: {
-      inventoryId: inventory.id,
-      slotPrice: 0,
-      lent: false,
-      slotType: "Aside Ad",
-      slotPlatform: "Web App",
-    },
   });
   return (
     <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
@@ -60,6 +59,11 @@ export default function NewSlot({
           onSubmit={form.handleSubmit(async (data) => {
             setIsLoading(true);
             try {
+              if (!program || !anchorWallet) {
+                toast("Please try again.");
+                return;
+              }
+              const walletAddress = anchorWallet.publicKey.toBase58();
               if (data.slotPrice < 0) {
                 throw new Error("Only Positive Numbers are allowed");
               }
@@ -71,21 +75,43 @@ export default function NewSlot({
               if (!image) {
                 throw new Error("Please upload image.");
               }
-
-              const slotPrice = BigInt(LAMPORTS_PER_SOL * data.slotPrice);
+              const slotPrice = LAMPORTS_PER_SOL * data.slotPrice;
               const s3ImageUri = await s3Upload(image);
-              toast("Image Uploaded Successfully");
-              const res = await createAdSlot.mutateAsync({
-                ...data,
-                slotPrice: slotPrice,
-                slotImageUri: s3ImageUri,
-                status: "draft",
+              const underdogApiEndpoint = "https://devnet.underdogprotocol.com";
+              const nft = await createUnderdogNFT({
+                nftBody: {
+                  attributes: {
+                    fileType: "",
+                    displayUri: "",
+                    length: data.slotLength,
+                    platform: data.slotPlatform,
+                    slotType: data.slotType,
+                    status: "inactive",
+                    websiteUri: data.slotWebsiteUri,
+                    width: data.slotWidth,
+                  },
+                  name: data.slotName,
+                  description: data.slotDescription,
+                  delegated: true,
+                  image: s3ImageUri,
+                  receiverAddress: walletAddress,
+                },
+                projectId: inventoryId,
+                underdogApiEndpoint,
               });
+              const res = await createAdNFTAccount(
+                inventoryId,
+                nft.underdogNFTId,
+                nft.nftMint,
+                program,
+                slotPrice
+              );
+              console.log(res.tx);
               if (!res) {
                 await deleteS3Image(s3ImageUri);
               }
               toast("Ad slot created successfully.");
-              router.push(`/inventories/${inventory?.id}`);
+              router.push(`/inventories/${inventoryId}`);
               router.refresh();
               setIsLoading(false);
             } catch (err) {
@@ -99,7 +125,7 @@ export default function NewSlot({
           })}
         >
           <div className="flex items-center gap-4">
-            <Link href={`/inventories/${inventory?.id}`}>
+            <Link href={`/inventories/${inventoryId}`}>
               <Button variant="outline" size="icon" className="h-7 w-7">
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Back</span>
@@ -264,11 +290,11 @@ export default function NewSlot({
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="Mobile App">
+                                <SelectItem value="mobile">
                                   Mobile App
                                 </SelectItem>
-                                <SelectItem value="Web App">Web App</SelectItem>
-                                <SelectItem value="Billboard">
+                                <SelectItem value="web">Web App</SelectItem>
+                                <SelectItem value="billboard">
                                   Billboard
                                 </SelectItem>
                               </SelectContent>
@@ -298,21 +324,21 @@ export default function NewSlot({
                       <FormItem>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value ?? "Aside Ad"}
+                          defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue
                                 placeholder="Select Ad Space"
-                                defaultValue="Aside Ad"
+                                defaultValue="aside"
                               />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Banner Ad">Banner Ad</SelectItem>
-                            <SelectItem value="Pop Up Ad">Pop Up Ad</SelectItem>
-                            <SelectItem value="Aside Ad">Aside Ad</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
+                            <SelectItem value="banner">Banner Ad</SelectItem>
+                            <SelectItem value="popup">Pop Up Ad</SelectItem>
+                            <SelectItem value="aside">Aside Ad</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -407,7 +433,7 @@ export default function NewSlot({
                               </FormControl>
                               <SelectContent>
                                 <SelectItem value="draft">Draft</SelectItem>
-                                <SelectItem value="active">Active</SelectItem>
+                                <SelectItem value="inactive">Inactive</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />

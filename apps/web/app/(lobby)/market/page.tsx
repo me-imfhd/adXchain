@@ -1,6 +1,5 @@
-import { api } from "@repo/trpc";
+import { getAllActiveInventories } from "@repo/api";
 import {
-  Badge,
   Button,
   Card,
   CardContent,
@@ -8,12 +7,12 @@ import {
   Input,
   Shell,
 } from "@repo/ui/components";
-import { SearchIcon } from "@repo/ui/icons";
+import { ExternalLink, SearchIcon } from "@repo/ui/icons";
 import Link from "next/link";
 import React from "react";
 
 export default async function Page() {
-  const inventories = await api.inventory.getAllInventories.query();
+  const inventories = await getAllActiveInventories();
   return (
     <div className="grid gap-6 lg:gap-8 mt-16">
       <Shell>
@@ -37,13 +36,16 @@ export default async function Page() {
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {inventories.map((inventory) => {
-            const totalSpacesLeft = inventory.adSlots.filter(
-              (adSlot) => adSlot.lent === false,
+            const totalSpacesLeft = inventory.adNFTs.filter(
+              (adSlot) =>
+                adSlot.account.lent === false &&
+                adSlot.attributes.status === "active"
             );
-            const totalSpaces = inventory.adSlots.length;
-            const walletAddress = inventory.user.walletAddress;
-            const wa =
-              walletAddress.slice(0, 4) + ".." + walletAddress.slice(-4);
+            const totalSpaces = inventory.adNFTs.filter(
+              (ad) => ad.attributes.status === "active"
+            ).length;
+            const mintAddress = inventory.account.collectionMint.toBase58();
+            const wa = mintAddress.slice(0, 4) + ".." + mintAddress.slice(-4);
             return (
               <Card className="rounded-xl">
                 <div className="flex flex-col gap-1">
@@ -52,7 +54,7 @@ export default async function Page() {
                       alt="Collection Image"
                       className="object-cover rounded-xl"
                       height="225"
-                      src={inventory.inventoryImageUri!}
+                      src={inventory.image}
                       style={{
                         aspectRatio: "400/225",
                         objectFit: "cover",
@@ -64,34 +66,34 @@ export default async function Page() {
                     <div className="grid gap-3">
                       <div className="flex flex-row items-center justify-between">
                         <h3 className="font-semibold text-2xl">
-                          {inventory.inventoryName}
+                          {inventory.name}
                         </h3>
                       </div>
                       <div className="flex flex-col gap-1">
                         <p className="text-sm leading-none flex gap-2 justify-between">
                           <span className="text-muted-foreground font-medium ">
-                            LENDER :
+                            MINT
                           </span>
                           <Link
-                            href={`https://explorer.solana.com/address/${inventory.user.walletAddress}?cluster=devnet`}
+                            href={`https://explorer.solana.com/address/${mintAddress}?cluster=devnet`}
                           >
                             <span className="flex items-center hover:underline hover:-translate-y-[1px] gap-1 ">
-                              <ExternalLinkIcon className="h-3 w-3" />
+                              <ExternalLink className="h-3 w-3" />
                               {wa}
                             </span>
                           </Link>
                         </p>
                         <p className="text-sm leading-none flex justify-between gap-2">
                           <span className="text-muted-foreground font-medium">
-                            TOTAL AD SPACES:
+                            TOTAL AD SPACES
                           </span>
-                          <span>{totalSpaces}</span>
+                          <span>{totalSpaces ?? 0}</span>
                         </p>
                         <p className="text-sm leading-none flex justify-between gap-2">
                           <span className="text-muted-foreground font-medium">
-                            AVAILABLE SPACES :
+                            AVAILABLE SPACES
                           </span>
-                          <span>{totalSpacesLeft.length}</span>
+                          <span>{totalSpacesLeft?.length || 0}</span>
                         </p>
                       </div>
                     </div>
@@ -99,12 +101,12 @@ export default async function Page() {
                   <CardFooter className="flex items-center justify-between">
                     <Link
                       className="flex items-center gap-2 hover:underline  hover:-translate-y-[1px]"
-                      href={inventory.inventoryWebsiteUri}
+                      href={inventory.attributes.websiteUri}
                     >
-                      <ExternalLinkIcon className="h-4 w-4" />
+                      <ExternalLink className="h-4 w-4" />
                       Website
                     </Link>
-                    <Link href={`/market/${inventory.id}`}>
+                    <Link href={`/market/${inventory.account.id}`}>
                       <Button
                         size="sm"
                         variant="secondary"
@@ -121,26 +123,5 @@ export default async function Page() {
         </div>
       </Shell>
     </div>
-  );
-}
-
-function ExternalLinkIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-      <polyline points="15 3 21 3 21 9" />
-      <line x1="10" x2="21" y1="14" y2="3" />
-    </svg>
   );
 }

@@ -8,36 +8,52 @@ import {
   CardHeader,
   CardTitle,
   Form,
+  FormControl,
   FormField,
+  FormItem,
+  FormMessage,
   Input,
   Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Textarea,
 } from "@repo/ui/components";
 import { ChevronLeft } from "@repo/ui/icons";
 import Link from "next/link";
-import { trpc } from "@repo/trpc/trpc/client";
 import { useForm } from "react-hook-form";
 import { updateInventoryParams } from "@repo/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { s3Upload } from "./s3Upload";
 import { useRouter } from "next/navigation";
-import { GetInventoryById } from "@repo/api";
+import { GetInventory } from "@repo/api";
 import { deleteS3Image } from "./s3Delete";
 import { toast } from "sonner";
+import { trpc } from "@repo/trpc/trpc/client";
 export default function EditInventory({
   inventory,
+  inventoryId,
 }: {
-  inventory: GetInventoryById;
+  inventory: NonNullable<GetInventory>;
+  inventoryId: number;
 }) {
-  const updateInventory = trpc.inventory.updateInventory.useMutation();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
+  const { mutateAsync: updateUnderdogProject } =
+    trpc.underdog.updateUnderdogProject.useMutation();
   const [image, setImage] = useState<File | null>(null);
   const form = useForm<z.infer<typeof updateInventoryParams>>({
     resolver: zodResolver(updateInventoryParams),
-    defaultValues: { ...inventory },
+    defaultValues: {
+      inventoryDescription: inventory.data.description,
+      inventoryImageUri: inventory.data.image,
+      inventoryName: inventory.data.name,
+      inventoryWebsiteUri: inventory.data.attributes.websiteUri,
+      status: inventory.data.attributes.listStatus,
+    },
   });
   return (
     <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
@@ -46,10 +62,20 @@ export default function EditInventory({
           onSubmit={form.handleSubmit(async (data) => {
             setIsLoading(true);
             try {
+              const underdogApiEndpoint = "https://devnet.underdogprotocol.com";
               if (!image) {
-                const res = await updateInventory.mutateAsync({
-                  ...data,
-                  updatedAt: new Date(),
+                const res = await updateUnderdogProject({
+                  underdogApiEndpoint,
+                  projectId: inventoryId,
+                  nftBody: {
+                    attributes: {
+                      listStatus: data.status,
+                      websiteUri: data.inventoryWebsiteUri,
+                    },
+                    description: data.inventoryDescription,
+                    image: data.inventoryImageUri,
+                    name: data.inventoryName,
+                  },
                 });
                 if (res) {
                   toast("Inventory Updated Successfully");
@@ -59,14 +85,23 @@ export default function EditInventory({
                 }
                 return;
               }
-              await deleteS3Image(inventory?.inventoryImageUri!);
+              await deleteS3Image(inventory.data.image);
               const s3ImageUri = await s3Upload(image);
               if (s3ImageUri) {
                 toast("Image updated successfully.");
               }
-              const res = await updateInventory.mutateAsync({
-                ...data,
-                inventoryImageUri: s3ImageUri,
+              const res = await updateUnderdogProject({
+                underdogApiEndpoint,
+                projectId: inventoryId,
+                nftBody: {
+                  attributes: {
+                    listStatus: data.status,
+                    websiteUri: data.inventoryWebsiteUri,
+                  },
+                  description: data.inventoryDescription,
+                  image: s3ImageUri,
+                  name: data.inventoryName,
+                },
               });
               if (res) {
                 toast("Inventory updated successfully.");
@@ -182,7 +217,7 @@ export default function EditInventory({
                         />
                       ) : (
                         <img
-                          src={inventory?.inventoryImageUri!}
+                          src={inventory.data.image}
                           alt={"NFTImage"}
                           height={200}
                           width={200}
@@ -197,6 +232,45 @@ export default function EditInventory({
                         }}
                       />
                     </label>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-6">
+                    <div className="grid gap-3">
+                      <FormField
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => (
+                          <FormItem>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger
+                                  id="status"
+                                  aria-label="Select status"
+                                >
+                                  <SelectValue placeholder="Select status" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="inactive">
+                                  Inactive
+                                </SelectItem>
+                                <SelectItem value="active">Active</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
                 </CardContent>
               </Card>

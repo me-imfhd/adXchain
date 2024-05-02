@@ -37,19 +37,26 @@ export default function MobileSidebar() {
             Inventories
           </Link>
           <Link
+            href="/myNfts"
+            className="flex items-center gap-4 px-2.5 text-foreground"
+          >
+            <Package className="h-5 w-5" />
+            My Ad NFTs
+          </Link>
+          {/* <Link
             href="/account"
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <Users2 className="h-5 w-5" />
             Account
-          </Link>
-          <Link
+          </Link> */}
+          {/* <Link
             href="/settings"
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <LineChart className="h-5 w-5" />
             Settings
-          </Link>
+          </Link> */}
         </nav>
       </SheetContent>
     </Sheet>

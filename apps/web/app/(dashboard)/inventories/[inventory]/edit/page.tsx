@@ -1,12 +1,19 @@
 import EditInventory from "@/app/(dashboard)/_components/editInventory";
-import { api } from "@repo/trpc";
+import { getInventory } from "@repo/api";
+import { checkAuth } from "@repo/auth";
+import { notFound } from "next/navigation";
 import React from "react";
 
 export default async function Page({
   params: { inventory },
 }: {
-  params: { inventory: string };
+  params: { inventory: number };
 }) {
-  const res = await api.inventory.getInventoryById.query({ id: inventory });
-  return <EditInventory inventory={res} />;
+  await checkAuth();
+  const res = await getInventory(inventory);
+  console.log(inventory);
+  if (!res) {
+    notFound();
+  }
+  return <EditInventory inventory={res} inventoryId={Number(inventory)} />;
 }

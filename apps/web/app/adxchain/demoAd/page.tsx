@@ -1,32 +1,24 @@
 import React from "react";
 import axios from "axios";
-
-type GetAd = {
-  slotId: string;
-  minted: boolean;
-  ad: {
-    displayUri: string;
-  };
-};
+import { UnderdogNFT } from "@repo/api/types";
 
 export default async function AdSlotComponent() {
   const adxchainURI = "https://adxchain-web.vercel.app";
-  const adSlotId = "clupviled0003sc62onlnb05d";
+  const adSlotId = "6zcgLnpApnyktSfFqu3rU6FQSXi67VkSMS6rCTftAcFZ";
   try {
     const response = await axios.get(
-      `${adxchainURI}/api/publisher/getAd/${adSlotId}`,
-      { params: { network: "devnet" } },
+      `${adxchainURI}/api/publisher/getAd/${adSlotId}`
     );
     if (response?.status == 200) {
-      const data = response.data as GetAd;
+      const data = response.data as UnderdogNFT;
       return (
         <div
-          id={data?.slotId} // Will be used for navigating to the add directly
+          id={adSlotId} // Will be used for navigating to the add directly
           className="w-screen h-screen flex justify-center items-center"
         >
           <img
-            src={data.ad.displayUri}
-            className="w-[400px] h-[400px]" // set the dimesions as in adSlots dimension or update accordingly
+            src={data.attributes.displayUri}
+            className={`w-[400px] h-[400px]`} // set the dimesions as in adSlots dimension or update accordingly
           />
         </div>
       );

@@ -7,6 +7,7 @@ import {
   Users2,
   LineChart,
   Settings,
+  Lock,
 } from "@repo/ui/icons";
 import Link from "next/link";
 import React from "react";
@@ -22,6 +23,19 @@ export default function Sidebar() {
           <Package2 className="h-4 w-4 transition-all group-hover:scale-110" />
           <span className="sr-only">adXchain</span>
         </Link>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link
+              href="/myNfts"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+            >
+              <Lock className="h-5 w-5" />
+              <span className="sr-only">My Ad NFTs</span>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent side="right">My Ad NFTs</TooltipContent>
+        </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
@@ -34,7 +48,7 @@ export default function Sidebar() {
           </TooltipTrigger>
           <TooltipContent side="right">Inventories</TooltipContent>
         </Tooltip>
-        <Tooltip>
+        {/* <Tooltip>
           <TooltipTrigger asChild>
             <Link
               href="/account"
@@ -45,7 +59,7 @@ export default function Sidebar() {
             </Link>
           </TooltipTrigger>
           <TooltipContent side="right">Account</TooltipContent>
-        </Tooltip>
+        </Tooltip> */}
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
         <Tooltip>

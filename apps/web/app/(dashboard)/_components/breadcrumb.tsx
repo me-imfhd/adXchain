@@ -16,18 +16,6 @@ export default function DynamicBreadcrumb() {
   return (
     <Breadcrumb className="hidden md:flex">
       <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link
-              href="/dashboard"
-              className={`${
-                pathname === "/dashboard" ? "font-semibold text-white" : ""
-              }`}
-            >
-              Dashboard
-            </Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
@@ -38,21 +26,6 @@ export default function DynamicBreadcrumb() {
               }`}
             >
               Your Inventories
-            </Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link
-              href="/inventories/all"
-              className={`${
-                pathname === "/inventories/all"
-                  ? "font-semibold text-white"
-                  : ""
-              }`}
-            >
-              All Inventories
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>

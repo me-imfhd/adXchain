@@ -219,6 +219,9 @@ importers:
       '@repo/db':
         specifier: workspace:*
         version: link:../db
+      '@solana/wallet-adapter-react':
+        specifier: ^0.15.35
+        version: 0.15.35(@solana/web3.js@1.91.1)(bs58@4.0.1)(react-native@0.73.6)(react@18.2.0)
       '@solana/web3.js':
         specifier: ^1.91.1
         version: 1.91.1
@@ -228,12 +231,18 @@ importers:
       axios:
         specifier: ^1.6.8
         version: 1.6.8
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       next:
         specifier: ^14.1.4
         version: 14.1.4(@babel/core@7.23.6)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18
         version: 18.2.0
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
       superjson:
         specifier: 2.2.1
         version: 2.2.1
@@ -324,8 +333,8 @@ importers:
   packages/contract:
     dependencies:
       '@coral-xyz/anchor':
-        specifier: ^0.29.0
-        version: 0.29.0
+        specifier: ^0.30.0
+        version: 0.30.0
     devDependencies:
       '@types/bn.js':
         specifier: ^5.1.0
@@ -479,6 +488,9 @@ importers:
       '@trpc/server':
         specifier: ^10.37.1
         version: 10.45.1
+      axios:
+        specifier: ^1.6.8
+        version: 1.6.8
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -3030,11 +3042,11 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@coral-xyz/anchor@0.29.0:
-    resolution: {integrity: sha512-eny6QNG0WOwqV0zQ7cs/b1tIuzZGmP7U7EcH+ogt4Gdbl8HDmIYVMh/9aTmYZPaFWjtUaI8qSn73uYEXWfATdA==}
+  /@coral-xyz/anchor@0.30.0:
+    resolution: {integrity: sha512-qreDh5ztiRHVnCbJ+RS70NJ6aSTPBYDAgFeQ7Z5QvaT5DcDIhNyt4onOciVz2ieIE1XWePOJDDu9SbNvPGBkvQ==}
     engines: {node: '>=11'}
     dependencies:
-      '@coral-xyz/borsh': 0.29.0(@solana/web3.js@1.91.1)
+      '@coral-xyz/borsh': 0.30.0(@solana/web3.js@1.91.1)
       '@noble/hashes': 1.4.0
       '@solana/web3.js': 1.91.1
       bn.js: 5.2.1
@@ -3054,8 +3066,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@coral-xyz/borsh@0.29.0(@solana/web3.js@1.91.1):
-    resolution: {integrity: sha512-s7VFVa3a0oqpkuRloWVPdCK7hMbAMY270geZOGfCnaqexrP5dTIpbEHL33req6IYPPJ0hYa71cdvJ1h6V55/oQ==}
+  /@coral-xyz/borsh@0.30.0(@solana/web3.js@1.91.1):
+    resolution: {integrity: sha512-OrcV+7N10cChhgDRUxM4iEIuwxUHHs52XD85R8cFCUqE0vbLYrcoPPPs+VF6kZ9DhdJGVW2I6DHJOp5TykyZog==}
     engines: {node: '>=10'}
     peerDependencies:
       '@solana/web3.js': ^1.68.0

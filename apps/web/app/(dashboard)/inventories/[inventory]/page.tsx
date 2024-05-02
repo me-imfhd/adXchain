@@ -25,28 +25,30 @@ import {
   ChevronLeft,
   ChevronRight,
   Copy,
+  ExternalLink,
   ListFilter,
   MoreHorizontal,
   PlusCircle,
 } from "@repo/ui/icons";
 import Link from "next/link";
-import DeleteSlot from "./_deleteSlot";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import CopyButton from "../../_components/copyButton";
+import { getInventory } from "@repo/api";
+import { checkAuth } from "@repo/auth";
+import UpdatePrice from "./_updatePrice";
+import UpdateStatus from "./_slotStatus";
 
 export default async function InventoryLayout({
   params: { inventory },
 }: {
-  params: { inventory: string };
+  params: { inventory: number };
 }) {
-  const i = await api.inventory.getInventoryById.query({
-    id: inventory,
-  });
+  const session = await checkAuth();
+  const i = await getInventory(inventory);
   if (!i) {
     return notFound();
   }
-  const adSlots = i.adSlots;
-
+  const adNFTs = i.adNFTs.sort((a, b) => a.id - b.id);
   return (
     <>
       <div className="flex flex-1 min-h-[100vh] flex-col gap-4 lg:gap-6 lg:p-6">
@@ -65,7 +67,7 @@ export default async function InventoryLayout({
           <TypographyH3 className="text-muted-foreground flex gap-2 items-center">
             <span>Inventory</span>
             <ChevronRight className="h-4 w-4" />
-            <span>{i.inventoryName}</span>
+            <span>{i.data.name}</span>
           </TypographyH3>
         </div>
         <div className="flex items-center">
@@ -101,7 +103,7 @@ export default async function InventoryLayout({
             </Link>
           </div>
         </div>
-        {adSlots.length === 0 ? (
+        {adNFTs.length === 0 ? (
           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
             <div className="flex flex-col items-center gap-1 text-center">
               <h3 className="text-2xl font-bold tracking-tight">
@@ -143,8 +145,9 @@ export default async function InventoryLayout({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {adSlots.map((adSlot) => {
-                      console.log(adSlot.owner?.walletAddress);
+                    {adNFTs.map((ad) => {
+                      const renter = ad.account.currentRenter?.toString();
+                      const wa = renter?.slice(0, 4) + ".." + renter?.slice(-4);
                       return (
                         <TableRow>
                           <TableCell className="hidden sm:table-cell">
@@ -152,15 +155,17 @@ export default async function InventoryLayout({
                               alt="Product image"
                               className="aspect-square rounded-md object-cover"
                               height="64"
-                              src={adSlot.slotImageUri!}
+                              src={ad.image}
                               width="64"
                             />
                           </TableCell>
                           <TableCell className="font-medium">
-                            {adSlot.slotName}
+                            {ad.name}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline">{adSlot.status}</Badge>
+                            <Badge variant="outline">
+                              {ad.attributes.status}
+                            </Badge>
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
                             <div className="flex gap-1 items-center">
@@ -188,20 +193,33 @@ export default async function InventoryLayout({
                                 ></path>
                               </svg>
                               <span>
-                                {Number(adSlot.slotPrice) / LAMPORTS_PER_SOL}
+                                {Number(ad.account.priceLamports) /
+                                  LAMPORTS_PER_SOL}
                               </span>
                             </div>
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
-                            {adSlot.slotType}
+                            {ad.attributes.slotType.toUpperCase()}
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
-                            {adSlot.owner?.walletAddress
-                              ? adSlot.owner.walletAddress
-                              : "No Renter Yet"}
+                            <Link
+                              href={`https://explorer.solana.com/address/${renter}?cluster=devnet`}
+                            >
+                              {renter && ad.account.lent ? (
+                                <span className="flex items-center hover:underline hover:-translate-y-[1px] gap-1 ">
+                                  <ExternalLink className="h-3 w-3" />
+                                  {wa}
+                                </span>
+                              ) : (
+                                "No Renter Yet"
+                              )}
+                            </Link>
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
-                            <CopyButton id={adSlot.id} key={adSlot.id} />
+                            <CopyButton
+                              id={ad.publicKey.toBase58()}
+                              key={ad.publicKey.toBase58()}
+                            />
                           </TableCell>
                           <TableCell>
                             <DropdownMenu>
@@ -210,7 +228,7 @@ export default async function InventoryLayout({
                                   aria-haspopup="true"
                                   size="icon"
                                   variant="ghost"
-                                  disabled={!!adSlot.nftMintAddress}
+                                  disabled={ad.account.lent}
                                 >
                                   <MoreHorizontal className="h-4 w-4" />
                                   <span className="sr-only">Toggle menu</span>
@@ -219,11 +237,31 @@ export default async function InventoryLayout({
                               <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                 <Link
-                                  href={`/inventories/${adSlot.inventoryId}/${adSlot.id}/edit`}
+                                  href={`/inventories/${Number(i.id)}/${Number(ad.account.id)}/edit`}
                                 >
                                   <DropdownMenuItem>Edit</DropdownMenuItem>
                                 </Link>
-                                <DeleteSlot id={adSlot.id} />
+                                <UpdateStatus
+                                  inventoryId={Number(i.id)}
+                                  nftId={Number(ad.account.id)}
+                                  nftBody={{
+                                    attributes: { ...ad.attributes },
+                                    description: ad.description,
+                                    image: ad.image,
+                                    name: ad.name,
+                                  }}
+                                />
+                                <UpdatePrice
+                                  price_lamports={
+                                    Number(ad.account.priceLamports) /
+                                    LAMPORTS_PER_SOL
+                                  }
+                                  nftId={Number(ad.account.id)}
+                                  adMint={ad.account.nftMint.toBase58()}
+                                  inventoryId={Number(i.id)}
+                                  lent={ad.account.lent}
+                                  session={session}
+                                />
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </TableCell>

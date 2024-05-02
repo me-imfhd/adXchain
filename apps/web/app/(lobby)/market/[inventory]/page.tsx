@@ -1,53 +1,61 @@
-import { api } from "@repo/trpc";
 import { notFound } from "next/navigation";
 import React from "react";
 import MarketPage from "../../_components/market-page";
 import { checkAuth } from "@repo/auth";
+import { getInventory } from "@repo/api";
+import { AdNFTAttributes } from "@repo/api/types";
 export type SlotMap = {
-  id: string;
+  id: number;
   isSelected: boolean;
-  price: bigint;
+  price: number;
   isRented: boolean;
   imageUri: string;
   slotName: string;
+  description: string;
+  attributes: AdNFTAttributes;
+  mintAddress: string;
   file: File | null | undefined;
 };
 export default async function InventoryPage({
   params: { inventory },
 }: {
-  params: { inventory: string };
+  params: { inventory: number };
 }) {
   const session = await checkAuth();
-  const i = await api.inventory.getActiveInventoryById.query({ id: inventory });
+  const i = await getInventory(inventory);
   if (!i) {
     notFound();
   }
-  const { lent, total } = await api.adSlots.getSlotCountInInventory.query({
-    id: inventory,
-  });
-  const supply = total - lent;
-  const percentage = (supply / total) * 100;
-  const initial: SlotMap[] = i.adSlots.map((adSlot) => ({
-    id: adSlot.id,
+  const activeAds = i.adNFTs.filter((ad) => ad.attributes.status == "active");
+  const notLent = activeAds.filter((ad) => ad.account.lent === false);
+  const supply = notLent.length;
+  const percentage = (supply / activeAds.length) * 100;
+  const initial: SlotMap[] = activeAds.map((adSlot) => ({
+    id: Number(adSlot.account.id),
     isSelected: false,
-    price: adSlot.slotPrice,
-    isRented: adSlot.lent,
-    imageUri: adSlot.slotImageUri,
-    slotName: adSlot.slotName,
+    price: Number(adSlot.account.priceLamports),
+    isRented: adSlot.account.lent,
+    imageUri: adSlot.image,
+    slotName: adSlot.name,
+    description: adSlot.description,
+    attributes: adSlot.attributes,
+    mintAddress: adSlot.account.nftMint.toBase58(),
     file: null,
   }));
   const totalBuyablePrice = initial
     .filter((slot) => !slot.isRented)
-    .reduce((acc, curr) => acc + curr.price, BigInt(0));
+    .reduce((acc, curr) => acc + curr.price, 0);
 
   return (
     <MarketPage
       totalBuyablePrice={totalBuyablePrice}
       initial={initial}
-      total={total}
+      total={activeAds.length}
       supply={supply}
       percentage={percentage}
       inventory={i}
+      activeAds={activeAds}
+      inventoryId={i.id.toNumber()}
       session={session}
     />
   );

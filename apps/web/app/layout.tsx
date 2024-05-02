@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   ],
 };
 export default function RootLayout({ children }: PropsWithChildren) {
+  // const network = getNetworkCookie();
+  const network = "devnet";
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -24,10 +26,10 @@ export default function RootLayout({ children }: PropsWithChildren) {
           "min-h-screen bg-background antialiased font-ox",
           oxCustom.variable,
           oxSemiBold.variable,
-          pressStart.variable,
+          pressStart.variable
         )}
       >
-        <Provider>
+        <Provider network={network}>
           <TrpcProvider cookies={cookies().toString()}>
             {children}
             <TailwindResposivenessIndicator />

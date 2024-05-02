@@ -1,9 +1,12 @@
 "use client";
+import { useAnchorContext } from "@/lib/hooks/use-anchor";
 import { zodResolver } from "@hookform/resolvers/zod";
+// import { userAdXchainAccount } from "@repo/api";
 import { SigninMessage, getCsrfToken, signIn } from "@repo/auth";
 import bs58 from "@repo/auth/bs58";
+import { anchor } from "@repo/contract";
 
-import { createUserSchema } from "@repo/db";
+import { userSchema } from "@repo/db";
 import {
   Button,
   Card,
@@ -29,16 +32,17 @@ import { z } from "zod";
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const { publicKey, connected, signMessage } = useWallet();
+  const { signMessage } = useWallet();
+  const { anchorWallet, program } = useAnchorContext();
   const router = useRouter();
-  const walletAddress = publicKey?.toBase58();
-  const form = useForm<z.infer<typeof createUserSchema>>({
-    resolver: zodResolver(createUserSchema),
-    defaultValues: { walletAddress: "" },
+  const walletAddress = anchorWallet?.publicKey?.toBase58();
+  const form = useForm<z.infer<typeof userSchema>>({
+    resolver: zodResolver(userSchema),
+    defaultValues: { id: "", name: "", email: "" },
   });
   useEffect(() => {
     if (walletAddress) {
-      form.setValue("walletAddress", walletAddress);
+      form.setValue("id", walletAddress);
     }
   }, [walletAddress, form.setValue]);
   return (
@@ -48,25 +52,39 @@ export default function LoginForm() {
         onSubmit={form.handleSubmit(async (data) => {
           setIsLoading(true);
           try {
-            if (!connected || !data.walletAddress) {
+            if (!data.id) {
               toast("Wallet Not Connected", {
                 description: "Please Connect Your Wallet First.",
               });
               setIsLoading(false);
               return;
             }
+            if (!anchorWallet || !program || !signMessage) {
+              toast("Please Try Again");
+              return;
+            }
             const csrf = await getCsrfToken();
 
             const message = new SigninMessage({
               domain: window.location.host,
-              publicKey: data.walletAddress,
+              publicKey: data.id,
               statement: `Sign in to adXchain. \n\n`,
               nonce: csrf!,
             });
 
             const d = new TextEncoder().encode(message.prepare());
-            const signature = await signMessage!(d);
+            const signature = await signMessage(d);
             const serializedSignature = bs58.encode(signature);
+            // const alreadyUser = await userAdXchainAccount(data.id);
+            // if (!alreadyUser) {
+            //   const tx = await program.methods
+            //     .initializeUser()
+            //     .accounts({
+            //       authority: new anchor.web3.PublicKey(data.id),
+            //     })
+            //     .rpc();
+            //   toast("User account created successfully.");
+            // }
             const a = await signIn("credentials", {
               message: JSON.stringify(message),
               redirect: false,
@@ -81,6 +99,7 @@ export default function LoginForm() {
             }
             return;
           } catch (e) {
+            console.log(e);
             toast("Could Not Login, Please Try Again", {
               description: (e as Error).message ?? "Error Logging In.",
             });
@@ -132,7 +151,7 @@ export default function LoginForm() {
               <Label>Wallet Address</Label>
               <FormField
                 control={form.control}
-                name="walletAddress"
+                name="id"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

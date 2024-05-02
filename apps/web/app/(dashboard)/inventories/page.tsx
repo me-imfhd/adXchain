@@ -1,8 +1,10 @@
-import { api } from "@repo/trpc";
 import React from "react";
 import InventoriesPage from "../_components/inventories-page";
+import { getWalletsInventory } from "@repo/api";
+import { checkAuth } from "@repo/auth";
 
 export default async function InventoryPage() {
-  const inventory = await api.inventory.getInventory.query();
-  return <InventoriesPage inventory={inventory} />;
+  const session = await checkAuth();
+  const inventories = await getWalletsInventory(session.user.id);
+  return <InventoriesPage inventories={inventories} />;
 }

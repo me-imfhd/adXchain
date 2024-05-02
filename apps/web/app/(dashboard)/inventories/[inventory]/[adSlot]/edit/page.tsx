@@ -1,16 +1,20 @@
 import EditSlot from "@/app/(dashboard)/_components/editSlot";
-import { api } from "@repo/trpc";
+import { getAdNFT } from "@repo/api";
+import { checkAuth } from "@repo/auth";
 import { notFound } from "next/navigation";
 import React from "react";
 
 export default async function Page({
-  params: { adSlot },
+  params: { adSlot, inventory },
 }: {
-  params: { adSlot: string };
+  params: { adSlot: number; inventory: number };
 }) {
-  const slot = await api.adSlots.getAdSlotById.query({ id: adSlot });
-  if (!slot) {
+  const session = await checkAuth();
+  const adNFT = await getAdNFT(inventory, adSlot);
+  if (!adNFT) {
     notFound();
   }
-  return <EditSlot slot={slot} />;
+  return (
+    <EditSlot session={session} adNFT={adNFT} inventoryId={Number(inventory)} />
+  );
 }

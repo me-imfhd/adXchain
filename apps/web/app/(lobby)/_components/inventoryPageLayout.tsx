@@ -1,7 +1,8 @@
 import React from "react";
 import { TypographyH3 } from "@repo/ui/components";
-import { GetActiveInventoryById } from "@repo/api";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { anchor } from "@repo/contract";
+import { GetInventory } from "@repo/api";
 export default function InventoryPageLayout({
   i,
   dialog,
@@ -11,8 +12,8 @@ export default function InventoryPageLayout({
   total,
   totalBuyablePrice,
 }: {
-  i: GetActiveInventoryById;
-  totalBuyablePrice: bigint;
+  i: NonNullable<GetInventory>;
+  totalBuyablePrice: number;
   dialog: React.ReactNode;
   cards: React.ReactNode;
   supply: number;
@@ -22,24 +23,24 @@ export default function InventoryPageLayout({
   return (
     <div className="flex flex-col items-center justify-center mt-[57px]  w-full">
       <div className="grid md:grid-cols-[300px_1fr] gap-4 min-h-screen w-full">
-        <div className="flex flex-col gap-2 h-full md:border-r w-full ">
+      <div className="flex flex-col gap-2 h-full md:border-r w-full ">
           <img
             alt="Store image"
             className="aspect-video object-cover"
             height="200"
-            src={i?.inventoryImageUri!}
+            src={i.data.image!}
             width="300"
           />
           <div className="flex flex-col p-2 gap-2">
-            <h1 className="font-bold text-2xl">{i?.inventoryName}</h1>
+            <h1 className="font-bold text-2xl">{i.data.name}</h1>
             <div className="grid gap-2 text-sm leading-loose">
-              <p>{i?.inventoryDescription}</p>
+              <p>{i.data.description}</p>
             </div>
           </div>
           {dialog}
         </div>
         <div>
-          {i && i.adSlots.length > 0 && (
+          {i && i.adNFTs.length > 0 && (
             <div className="flex flex-wrap p-4 gap-8">
               <div className="text-center ">
                 <TypographyH3 className="flex justify-center text-center ">

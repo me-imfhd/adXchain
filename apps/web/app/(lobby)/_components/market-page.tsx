@@ -1,9 +1,9 @@
 "use client";
-import { GetActiveInventoryById } from "@repo/api";
 import {
   Badge,
   Button,
   Card,
+  CardDescription,
   Dialog,
   DialogContent,
   DialogFooter,
@@ -21,19 +21,24 @@ import InventoryPageLayout from "./inventoryPageLayout";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { SlotMap } from "../market/[inventory]/page";
 import { Session } from "@repo/auth";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import BuyMultiple from "./_buyMultipleAdNFTs";
 import { signOut } from "@repo/auth";
 import { redirect } from "next/navigation";
+import { anchor } from "@repo/contract";
+import { GetAdNFT, GetInventory } from "@repo/api";
+import { useWalletSession } from "@/lib/hooks/check-wallet";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 interface MarketPageProps {
-  inventory: NonNullable<GetActiveInventoryById>;
-  totalBuyablePrice: bigint;
+  inventory: NonNullable<GetInventory>;
+  inventoryId: number;
+  totalBuyablePrice: number;
   supply: number;
   percentage: number;
   total: number;
   session: Session;
   initial: SlotMap[];
+  activeAds: GetAdNFT[];
 }
 
 export default function MarketPage({
@@ -44,43 +49,34 @@ export default function MarketPage({
   session,
   total,
   initial,
+  activeAds,
+  inventoryId,
 }: MarketPageProps) {
-  const { connection } = useConnection();
-  const { publicKey, sendTransaction } = useWallet();
-  const [balance, setBalance] = useState<bigint>(0n);
+  const { connection, publicKey, sendTransaction, program } =
+    useWalletSession(session);
+  const [balance, setBalance] = useState<number>(0);
   useEffect(() => {
     if (!connection || !publicKey) {
       return;
     }
-    if (publicKey.toBase58() !== session.user.walletAddress) {
-      toast("New Wallet Found", {
-        description: "Login With Your New Wallet",
-      });
-      (async () => {
-        await signOut();
-        redirect("/signin");
-      })();
-    }
     connection.onAccountChange(
       publicKey,
       (updatedAccountInfo) => {
-        setBalance(BigInt(updatedAccountInfo.lamports));
+        setBalance(updatedAccountInfo.lamports);
       },
-      "confirmed",
+      "confirmed"
     );
-
     connection.getAccountInfo(publicKey).then((info) => {
-      setBalance(BigInt(info?.lamports!));
+      setBalance(info?.lamports!);
     });
   }, [connection, publicKey]);
   const [slotsArray, setSlotsArray] = useState<SlotMap[]>(initial);
   const selectedSlots = slotsArray.filter((slot) => slot.isSelected);
-
   const totalPrice = slotsArray
     .filter((slot) => slot.isSelected && !slot.isRented)
-    .reduce((accumulator, slot) => accumulator + slot.price, BigInt(0));
-  const handleClick = (id: string) => {
-    console.log(slotsArray);
+    .reduce((accumulator, slot) => accumulator + slot.price, 0);
+  const handleClick = (id: number) => {
+    console.log("select id: ", id);
     const updatedSlotsArray = slotsArray.map((slot) => {
       if (slot.id === id) {
         return { ...slot, isSelected: !slot.isSelected };
@@ -89,7 +85,6 @@ export default function MarketPage({
       }
     });
     setSlotsArray(updatedSlotsArray);
-    console.log(slotsArray);
   };
   return (
     <InventoryPageLayout
@@ -101,10 +96,7 @@ export default function MarketPage({
       dialog={
         <Dialog>
           <DialogTrigger asChild>
-            <GlowingButton
-              className="w-full"
-              disabled={totalPrice == BigInt(0)}
-            >
+            <GlowingButton className="w-full" disabled={totalPrice == 0}>
               BUY
               <span className=" flex items-center gap-1">
                 at {Number(totalPrice) / LAMPORTS_PER_SOL}
@@ -144,7 +136,7 @@ export default function MarketPage({
                   {selectedSlots.map((adSlot) => {
                     return (
                       <div
-                        key={adSlot.id}
+                        key={Number(adSlot.id)}
                         className="flex gap-5 w-full items-center"
                       >
                         <Badge
@@ -206,7 +198,7 @@ export default function MarketPage({
                                   <img
                                     className="object-cover rounded-lg"
                                     src={URL.createObjectURL(
-                                      new Blob([adSlot.file]),
+                                      new Blob([adSlot.file])
                                     )}
                                     style={{
                                       aspectRatio: "25/25",
@@ -224,7 +216,7 @@ export default function MarketPage({
                                   type="file"
                                   className="hidden"
                                   onChange={(
-                                    e: ChangeEvent<HTMLInputElement>,
+                                    e: ChangeEvent<HTMLInputElement>
                                   ) => {
                                     if (e.target.files?.[0]) {
                                       toast("File Added");
@@ -237,7 +229,7 @@ export default function MarketPage({
                                             };
                                           }
                                           return slot;
-                                        },
+                                        }
                                       );
                                       setSlotsArray(updatedSlots);
                                     }
@@ -254,7 +246,7 @@ export default function MarketPage({
                 <div className="flex flex-col w-[35%] border-solid border p-3 items-end">
                   {selectedSlots.map((adSlot) => {
                     return (
-                      <div key={adSlot.id} className="flex gap-4">
+                      <div key={Number(adSlot.id)} className="flex gap-4">
                         <span className="flex items-center gap-1">
                           {Number(adSlot.price) / LAMPORTS_PER_SOL}
                         </span>
@@ -340,7 +332,7 @@ export default function MarketPage({
                       <Button
                         variant="secondary"
                         className="font-semibold flex items-center"
-                        disabled={BigInt(balance) < totalPrice}
+                        disabled={balance < totalPrice}
                       >
                         <span>Pay</span>
                         <span className="flex items-center gap-1">
@@ -373,18 +365,20 @@ export default function MarketPage({
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>Confirm Transaction</DialogHeader>
+                      <CardDescription>
+                        Note: Transfer of ownership does not work on devnet
+                        cluster yet, but you still can buy the Ad NFT and upload
+                        your ad content.
+                      </CardDescription>
                       <BuyMultiple
-                        connection={connection}
-                        payersAddress={publicKey}
-                        recieversAddress={inventory.user.walletAddress}
+                        connection={connection!}
+                        lenderAddress={inventory.authority.toString()}
+                        renterAddress={publicKey.toString()}
                         sendTransaction={sendTransaction}
-                        balance={balance}
-                        inventoryId={inventory.id}
-                        inventoryImageUri={inventory?.inventoryImageUri!}
-                        inventoryName={inventory?.inventoryName!}
-                        session={session}
+                        inventoryId={inventoryId}
                         transactionAmount={totalPrice}
                         selectedSlots={selectedSlots}
+                        program={program}
                       />
                     </DialogContent>
                   </Dialog>
@@ -396,21 +390,20 @@ export default function MarketPage({
       }
       cards={
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-start p-3">
-          {inventory?.adSlots.length === 0
+          {activeAds.length === 0
             ? "This inventory has not ad slots listed."
-            : inventory?.adSlots.map((adSlot) => {
+            : activeAds.map((adSlot) => {
                 const rented = Boolean(
-                  slotsArray.find(
-                    (slot) => slot.id == adSlot.id && slot.isRented,
-                  ),
+                  slotsArray.find((slot) => {
+                    return slot.id == adSlot.id && slot.isRented;
+                  })
                 );
                 const selected = Boolean(
                   slotsArray.find(
-                    (slot) => slot.id == adSlot.id && slot.isSelected,
-                  ),
+                    (slot) => slot.id == adSlot.id && slot.isSelected
+                  )
                 );
-
-                const walletAddress = adSlot.owner?.walletAddress;
+                const walletAddress = adSlot.account.currentRenter?.toString();
                 const wa =
                   walletAddress?.slice(0, 4) + ".." + walletAddress?.slice(-4);
                 return (
@@ -434,7 +427,7 @@ export default function MarketPage({
                           alt="Collection Image"
                           className="object-cover rounded-lg"
                           height="225"
-                          src={adSlot.slotImageUri!}
+                          src={adSlot.image}
                           style={{
                             aspectRatio: "400/225",
                             objectFit: "cover",
@@ -446,7 +439,7 @@ export default function MarketPage({
                         <div className="grid gap-3">
                           <div className="flex flex-row items-center justify-between">
                             <h3 className="font-semibold text-xl">
-                              {adSlot.slotName}
+                              {adSlot.name}
                             </h3>
                           </div>
                           <div className="text-xs flex flex-col gap-1">
@@ -455,7 +448,7 @@ export default function MarketPage({
                                 Floor Price
                               </span>
                               <span className="flex items-center gap-1">
-                                {Number(adSlot.slotPrice) / LAMPORTS_PER_SOL}{" "}
+                                {adSlot.priceLamports / LAMPORTS_PER_SOL}{" "}
                                 <svg
                                   version="1.1"
                                   id="Layer_1"
@@ -485,19 +478,19 @@ export default function MarketPage({
                               <span className="text-muted-foreground font-medium">
                                 Slot Area
                               </span>
-                              <span>{`${adSlot.slotWidth} x ${adSlot.slotLength} `}</span>
+                              <span>{`${adSlot.attributes.width} x ${adSlot.attributes.width} `}</span>
                             </p>
                             <p className=" leading-none flex justify-between gap-2">
                               <span className="text-muted-foreground font-medium">
                                 Ad Space Type
                               </span>
-                              <span>{adSlot.slotType}</span>
+                              <span>{adSlot.attributes.slotType}</span>
                             </p>
                             <p className=" leading-none flex justify-between gap-2">
                               <span className="text-muted-foreground font-medium">
                                 Platform
                               </span>
-                              <span>{adSlot.slotPlatform}</span>
+                              <span>{adSlot.attributes.platform}</span>
                             </p>
                             {rented && walletAddress ? (
                               <p className=" leading-none flex justify-between gap-2">
@@ -527,7 +520,7 @@ export default function MarketPage({
                       <div className="px-2 py-2  flex  items-center justify-between">
                         <Link
                           className="flex items-center gap-2 hover:underline  hover:-translate-y-[1px]"
-                          href={`${adSlot.slotWebsiteUri}#${adSlot.id}`}
+                          href={`${adSlot.attributes.websiteUri}#${adSlot.publicKey.toString()}`}
                         >
                           <ExternalLink className="h-4 w-4" />
                           Website

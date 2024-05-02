@@ -3,29 +3,28 @@
 import { SessionProvider } from "@repo/auth";
 import { ThemeProvider } from "@repo/ui/components/ThemeProvider";
 import { UseAnchorProvider } from "@/lib/hooks/use-anchor";
-import {
-  ConnectionProvider,
-  WalletProvider,
-} from "@solana/wallet-adapter-react";
+import { WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import "@solana/wallet-adapter-react-ui/styles.css";
+import { ReactNode } from "react";
+import { Network } from "@/lib/utils";
 
-import { useMemo, type PropsWithChildren } from "react";
-
-const Provider = ({ children }: PropsWithChildren) => {
-  const wallets = useMemo(() => [], []);
-
+const Provider = ({
+  children,
+  network,
+}: {
+  children: ReactNode;
+  network: Network;
+}) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <ConnectionProvider endpoint="https://api.devnet.solana.com">
-        <WalletProvider wallets={wallets} autoConnect>
-          <SessionProvider>
-            <WalletModalProvider>
-              <UseAnchorProvider>{children}</UseAnchorProvider>
-            </WalletModalProvider>
-          </SessionProvider>
-        </WalletProvider>
-      </ConnectionProvider>
+      <WalletProvider wallets={[]} autoConnect>
+        <SessionProvider>
+          <WalletModalProvider>
+            <UseAnchorProvider network={network}>{children}</UseAnchorProvider>
+          </WalletModalProvider>
+        </SessionProvider>
+      </WalletProvider>
     </ThemeProvider>
   );
 };

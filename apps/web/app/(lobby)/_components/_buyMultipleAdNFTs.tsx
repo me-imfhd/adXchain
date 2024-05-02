@@ -1,34 +1,16 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { type WalletAdapterProps } from "@solana/wallet-adapter-base";
-import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
-} from "@repo/ui/components";
 import { useState } from "react";
-import {
-  createUnderdogNFT,
-  createUnderdogProject,
-  retrieveNft,
-  s3Upload,
-} from "@repo/api";
-import { multipleAdSlotForm } from "@repo/db";
+import { lendAdNFT, s3Upload, transferUnderdogNFT } from "@repo/api";
 import { Session } from "@repo/auth";
 import { useRouter } from "next/navigation";
 import { Connection, SystemProgram, Transaction } from "@solana/web3.js";
 import { PublicKey } from "@metaplex-foundation/js";
 import { SlotMap } from "../market/[inventory]/page";
-import { trpc } from "@repo/trpc/trpc/client";
-import { NftBodyParams } from "@repo/api/web3-ops/types";
 import { GlowingButton } from "@repo/ui/components/buttons";
 import { toast } from "sonner";
+import { Contract, anchor } from "@repo/contract";
+import { trpc } from "@repo/trpc/trpc/client";
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/jpeg",
@@ -39,244 +21,121 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
   "video/webm",
   "video/mp4",
 ];
-const underdogApiEndpoint = "https://devnet.underdogprotocol.com";
-type InventorySchema = z.infer<typeof multipleAdSlotForm>;
 interface BuyAdNFTProps {
   selectedSlots: SlotMap[];
   sendTransaction: WalletAdapterProps["sendTransaction"];
-  balance: bigint;
-  session: Session;
-  inventoryName: string;
-  inventoryId: string;
-  inventoryImageUri: string;
-  transactionAmount: bigint;
-  recieversAddress: string;
-  payersAddress: PublicKey;
+  inventoryId: number;
+  transactionAmount: number;
+  renterAddress: string;
+  lenderAddress: string;
   connection: Connection;
+  program: anchor.Program<Contract> | undefined;
 }
 export default function BuyMultiple({
-  session,
   selectedSlots,
   connection,
-  balance,
-  payersAddress,
-  recieversAddress,
+  renterAddress,
   sendTransaction,
   transactionAmount,
-  inventoryImageUri,
-  inventoryName,
+  lenderAddress,
   inventoryId,
+  program,
 }: BuyAdNFTProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const oldProject = trpc.project.getUserProjectByInventoryId.useMutation();
-  const updateSlot = trpc.adSlots.buySlot.useMutation();
   const router = useRouter();
-  const createNewProject = trpc.project.createProject.useMutation();
-  const form = useForm<InventorySchema>({
-    resolver: zodResolver(multipleAdSlotForm),
-  });
-
-  async function operation(
-    underdogApiKey: string,
-    s3ImagesUri: string[],
-    underdogProjectId: number,
-  ) {
-    try {
-      const payTransaction = await sendSol(
-        recieversAddress,
-        payersAddress,
-        transactionAmount,
-        connection,
-        sendTransaction,
-      );
-      if (!payTransaction) {
-        throw new Error("Transaction Not Completed, try again.");
-      }
-    } catch (err) {
-      throw new Error((err as Error).message);
-    }
-    try {
-      await Promise.all(
-        selectedSlots.map(async (slot) => {
-          const s3ImageUri = await s3Upload(slot.file!);
-          s3ImagesUri.push(s3ImageUri);
-
-          const nftBody = {
-            attributes: {
-              displayUri: s3ImageUri,
-              fileType: slot.file!.type,
-            },
-            delegated: true,
-            image: slot.imageUri,
-            name: slot.slotName,
-          } as NftBodyParams;
-          console.log(nftBody);
-          try {
-            const nft = await createUnderdogNFT({
-              projectId: underdogProjectId,
-              underdogApiEndpoint,
-              underdogApiKey,
-              nftBody,
-            });
-            if (nft) {
-              toast("Ad Space Initialized successfully.");
-            }
-            const nftMint = await retrieveNft({
-              nftId: nft.nftId,
-              projectId: underdogProjectId,
-              underdogApiKey,
-              underdogApiEndpoint,
-            });
-            await updateSlot.mutateAsync({
-              id: slot.id,
-              nftMintAddress: nftMint.mintAddress,
-              ownerId: session.user.id,
-              lent: true,
-            });
-          } catch (err) {
-            throw new Error("Ad NFT creation failed.");
-          }
-        }),
-      );
-      setIsLoading(false);
-      toast("");
-      router.push(`/market`);
-      return;
-    } catch (error) {
-      console.log(error);
-      toast("INTERNAL_SERVER_ERROR", {
-        description: (error as Error).message,
-      });
-    }
-  }
-
+  const { mutateAsync: updateUnderdogNFT } =
+    trpc.underdog.updateUnderdogNFT.useMutation();
   return (
     <>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(async (data) => {
-            setIsLoading(true);
-            const s3ImagesUri: string[] = [];
-            try {
-              // Validate files
-              selectedSlots.forEach(({ file }) => {
-                if (!file) {
-                  throw new Error("File Not Found");
-                }
-                if (!ACCEPTED_IMAGE_MIME_TYPES.includes(file.type)) {
-                  throw new Error("Format not supported");
-                }
-                if (!(file.size <= MAX_FILE_SIZE)) {
-                  throw new Error("Max image size is 5mb.");
-                }
-              });
-
-              const projectAlreadyExist = await oldProject.mutateAsync({
-                id: inventoryId,
-              });
-
-              if (!projectAlreadyExist?.underdogProjectId) {
-                const underdogProject = await createUnderdogProject({
-                  inventoryImageUri: inventoryImageUri,
-                  inventoryName: inventoryName,
-                  underdogApiEndpoint,
-                  underdogApiKey: data.underdogApi,
-                });
-                const web2Project = await createNewProject.mutateAsync({
-                  collectionMintAddress: underdogProject.mintAddress,
-                  inventoryId,
-                  underdogProjectId: underdogProject.projectId,
-                  userId: session.user.id,
-                });
-                await operation(
-                  data.underdogApi,
-                  s3ImagesUri,
-                  web2Project.project.underdogProjectId,
-                );
-              } else {
-                await operation(
-                  data.underdogApi,
-                  s3ImagesUri,
-                  projectAlreadyExist.underdogProjectId,
-                );
+      <GlowingButton
+        onClick={async () => {
+          if (!program) {
+            toast("Please try again.");
+            return;
+          }
+          setIsLoading(true);
+          const s3ImagesUri: string[] = [];
+          try {
+            selectedSlots.forEach(({ file }) => {
+              if (!file) {
+                throw new Error("File Not Found");
               }
-            } catch (err) {
-              console.log(err);
-              setIsLoading(false);
-              toast("INTERNAL_SERVER_ERROR", {
-                description: (err as Error).message,
-              });
-            }
-          })}
-          className="space-y-8"
-        >
-          <FormField
-            control={form.control}
-            name="underdogApi"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Underdog api key</FormLabel>
-                <FormControl>
-                  <Input type="password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <GlowingButton
-            type="submit"
-            className="w-full"
-            isLoading={isLoading}
-            disabled={isLoading}
-          >
-            Buy
-          </GlowingButton>
-        </form>
-      </Form>
+              if (!ACCEPTED_IMAGE_MIME_TYPES.includes(file.type)) {
+                throw new Error("Format not supported");
+              }
+              if (!(file.size <= MAX_FILE_SIZE)) {
+                throw new Error("Max image size is 5mb.");
+              }
+            });
+            const transaction = new Transaction();
+            const underdogApiEndpoint = "https://devnet.underdogprotocol.com";
+            await Promise.all(
+              selectedSlots.map(async (adNFT) => {
+                try {
+                  const s3ImageUri = await s3Upload(adNFT.file!);
+                  // transfer the nft
+                  // await transferUnderdogNFT({
+                  //   projectId: inventoryId,
+                  //   underdogApiEndpoint,
+                  //   underdogApiKey,
+                  //   nftId: adNFT.id,
+                  //   receiverAddress: renterAddress,
+                  // });
+                  // set the ad
+                  await updateUnderdogNFT({
+                    nftId: adNFT.id,
+                    nftBody: {
+                      attributes: {
+                        ...adNFT.attributes,
+                        displayUri: s3ImageUri,
+                        fileType: adNFT.file?.type!,
+                      },
+                      description: adNFT.description,
+                      image: adNFT.imageUri,
+                      name: adNFT.slotName,
+                    },
+                    projectId: inventoryId,
+                    underdogApiEndpoint,
+                  });
+                  toast(
+                    `Successfully Uploaded Ad for ${adNFT.slotName} Ad Space.`
+                  );
+                  // set lender on chain
+                  const trx = await lendAdNFT(
+                    inventoryId,
+                    adNFT.id,
+                    program,
+                    transactionAmount,
+                    lenderAddress
+                  );
+                  transaction.add(trx.tx);
+                  s3ImagesUri.push(s3ImageUri);
+                } catch (err) {
+                  console.log(err);
+                  throw new Error(
+                    "Updating Ad Space Incomplete, transaction failed."
+                  );
+                }
+                const tx = await sendTransaction(transaction, connection);
+              })
+            );
+            setIsLoading(false);
+            toast("Ad Space Ownershsip tranfer complete 🎉");
+            router.push("/myNfts");
+          } catch (err) {
+            console.log(err);
+            setIsLoading(false);
+            toast("INTERNAL_SERVER_ERROR", {
+              description: (err as Error).message,
+            });
+          }
+        }}
+        className="w-full"
+        isLoading={isLoading}
+        disabled={isLoading}
+      >
+        Buy
+      </GlowingButton>
     </>
   );
 }
-
-async function retry(fn: any, retries: number, delayMs: number) {
-  let lastError = null;
-  console.log("try/retry");
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error;
-      if (attempt < retries) {
-        await delay(delayMs);
-      }
-    }
-  }
-
-  throw lastError;
-}
-
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-const sendSol = async (
-  recieverAddress: string,
-  payerPublicKey: PublicKey,
-  amountLamports: bigint,
-  connection: Connection,
-  sendTransaction: WalletAdapterProps["sendTransaction"],
-) => {
-  const transaction = new Transaction();
-  const recipientPubKey = new PublicKey(recieverAddress);
-
-  const sendSolInstruction = SystemProgram.transfer({
-    fromPubkey: payerPublicKey,
-    toPubkey: recipientPubKey,
-    lamports: Number(amountLamports),
-  });
-
-  transaction.add(sendSolInstruction);
-  const tx = await sendTransaction(transaction, connection);
-  console.log(tx);
-  return tx;
-};
