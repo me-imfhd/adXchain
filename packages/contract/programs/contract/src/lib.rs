@@ -1,80 +1,94 @@
 use anchor_lang::prelude::*;
 
-declare_id!("FtX5sPSgTzSoefKZaeAqBuaYDUWKREUpiDNxFLsScEH2");
-
+declare_id!("ADXZ7eEnK2iU8tAPPvUbAw7NBQokSVhirAiHUFBHLfsj");
 #[program]
 mod contract {
+    use anchor_lang::system_program;
+
     use super::*;
-    pub fn initialize_user(ctx: Context<InitializeUser>) -> Result<()> {
-        ctx.accounts.user.authority = ctx.accounts.authority.key();
-        ctx.accounts.user.last_inventory = 0;
-        msg!("User Initialized");
-
-        Ok(())
-    }
-    pub fn initialize_inventory(ctx: Context<InitializeInventory>, collection_mint: Pubkey) -> Result<()> {
-        let user = &mut ctx.accounts.user;
+    pub fn initialize_inventory(
+        ctx: Context<InitializeInventory>,
+        inventory_id: u64,
+        collection_mint: Pubkey
+    ) -> Result<()> {
         let inventory = &mut ctx.accounts.inventory;
-        inventory.id = user.last_inventory;
-        inventory.authority = user.authority;
+        let authority = &ctx.accounts.authority;
+        inventory.id = inventory_id;
+        inventory.authority = authority.key();
         inventory.collection_mint = collection_mint;
-        inventory.last_ad_nft = 0;
-        msg!("Inventory Initialized");
-        user.last_inventory = user.last_inventory.checked_add(1).unwrap();
-        msg!("User's Last Inventory Index Updated");
+        msg!("Inventory Initialized inventory_id: {}", inventory_id);
 
         Ok(())
     }
-    pub fn initialize_ad_nft(ctx: Context<InitializeAdNFT>, nft_mint: Pubkey) -> Result<()> {
+    pub fn initialize_ad_nft(
+        ctx: Context<InitializeAdNFT>,
+        inventory_id: u64,
+        nft_id: u64,
+        nft_mint: Pubkey,
+        price_lamports: u64
+    ) -> Result<()> {
         let inventory = &mut ctx.accounts.inventory;
         let ad_nft = &mut ctx.accounts.ad_nft;
 
-        ad_nft.authority = inventory.authority;
-        ad_nft.id = inventory.last_ad_nft;
-        ad_nft.nft_mint= nft_mint;
-        msg!("Ad NFT Initialized");
-        inventory.last_ad_nft = inventory.last_ad_nft.checked_add(1).unwrap();
-        msg!("Inventory's Last Ad NFT Index Updated");
+        ad_nft.collection_mint = inventory.collection_mint;
+        ad_nft.id = nft_id;
+        ad_nft.nft_mint = nft_mint;
+        ad_nft.lent = false;
+        ad_nft.price_lamports = price_lamports;
+        ad_nft.current_renter = None;
+        msg!("Ad NFT Initialized ad_nft id: {} and inventory_id: {}", nft_id, inventory_id);
 
+        Ok(())
+    }
+    pub fn update_ad_nft(
+        ctx: Context<UpdateAdNFT>,
+        inventory_id: u64,
+        nft_id: u64,
+        nft_mint: Pubkey,
+        price_lamports: u64,
+    ) -> Result<()> {
+        let inventory = &mut ctx.accounts.inventory;
+        let ad_nft = &mut ctx.accounts.ad_nft;
+
+        ad_nft.collection_mint = inventory.collection_mint;
+        ad_nft.nft_mint = nft_mint;
+        ad_nft.price_lamports = price_lamports;
+        msg!("Ad NFT Updated ad_nft id: {} and inventory_id: {}", nft_id, inventory_id);
+        Ok(())
+    }
+    pub fn lend_ad_nft(
+        ctx: Context<LendAdNFT>,
+        inventory_id: u64,
+        nft_id: u64,
+        amount: u64,
+    ) -> Result<()> {
+        let ad_nft = &mut ctx.accounts.ad_nft;
+        let cpi_context = CpiContext::new(
+            ctx.accounts.system_program.to_account_info(), 
+            system_program::Transfer {
+                from: ctx.accounts.signer.to_account_info().clone(),
+                to: ctx.accounts.lender.clone(),
+            });
+        system_program::transfer(cpi_context, amount)?;
+        
+        ad_nft.lent = true;
+        ad_nft.current_renter = Some(ctx.accounts.signer.key());
+
+        msg!("Ad NFT Lent Successfully. nft_id: {} inventory_id: {}", nft_id, inventory_id);
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-#[instruction()]
-pub struct InitializeUser<'info> {
-    #[account(
-        init, 
-        payer = authority, 
-        space = 8 + 1 + 32, 
-        seeds= [b"user", authority.key().as_ref()],
-        bump,
-        )
-    ]
-    pub user: Account<'info, UserAccount>,
-    #[account(mut)]
-    pub authority: Signer<'info>,
-    pub system_program: Program<'info, System>,
-}
-
-#[derive(Accounts)]
-#[instruction()]
+#[instruction(inventory_id: u64)]
 pub struct InitializeInventory<'info> {
     #[account(
-        mut,
-        has_one = authority,
-        seeds = [b"user", authority.key().as_ref()],
+        init,
+        payer = authority,
+        space = 8 + 32 + 32 + 8,
+        seeds = [b"inventory", inventory_id.to_le_bytes().as_ref()],
         bump
     )]
-    pub user: Account<'info, UserAccount>,
-    #[account(
-        init, 
-        payer = authority, 
-        space = 8 + 1 + 1 + 32 + 32, 
-        seeds= [b"inventory", authority.key().as_ref(), &[user.last_inventory as u8].as_ref()],
-        bump,
-        )
-    ]
     pub inventory: Account<'info, InventoryAccount>,
     #[account(mut)]
     pub authority: Signer<'info>,
@@ -82,56 +96,83 @@ pub struct InitializeInventory<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction()]
+#[instruction(inventory_id: u64, nft_id: u64)]
 pub struct InitializeAdNFT<'info> {
     #[account(
-        mut,
-        has_one = authority,
-        seeds = [b"user", authority.key().as_ref()],
-        bump
-    )]
-    pub user: Account<'info, UserAccount>,
-    #[account(
         mut, 
-        // has_one = authority, 
-        // seeds= [b"inventory", authority.key().as_ref(), &[user.last_inventory as u8].as_ref()],
-        // bump,
-        )
-    ]
+        has_one = authority, 
+        seeds= [b"inventory", inventory_id.to_le_bytes().as_ref()],
+        bump,
+        )]
     pub inventory: Account<'info, InventoryAccount>,
     #[account(
-        init, 
-        payer = authority, 
-        space =  8 + 1 + 32 + 32, 
-        seeds= [b"nft", authority.key().as_ref() , &[inventory.last_ad_nft as u8].as_ref()],
-        bump,
-        )
-    ]
+        init,
+        payer = authority,
+        space = 8 + 32 + 1 + 32 + 32 + 8 + 1 + 8,
+        seeds = [b"nft", inventory.key().as_ref(), nft_id.to_le_bytes().as_ref()],
+        bump
+    )]
     pub ad_nft: Account<'info, AdNFTAccount>,
     #[account(mut)]
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
+
+#[derive(Accounts)]
+#[instruction(inventory_id: u64, nft_id: u64)]
+pub struct UpdateAdNFT<'info> {
+    #[account(
+        mut, 
+        has_one = authority,
+        seeds= [b"inventory", inventory_id.to_le_bytes().as_ref()],
+        bump,
+        )]
+    pub inventory: Account<'info, InventoryAccount>,
+    #[account(
+        mut, 
+        seeds= [b"nft", inventory.key().as_ref() , nft_id.to_le_bytes().as_ref()],
+        bump,
+        )]
+    pub ad_nft: Account<'info, AdNFTAccount>,
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+#[derive(Accounts)]
+#[instruction(inventory_id: u64, nft_id: u64)]
+pub struct LendAdNFT<'info> {
+    #[account(
+        mut, 
+        seeds= [b"inventory", inventory_id.to_le_bytes().as_ref()],
+        bump,
+        )]
+    pub inventory: Account<'info, InventoryAccount>,
+    #[account(
+        mut, 
+        seeds= [b"nft", inventory.key().as_ref() , nft_id.to_le_bytes().as_ref()],
+        bump,
+        )]
+    pub ad_nft: Account<'info, AdNFTAccount>,
+    pub signer: Signer<'info>,
+    /// CHECK: Lender's account
+    pub lender: AccountInfo<'info>,
+    pub system_program: Program<'info, System>,
+}
 #[account]
 #[derive(Default)]
 pub struct AdNFTAccount {
-    pub id: u8,
+    pub collection_mint: Pubkey,
+    pub current_renter: Option<Pubkey>,
     pub nft_mint: Pubkey,
-    pub authority: Pubkey
+    pub price_lamports: u64,
+    pub lent: bool,
+    pub id: u64,
 }
 
 #[account]
 #[derive(Default)]
 pub struct InventoryAccount {
-    pub id: u8,
-    pub last_ad_nft: u8,
+    pub authority: Pubkey,
     pub collection_mint: Pubkey,
-    pub authority: Pubkey,
-}
-
-#[account]
-#[derive(Default)]
-pub struct UserAccount {
-    pub last_inventory: u8,
-    pub authority: Pubkey,
+    pub id: u64,
 }

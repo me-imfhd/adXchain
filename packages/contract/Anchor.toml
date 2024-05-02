@@ -4,14 +4,14 @@
 seeds = false
 skip-lint = false
 
-[programs.localnet]
-contract = "FtX5sPSgTzSoefKZaeAqBuaYDUWKREUpiDNxFLsScEH2"
+[programs.devnet]
+contract = "ADXZ7eEnK2iU8tAPPvUbAw7NBQokSVhirAiHUFBHLfsj"
 
 [registry]
-url = "http://localhost:8899/"
+url = "https://api.devnet.solana.com/"
 
 [provider]
-cluster = "Localnet"
+cluster = "Devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
