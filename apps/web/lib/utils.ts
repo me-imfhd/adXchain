@@ -1,4 +1,3 @@
-"use server";
 // import { isClerkAPIResponseError } from "@clerk/nextjs";
 import { cookies } from "next/headers";
 import { toast } from "sonner";
