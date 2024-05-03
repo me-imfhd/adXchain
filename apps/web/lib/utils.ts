@@ -1,16 +1,8 @@
 // import { isClerkAPIResponseError } from "@clerk/nextjs";
-import { cookies } from "next/headers";
 import { toast } from "sonner";
 import { z } from "zod";
 
 export type Network = "devnet" | "mainnet";
-export function getNetworkCookie(): Network {
-  const network = cookies().get("network")?.value;
-  if (!network) {
-    cookies().set("network", "devnet");
-  }
-  return cookies().get("network")?.value as Network;
-}
 
 export function slugify(str: string) {
   return str
