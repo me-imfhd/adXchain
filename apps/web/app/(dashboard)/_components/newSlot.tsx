@@ -36,6 +36,8 @@ import { GetInventory, createAdNFTAccount } from "@repo/api";
 import { useWalletSession } from "@/lib/hooks/check-wallet";
 import { Session } from "@repo/auth";
 import { trpc } from "@repo/trpc/trpc/client";
+import { validateImage } from "@/lib/validate-image";
+import { catchError } from "@/lib/utils";
 export default function NewSlot({
   session,
   inventoryId,
@@ -60,8 +62,8 @@ export default function NewSlot({
             setIsLoading(true);
             try {
               if (!program || !anchorWallet) {
-                toast("Please try again.");
-                return;
+                router.refresh();
+                throw new Error("Please try again.");
               }
               const walletAddress = anchorWallet.publicKey.toBase58();
               if (data.slotPrice < 0) {
@@ -72,11 +74,24 @@ export default function NewSlot({
                   throw new Error("Only Positive Numbers are allowed");
                 }
               }
-              if (!image) {
-                throw new Error("Please upload image.");
-              }
+
+              const img = validateImage(image);
               const slotPrice = LAMPORTS_PER_SOL * data.slotPrice;
-              const s3ImageUri = await s3Upload(image);
+              let s3ImageUri: string | null = null;
+              toast.promise(s3Upload(img), {
+                loading: "Uploading Slot Image...",
+                success: (imageURI) => {
+                  s3ImageUri = imageURI;
+                  return "Image Uploaded Successfully.";
+                },
+                error: (data) => {
+                  console.log(data);
+                  throw new Error("Image Upload Failed, Please try again.");
+                },
+              });
+              if (!s3ImageUri) {
+                return;
+              }
               const underdogApiEndpoint = "https://devnet.underdogprotocol.com";
               const nft = await createUnderdogNFT({
                 nftBody: {
@@ -86,7 +101,7 @@ export default function NewSlot({
                     length: data.slotLength,
                     platform: data.slotPlatform,
                     slotType: data.slotType,
-                    status: "inactive",
+                    status: "active",
                     websiteUri: data.slotWebsiteUri,
                     width: data.slotWidth,
                   },
@@ -115,11 +130,7 @@ export default function NewSlot({
               router.refresh();
               setIsLoading(false);
             } catch (err) {
-              console.log(err);
-              toast("INTERNAL_SERVER_ERROR", {
-                description:
-                  (err as Error).message ?? "Check console for errors",
-              });
+              catchError(err)
               setIsLoading(false);
             }
           })}

@@ -33,6 +33,8 @@ import { GetInventory } from "@repo/api";
 import { deleteS3Image } from "./s3Delete";
 import { toast } from "sonner";
 import { trpc } from "@repo/trpc/trpc/client";
+import { validateImage } from "@/lib/validate-image";
+import { catchError } from "@/lib/utils";
 export default function EditInventory({
   inventory,
   inventoryId,
@@ -78,7 +80,10 @@ export default function EditInventory({
                   },
                 });
                 if (res) {
-                  toast("Inventory Updated Successfully");
+                  toast.success("Inventory updated successfully.");
+                  toast.info(
+                    "Metadata updates will occur once validated on-chain, it can take upto several hours."
+                  );
                   router.push("/inventories");
                   router.refresh();
                   setIsLoading(false);
@@ -86,9 +91,21 @@ export default function EditInventory({
                 return;
               }
               await deleteS3Image(inventory.data.image);
-              const s3ImageUri = await s3Upload(image);
-              if (s3ImageUri) {
-                toast("Image updated successfully.");
+              let s3ImageUri: string | null = null;
+              const img = validateImage(image);
+              toast.promise(s3Upload(img), {
+                loading: "Uploading Slot Image...",
+                success: (imageURI) => {
+                  s3ImageUri = imageURI;
+                  return "Image Uploaded Successfully.";
+                },
+                error: (data) => {
+                  console.log(data);
+                  throw new Error("Image Upload Failed, Please try again.");
+                },
+              });
+              if (!s3ImageUri) {
+                return;
               }
               const res = await updateUnderdogProject({
                 underdogApiEndpoint,
@@ -104,17 +121,16 @@ export default function EditInventory({
                 },
               });
               if (res) {
-                toast("Inventory updated successfully.");
+                toast.success("Inventory updated successfully.");
+                toast.info(
+                  "Metadata updates will occur once validated on-chain, it can take upto several hours."
+                );
                 router.push("/inventories");
                 router.refresh();
                 setIsLoading(false);
               }
             } catch (err) {
-              console.log(err);
-              toast("INTERNAL_SERVER_ERROR", {
-                description:
-                  (err as Error).message ?? "Check console for errors",
-              });
+              catchError(err);
               setIsLoading(false);
             }
           })}

@@ -33,7 +33,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <TrpcProvider cookies={cookies().toString()}>
             {children}
             <TailwindResposivenessIndicator />
-            <Toaster richColors />
+            <Toaster richColors closeButton />
           </TrpcProvider>
         </Provider>
       </body>

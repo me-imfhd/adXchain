@@ -35,6 +35,8 @@ import { toast } from "sonner";
 import { createInventoryAccount } from "@repo/api";
 import { useWalletSession } from "@/lib/hooks/check-wallet";
 import { Session } from "@repo/auth";
+import { validateImage } from "@/lib/validate-image";
+import { catchError } from "@/lib/utils";
 export default function Inventory({ session }: { session: Session }) {
   const { anchorWallet, program } = useWalletSession(session);
   const { mutateAsync: createCollectionUnderdog } =
@@ -51,15 +53,28 @@ export default function Inventory({ session }: { session: Session }) {
         <form
           onSubmit={form.handleSubmit(async (data) => {
             if (!anchorWallet || !program) {
-              toast("Try Again");
-              return;
+              router.refresh();
+              throw new Error("Please try again.");
             }
             setIsLoading(true);
             try {
-              if (!image) {
-                throw new Error("Please upload image.");
+              const img = validateImage(image);
+
+              let s3ImageUri: string | null = null;
+              toast.promise(s3Upload(img), {
+                loading: "Uploading Slot Image...",
+                success: (imageURI) => {
+                  s3ImageUri = imageURI;
+                  return "Image Uploaded Successfully.";
+                },
+                error: (data) => {
+                  console.log(data);
+                  throw new Error("Image Upload Failed, Please try again.");
+                },
+              });
+              if (!s3ImageUri) {
+                return;
               }
-              const s3ImageUri = await s3Upload(image);
               const collection = await createCollectionUnderdog({
                 description: data.inventoryDescription,
                 image: s3ImageUri,
@@ -76,16 +91,12 @@ export default function Inventory({ session }: { session: Session }) {
               if (!res) {
                 await deleteS3Image(s3ImageUri);
               }
-              toast("Inventory created successfully.");
+              toast.success("Inventory created successfully.");
               router.push("/inventories");
               router.refresh();
               setIsLoading(false);
             } catch (err) {
-              console.log(err);
-              toast("INTERNAL_SERVER_ERROR", {
-                description:
-                  (err as Error).message ?? "Check console for errors",
-              });
+              catchError(err);
               setIsLoading(false);
             }
           })}

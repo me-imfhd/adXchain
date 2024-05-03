@@ -100,7 +100,7 @@ export default async function Page() {
                         Bought at
                       </TableHead>
                       <TableHead className="hidden md:table-cell font-semibold">
-                        NFT Status
+                        Ad Space Type
                       </TableHead>
                       <TableHead className="hidden md:table-cell font-semibold">
                         Jump to Ad
@@ -168,7 +168,7 @@ export default async function Page() {
                             </div>
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
-                            {ad.status.toUpperCase()}
+                            {ad.attributes.slotType.toUpperCase()}
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
                             <Link

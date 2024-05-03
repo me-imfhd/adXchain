@@ -1,4 +1,4 @@
-'use server';
+"use server";
 // import { isClerkAPIResponseError } from "@clerk/nextjs";
 import { cookies } from "next/headers";
 import { toast } from "sonner";
@@ -53,6 +53,7 @@ export function isArrayOfFile(files: unknown): files is File[] {
 // }
 
 export function catchError(err: unknown) {
+  console.log(err);
   if (err instanceof z.ZodError) {
     const errors = err.issues.map((issue) => {
       return issue.message;
@@ -63,23 +64,6 @@ export function catchError(err: unknown) {
   } else {
     return toast("Something went wrong, please try again later.");
   }
-}
-
-export function catchClerkError(err: unknown) {
-  // const unknownErr = "Something went wrong, please try again later.";
-
-  if (err instanceof z.ZodError) {
-    const errors = err.issues.map((issue) => {
-      return issue.message;
-    });
-    return toast(errors.join("\n"));
-  }
-  // } else if (isClerkAPIResponseError(err)) {
-  //   return toast.error(err.errors[0]?.longMessage ?? unknownErr);
-  // } else {
-  //   return toast.error(unknownErr);
-  // }
-  return;
 }
 
 export function isMacOs() {

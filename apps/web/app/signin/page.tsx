@@ -1,5 +1,6 @@
 "use client";
 import { useAnchorContext } from "@/lib/hooks/use-anchor";
+import { catchError } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SigninMessage, getCsrfToken, signIn } from "@repo/auth";
 import bs58 from "@repo/auth/bs58";
@@ -55,14 +56,14 @@ export default function LoginForm() {
           setIsLoading(true);
           try {
             if (!data.id) {
-              toast("Wallet Not Connected", {
+              toast.warning("Wallet Not Connected", {
                 description: "Please Connect Your Wallet First.",
               });
               setIsLoading(false);
               return;
             }
             if (!anchorWallet || !program || !signMessage) {
-              toast("Please Try Again");
+              toast.warning("Please Try Again");
               return;
             }
             const csrf = await getCsrfToken();
@@ -77,16 +78,6 @@ export default function LoginForm() {
             const d = new TextEncoder().encode(message.prepare());
             const signature = await signMessage(d);
             const serializedSignature = bs58.encode(signature);
-            // const alreadyUser = await userAdXchainAccount(data.id);
-            // if (!alreadyUser) {
-            //   const tx = await program.methods
-            //     .initializeUser()
-            //     .accounts({
-            //       authority: new anchor.web3.PublicKey(data.id),
-            //     })
-            //     .rpc();
-            //   toast("User account created successfully.");
-            // }
             const a = await signIn("credentials", {
               message: JSON.stringify(message),
               redirect: false,
@@ -96,15 +87,12 @@ export default function LoginForm() {
             });
             if (a?.ok) {
               router.push("/market");
-              toast("Locked In 🔒");
+              toast.success("Locked In 🔒");
               setIsLoading(false);
             }
             return;
-          } catch (e) {
-            console.log(e);
-            toast("Could Not Login, Please Try Again", {
-              description: (e as Error).message ?? "Error Logging In.",
-            });
+          } catch (err) {
+            catchError(err);
             setIsLoading(false);
           }
         })}

@@ -9,6 +9,7 @@ import { GlowingButton } from "@repo/ui/components/buttons";
 import { toast } from "sonner";
 import { Contract, anchor } from "@repo/contract";
 import { trpc } from "@repo/trpc/trpc/client";
+import { catchError } from "@/lib/utils";
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/jpeg",
@@ -48,84 +49,90 @@ export default function BuyMultiple({
       <GlowingButton
         onClick={async () => {
           if (!program) {
-            toast("Please try again.");
-            return;
+            router.refresh();
+            throw new Error("Please try again.");
           }
           setIsLoading(true);
           const s3ImagesUri: string[] = [];
           try {
-            selectedSlots.forEach(({ file }) => {
-              if (!file) {
-                throw new Error("File Not Found");
-              }
-              if (!ACCEPTED_IMAGE_MIME_TYPES.includes(file.type)) {
-                throw new Error("Format not supported");
-              }
-              if (!(file.size <= MAX_FILE_SIZE)) {
-                throw new Error("Max image size is 5mb.");
-              }
-            });
             const transaction = new Transaction();
             const underdogApiEndpoint = "https://devnet.underdogprotocol.com";
             await Promise.all(
               selectedSlots.map(async (adNFT) => {
-                try {
-                  const s3ImageUri = await s3Upload(adNFT.file!);
-                  // transfer the nft
-                  // await transferUnderdogNFT({
-                  //   projectId: inventoryId,
-                  //   underdogApiEndpoint,
-                  //   underdogApiKey,
-                  //   nftId: adNFT.id,
-                  //   receiverAddress: renterAddress,
-                  // });
-                  // set the ad
-                  await updateUnderdogNFT({
-                    nftId: adNFT.id,
-                    nftBody: {
-                      attributes: {
-                        ...adNFT.attributes,
-                        displayUri: s3ImageUri,
-                        fileType: adNFT.file?.type!,
-                      },
-                      description: adNFT.description,
-                      image: adNFT.imageUri,
-                      name: adNFT.slotName,
-                    },
-                    projectId: inventoryId,
-                    underdogApiEndpoint,
-                  });
-                  toast(
-                    `Successfully Uploaded Ad for ${adNFT.slotName} Ad Space.`
-                  );
-                  // set lender on chain
-                  const trx = await lendAdNFT(
-                    inventoryId,
-                    adNFT.id,
-                    program,
-                    transactionAmount,
-                    lenderAddress
-                  );
-                  transaction.add(trx.tx);
-                  s3ImagesUri.push(s3ImageUri);
-                } catch (err) {
-                  console.log(err);
-                  throw new Error(
-                    "Updating Ad Space Incomplete, transaction failed."
-                  );
+                if (!adNFT.file) {
+                  throw new Error("File Not Found");
                 }
-                const tx = await sendTransaction(transaction, connection);
+                if (!ACCEPTED_IMAGE_MIME_TYPES.includes(adNFT.file.type)) {
+                  throw new Error("Format not supported");
+                }
+                if (!(adNFT.file.size <= MAX_FILE_SIZE)) {
+                  throw new Error("Max image size is 5mb.");
+                }
+                let s3ImageUri: string | null = null;
+                toast.promise(s3Upload(adNFT.file), {
+                  loading: "Uploading Slot Image...",
+                  success: (imageURI) => {
+                    s3ImageUri = imageURI;
+                    return "Image Uploaded Successfully.";
+                  },
+                  error: (data) => {
+                    console.log(data);
+                    throw new Error("Image Upload Failed, Please try again.");
+                  },
+                });
+                if (!s3ImageUri) {
+                  return;
+                }
+                // transfer the nft
+                // await transferUnderdogNFT({
+                //   projectId: inventoryId,
+                //   underdogApiEndpoint,
+                //   underdogApiKey,
+                //   nftId: adNFT.id,
+                //   receiverAddress: renterAddress,
+                // });
+                // set the ad
+                await updateUnderdogNFT({
+                  nftId: adNFT.id,
+                  nftBody: {
+                    attributes: {
+                      ...adNFT.attributes,
+                      displayUri: s3ImageUri,
+                      fileType: adNFT.file?.type!,
+                    },
+                    description: adNFT.description,
+                    image: adNFT.imageUri,
+                    name: adNFT.slotName,
+                  },
+                  projectId: inventoryId,
+                  underdogApiEndpoint,
+                });
+                toast.success(
+                  `Successfully Uploaded Ad for ${adNFT.slotName} Ad Space.`
+                );
+                // set lender on chain
+                const trx = await lendAdNFT(
+                  inventoryId,
+                  adNFT.id,
+                  program,
+                  adNFT.price,
+                  lenderAddress
+                );
+                transaction.add(trx.tx);
+                s3ImagesUri.push(s3ImageUri);
               })
             );
+            const tx = await sendTransaction(transaction, connection);
             setIsLoading(false);
-            toast("Ad Space Ownershsip tranfer complete 🎉");
+            toast.success("Ad Space Lent Successfully 🎉");
+            toast.info(
+              "Your Ad will be live once validated on-chain, it can take upto several hours."
+            );
             router.push("/myNfts");
           } catch (err) {
-            console.log(err);
+            catchError(err);
             setIsLoading(false);
-            toast("INTERNAL_SERVER_ERROR", {
-              description: (err as Error).message,
-            });
+            return;
           }
         }}
         className="w-full"

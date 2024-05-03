@@ -1,5 +1,6 @@
 "use client";
 import { useWalletSession } from "@/lib/hooks/check-wallet";
+import { catchError } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateAdNFTAccount } from "@repo/api";
 import { Session } from "@repo/auth";
@@ -64,8 +65,8 @@ export default function UpdatePrice({
                 throw new Error("Only Positive Numbers are allowed");
               }
               if (!program) {
-                toast("Please Try Again.");
-                return;
+                router.refresh();
+                throw new Error("Please try again.");
               }
               try {
                 const mint = adMint;
@@ -75,17 +76,13 @@ export default function UpdatePrice({
                   nftId,
                   mint,
                   program,
-                  slotPrice,
+                  slotPrice
                 );
                 router.refresh();
-                toast("Ad NFT's Price Updated");
+                toast.success("Ad NFT's Price Updated");
                 setIsLoading(false);
               } catch (err) {
-                console.log(err);
-                toast("INTERNAL_SERVER_ERROR", {
-                  description:
-                    (err as Error).message ?? "Check console for errors",
-                });
+                catchError(err);
                 setIsLoading(false);
                 return;
               }

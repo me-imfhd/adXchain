@@ -1,4 +1,6 @@
 "use client";
+import { catchError } from "@/lib/utils";
+import { validateImage } from "@/lib/validate-image";
 import { s3Upload, updateUnderdogNFT } from "@repo/api";
 import { UpdateNftBodyParams } from "@repo/api/types";
 import { trpc } from "@repo/trpc/trpc/client";
@@ -16,16 +18,7 @@ import {
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
-const MAX_FILE_SIZE = 1024 * 1024 * 5;
-const ACCEPTED_IMAGE_MIME_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-  "video/webm",
-  "video/mp4",
-];
+
 export default function UpdateAd({
   inventoryId,
   nftId,
@@ -39,7 +32,8 @@ export default function UpdateAd({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState<File | null>(null);
-  const { mutateAsync } = trpc.underdog.updateUnderdogNFT.useMutation();
+  const { mutateAsync: updateUnderdogNFT } =
+    trpc.underdog.updateUnderdogNFT.useMutation();
   const router = useRouter();
   return (
     <Dialog>
@@ -52,22 +46,27 @@ export default function UpdateAd({
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            if (!image) {
-              throw new Error("File Not Found");
-            }
-            if (!ACCEPTED_IMAGE_MIME_TYPES.includes(image.type)) {
-              throw new Error("Format not supported");
-            }
-            if (!(image.size <= MAX_FILE_SIZE)) {
-              throw new Error("Max image size is 5mb.");
-            }
+            const img = validateImage(image);
             setIsLoading(true);
-            console.log(image.size);
-            const s3ImageUri = await s3Upload(image);
+            let s3ImageUri: string | null = null;
+            toast.promise(s3Upload(img), {
+              loading: "Uploading Slot Image...",
+              success: (imageURI) => {
+                s3ImageUri = imageURI;
+                return "Image Uploaded Successfully.";
+              },
+              error: (data) => {
+                console.log(data);
+                throw new Error("Image Upload Failed, Please try again.");
+              },
+            });
+            if (!s3ImageUri) {
+              return;
+            }
             console.log(s3ImageUri);
             try {
               const underdogApiEndpoint = "https://devnet.underdogprotocol.com";
-              await mutateAsync({
+              await updateUnderdogNFT({
                 nftId,
                 projectId: inventoryId,
                 nftBody: {
@@ -77,20 +76,18 @@ export default function UpdateAd({
                   attributes: {
                     ...nftBody.attributes,
                     displayUri: s3ImageUri,
-                    fileType: image.type,
+                    fileType: img.type,
                   },
                 },
                 underdogApiEndpoint,
               });
-              router.refresh();
-              toast("Your ad is updated successfully.");
+              toast.success("Your ad is updated successfully.");
+              toast.info(
+                "Your Ad will be live once validated on-chain, it can take upto several minutes."
+              );
               setIsLoading(false);
             } catch (err) {
-              console.log(err);
-              toast("INTERNAL_SERVER_ERROR", {
-                description:
-                  (err as Error).message ?? "Check console for errors",
-              });
+              catchError(err);
               setIsLoading(false);
               return;
             }
@@ -98,9 +95,9 @@ export default function UpdateAd({
         >
           <Card className="overflow-hidden border-0">
             <CardHeader>
-              <CardTitle>Ad Inventory Image</CardTitle>
+              <CardTitle>Ad Image</CardTitle>
               <CardDescription>
-                Upload Image for your ad inventory.
+                Upload Ad Image for your ad space.
               </CardDescription>
             </CardHeader>
             <CardContent>

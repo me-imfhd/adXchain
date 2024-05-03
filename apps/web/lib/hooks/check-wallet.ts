@@ -19,7 +19,7 @@ export function useWalletSession(session: Session) {
       return;
     }
     if (anchorWallet.publicKey.toBase58() !== session.user.id) {
-      toast("New Wallet Found", {
+      toast.warning("New Wallet Found", {
         description: "Login With Your New Wallet",
       });
       (async () => {

@@ -133,7 +133,7 @@ export default async function InventoryLayout({
                         Price
                       </TableHead>
                       <TableHead className="hidden md:table-cell font-semibold">
-                        NFT Status
+                        Ad Space Type
                       </TableHead>
                       <TableHead className="hidden md:table-cell font-semibold">
                         Renter
@@ -199,7 +199,7 @@ export default async function InventoryLayout({
                             </div>
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
-                            {ad.status.toUpperCase()}
+                            {ad.attributes.slotType.toUpperCase()}
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
                             <Link

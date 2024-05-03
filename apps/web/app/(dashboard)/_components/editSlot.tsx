@@ -35,6 +35,8 @@ import { toast } from "sonner";
 import { useWalletSession } from "@/lib/hooks/check-wallet";
 import { Session } from "@repo/auth";
 import { trpc } from "@repo/trpc/trpc/client";
+import { validateImage } from "@/lib/validate-image";
+import { catchError } from "@/lib/utils";
 export default function EditSlot({
   adNFT,
   inventoryId,
@@ -77,8 +79,8 @@ export default function EditSlot({
               }
 
               if (!program) {
-                toast("Please try again.");
-                return;
+                router.refresh();
+                throw new Error("Please try again");
               }
               const underdogApiEndpoint = "https://devnet.underdogprotocol.com";
 
@@ -103,13 +105,31 @@ export default function EditSlot({
                   projectId: inventoryId,
                   underdogApiEndpoint,
                 });
-                toast("Ad slot updated successfully.");
+                toast.success("Ad NFT Updated Successfully.");
+                toast.info(
+                  "Metadata updates will occur once validated on-chain, it can take upto several hours."
+                );
                 router.push(`/inventories/${inventoryId}`);
                 router.refresh();
                 setIsLoading(false);
                 return;
               }
-              const s3ImageUri = await s3Upload(image);
+              const img = validateImage(image);
+              let s3ImageUri: string | null = null;
+              toast.promise(s3Upload(image), {
+                loading: "Uploading Slot Image...",
+                success: (imageURI) => {
+                  s3ImageUri = imageURI;
+                  return "Image Uploaded Successfully.";
+                },
+                error: (data) => {
+                  console.log(data);
+                  throw new Error("Image Upload Failed, Please try again.");
+                },
+              });
+              if (!s3ImageUri) {
+                return;
+              }
               await updateUnderdogNFT({
                 nftId: adNFT.id,
                 nftBody: {
@@ -130,16 +150,15 @@ export default function EditSlot({
                 projectId: inventoryId,
                 underdogApiEndpoint,
               });
-              toast("Ad slot updated successfully.");
+              toast.success("Ad NFT Updated Successfully.");
+              toast.info(
+                "Metadata updates will occur once validated on-chain, it can take upto several hours."
+              );
               router.push(`/inventories/${inventoryId}`);
               router.refresh();
               setIsLoading(false);
             } catch (err) {
-              console.log(err);
-              toast("INTERNAL_SERVER_ERROR", {
-                description:
-                  (err as Error).message ?? "Check console for errors",
-              });
+              catchError(err);
               setIsLoading(false);
             }
           })}

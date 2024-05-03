@@ -1,4 +1,5 @@
 "use client";
+import { catchError } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdateNftBodyParams } from "@repo/api/types";
 import { trpc } from "@repo/trpc/trpc/client";
@@ -75,14 +76,14 @@ export default function UpdateStatus({
                   underdogApiEndpoint,
                 });
                 router.refresh();
-                toast("Ad NFT's Status Updated");
+                toast.success("Ad NFT's Status Updated");
+                toast.info(
+                  "Metadata updates will occur once validated on-chain, it can take upto several hours."
+                );
+
                 setIsLoading(false);
               } catch (err) {
-                console.log(err);
-                toast("INTERNAL_SERVER_ERROR", {
-                  description:
-                    (err as Error).message ?? "Check console for errors",
-                });
+                catchError(err);
                 setIsLoading(false);
                 return;
               }
